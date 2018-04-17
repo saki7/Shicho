@@ -33,23 +33,5 @@ namespace ATENA
         //public override void OnUpdate(float realTimeDelta, float smlTimeDelta)
         //{
         //}
-
-        //public override void OnBeforeSimulationFrame()
-        //{
-        //}
-
-        //public override void OnAfterSimulationFrame()
-        //{
-        //}
-
-        //public override void OnBeforeSimulationTick()
-        //{
-        //}
-
-        //public override void OnAfterSimulationTick()
-        //{
-        //}
-
-        // private GameObject gobj;
     }
 }
