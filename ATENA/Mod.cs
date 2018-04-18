@@ -15,7 +15,7 @@ namespace ATENA
         {
             get {
                 // Dirty hack, as in MT
-                Bootstrapper.Bootstrap();
+                Bootstrapper.Instance.Bootstrap();
                 return ModInfo.ID;
             }
         }
@@ -32,13 +32,18 @@ namespace ATENA
             //    null
             //);
 
-            Bootstrapper.Bootstrap();
+            Bootstrapper.Instance.Bootstrap();
+        }
+
+        public void OnDisabled()
+        {
+            Bootstrapper.Instance.Cleanup();
         }
 
         public void OnSettingsUI(UIHelperBase helper)
         {
             if (cfg == null) {
-                cfg = new GameObject($"{ModInfo.ID}.Config").AddComponent<AtenaConfig>();
+                cfg = GameObject.Find(ModInfo.ID).AddComponent<AtenaConfig>();
             }
 
             Manager.ConfigManager.Instance.Load();

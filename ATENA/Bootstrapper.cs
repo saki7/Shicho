@@ -14,9 +14,13 @@ namespace ATENA
 
     internal class Bootstrapper
     {
-        public delegate void Log2(string msg);
+        static Bootstrapper instance_ = new Bootstrapper();
+        public static Bootstrapper Instance {
+            get => instance_;
+        }
+        private Bootstrapper() {}
 
-        public static void Bootstrap()
+        public void Bootstrap()
         {
             if (!bootstrapped_) {
                 LogCh.verbose = true;
@@ -48,9 +52,15 @@ namespace ATENA
             }
 
             Log.Info("bootstrapping...");
-            DestroyOld(ModInfo.ID);
+            {
+                var oldGameObject = gobj ?? GameObject.Find(ModInfo.ID);
+                if (oldGameObject != null) {
+                    Log.Warn($"old GameObject found: (\"{ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
+                    GameObject.DestroyImmediate(oldGameObject);
+                }
+            }
 
-            var gobj = new GameObject(ModInfo.ID);
+            gobj = new GameObject(ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
             var app = gobj.AddComponent<Atena>();
@@ -58,27 +68,6 @@ namespace ATENA
             initialized_ = true;
 
             Log.Info("loaded.");
-        }
-
-        private static void DestroyOld(string name)
-        {
-            while (true) {
-                try {
-                    var gobj = GameObject.Find(name)?.gameObject;
-                    if (!gobj) break;
-
-                    var oldInstanceID = gobj.GetInstanceID();
-                    GameObject.DestroyImmediate(gobj);
-                    Log.Info($"destroyed old instance: 0x{oldInstanceID:X}");
-
-                    // Thread.Yield();
-                    Thread.Sleep(0);
-
-                } catch (Exception e) {
-                    Log.Info($"failed to destroy: {e}");
-                    break;
-                }
-            }
         }
 
         private static bool IsModToolsActive()
@@ -94,6 +83,15 @@ namespace ATENA
             ).FirstOrDefault();
         }
 
+        internal void Cleanup()
+        {
+            GameObject.DestroyImmediate(gobj);
+            gobj = null; // deref
+        }
+
+        internal GameObject GetGameObject() => gobj;
+
         public static bool bootstrapped_ = false, initialized_ = false;
+        private GameObject gobj = null;
     }
 }
