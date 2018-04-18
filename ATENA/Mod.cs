@@ -11,15 +11,8 @@ namespace ATENA
 {
     public class Mod : IUserMod
     {
-        public string Name
-        {
-            get {
-                // Dirty hack, as in MT
-                Bootstrapper.Instance.Bootstrap();
-                return ModInfo.ID;
-            }
-        }
-        public string Description => ModInfo.Description;
+        public string Name { get => ModInfo.ID; }
+        public string Description { get => ModInfo.Description; }
 
         public void OnEnabled()
         {
@@ -33,20 +26,24 @@ namespace ATENA
             //);
 
             Bootstrapper.Instance.Bootstrap();
+            //Log.Info("OnEnabled");
+            cfg = GameObject.Find(ModInfo.ID).AddComponent<AtenaConfig>();
         }
 
         public void OnDisabled()
         {
-            Bootstrapper.Instance.Cleanup();
+            try {
+                //Log.Info("OnDisabled");
+
+                Manager.ConfigManager.Instance.Save();
+            } finally {
+                cfg = null;
+                Bootstrapper.Instance.Cleanup();
+            }
         }
 
         public void OnSettingsUI(UIHelperBase helper)
         {
-            if (cfg == null) {
-                cfg = GameObject.Find(ModInfo.ID).AddComponent<AtenaConfig>();
-            }
-
-            Manager.ConfigManager.Instance.Load();
             cfg.Populate(helper);
         }
 

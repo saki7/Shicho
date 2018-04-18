@@ -54,9 +54,17 @@ namespace ATENA
             Log.Info("bootstrapping...");
             {
                 var oldGameObject = gobj ?? GameObject.Find(ModInfo.ID);
-                if (oldGameObject != null) {
-                    Log.Warn($"old GameObject found: (\"{ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
-                    GameObject.DestroyImmediate(oldGameObject);
+
+                while (oldGameObject) {
+                    try {
+                        Log.Warn($"old GameObject found: (\"{ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
+                        GameObject.DestroyImmediate(oldGameObject);
+                        oldGameObject = GameObject.Find(ModInfo.ID);
+
+                    } catch (Exception e) {
+                        Log.Error(e);
+                        break;
+                    }
                 }
             }
 
@@ -85,13 +93,26 @@ namespace ATENA
 
         internal void Cleanup()
         {
-            GameObject.DestroyImmediate(gobj);
-            gobj = null; // deref
+            try {
+                GameObject.DestroyImmediate(gobj);
+
+                while (true) {
+                    try {
+                        var o = GameObject.Find(ModInfo.ID);
+                        if (!o) break;
+                        GameObject.DestroyImmediate(o);
+
+                    } finally {
+                        Thread.Sleep(0);
+                    }
+                }
+
+            } finally {
+                gobj = null; // deref
+                initialized_ = false;
+            }
         }
-
-        internal GameObject GetGameObject() => gobj;
-
-        public static bool bootstrapped_ = false, initialized_ = false;
+        private bool bootstrapped_ = false, initialized_ = false;
         private GameObject gobj = null;
     }
 }

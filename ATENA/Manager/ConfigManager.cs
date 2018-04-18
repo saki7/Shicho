@@ -16,6 +16,8 @@ namespace ATENA.Manager
             get => instance_;
         }
 
+        private ConfigManager() {}
+
         public void Save()
         {
             Log.Info("saving...");
