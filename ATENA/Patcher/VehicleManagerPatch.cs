@@ -29,23 +29,23 @@ namespace ATENA.Patcher.VehicleManagerPatch
     //})]
     class CreateVehicle
     {
-        static void Prefix(object __instance)
+        static void Prefix(ref VehicleInfo info, ref TransferManager.TransferReason type)
         {
             // Debug.Log("patching!!!!");
             // Log.Warn("patching!");
 
-            var mgr = (VehicleManager)__instance;
+            // var mgr = __instance;
             //Log.Warn($"current: {mgr.m_vehicleCount}");
-            mgr.m_totalTrafficFlow = 50000;
-            mgr.m_parkedCount = 227;
-            mgr.m_vehicleCount = 2123;
+            // mgr.m_totalTrafficFlow = 50000;
+            // mgr.m_parkedCount = 227;
+            // mgr.m_vehicleCount = 2123;
 
             //info.m_isLargeVehicle = true;
             //info.m_vehicleType = VehicleInfo.VehicleType.Plane;
-            //info.m_maxSpeed = 200;
-            //info.m_acceleration = 3;
+            info.m_maxSpeed = 100;
+            info.m_acceleration = 3;
 
-            //type = TransferManager.TransferReason.Dead;
+            type = TransferManager.TransferReason.Worker0;
         }
         //static void Prefix(VehicleManager instance)
         //{

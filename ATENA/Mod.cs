@@ -16,9 +16,6 @@ namespace ATENA
 
         public void OnEnabled()
         {
-            var harmony = HarmonyInstance.Create("com.github.setnahq.atena");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-
             //harmony.Patch(
             //    typeof(VehicleManager).GetMethod("TheMethod"),
             //    new HarmonyMethod(typeof(ATENA.Patcher.VehicleManagerPatch.CreateVehicle).GetMethod("Prefix")),
@@ -27,26 +24,22 @@ namespace ATENA
 
             Bootstrapper.Instance.Bootstrap();
             //Log.Info("OnEnabled");
-            cfg = GameObject.Find(ModInfo.ID).AddComponent<AtenaConfig>();
         }
 
         public void OnDisabled()
         {
             try {
                 //Log.Info("OnDisabled");
-
                 Manager.ConfigManager.Instance.Save();
+
             } finally {
-                cfg = null;
                 Bootstrapper.Instance.Cleanup();
             }
         }
 
         public void OnSettingsUI(UIHelperBase helper)
         {
-            cfg.Populate(helper);
+            Bootstrapper.Instance.Atena.OnSettingsUI(helper);
         }
-
-        private AtenaConfig cfg;
     }
 }

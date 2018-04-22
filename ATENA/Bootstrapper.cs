@@ -1,9 +1,11 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Plugins;
 using UnityEngine;
-using ICities;
+
+using Harmony;
 
 using System;
+using System.Reflection;
 using System.Linq;
 using System.Threading;
 
@@ -23,6 +25,9 @@ namespace ATENA
         public void Bootstrap()
         {
             if (!bootstrapped_) {
+                harmony_ = HarmonyInstance.Create("com.github.setnahq.atena");
+                harmony_.PatchAll(Assembly.GetExecutingAssembly());
+
                 LogCh.verbose = true;
                 LogCh.EnableChannels(LogChannel.All);
                 bootstrapped_ = true;
@@ -71,8 +76,7 @@ namespace ATENA
             gobj = new GameObject(ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
-            var app = gobj.AddComponent<Atena>();
-            app.Initialize();
+            Atena.SetInstance(gobj.AddComponent<Atena>());
             initialized_ = true;
 
             Log.Info("loaded.");
@@ -112,7 +116,14 @@ namespace ATENA
                 initialized_ = false;
             }
         }
+
         private bool bootstrapped_ = false, initialized_ = false;
         private GameObject gobj = null;
+        private HarmonyInstance harmony_;
+
+        private Atena atena = null;
+        public Atena Atena {
+            get => atena;
+        }
     }
 }
