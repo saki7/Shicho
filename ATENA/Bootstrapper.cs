@@ -1,4 +1,5 @@
-﻿using ColossalFramework;
+﻿extern alias CitiesL;
+using ColossalFramework;
 using ColossalFramework.Plugins;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ using System.Threading;
 
 namespace ATENA
 {
-    using LogCh = CODebugBase<LogChannel>;
+    using LogCh = CODebugBase<CitiesL.LogChannel>;
 
     internal class Bootstrapper
     {
@@ -29,7 +30,7 @@ namespace ATENA
                 harmony_.PatchAll(Assembly.GetExecutingAssembly());
 
                 LogCh.verbose = true;
-                LogCh.EnableChannels(LogChannel.All);
+                LogCh.EnableChannels(CitiesL.LogChannel.All);
                 bootstrapped_ = true;
             }
 
@@ -47,7 +48,7 @@ namespace ATENA
 
             } else {
                 void emit(PluginManager.MessageType type, object msg) =>
-                    DebugOutputPanel.AddMessage(type, Log.Format(msg))
+                    CitiesL.DebugOutputPanel.AddMessage(type, Log.Format(msg))
                 ;
                 Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
                 Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);

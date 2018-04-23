@@ -1,14 +1,5 @@
-﻿using ICities;
-using ColossalFramework;
-
-using UnityEngine;
-
+﻿extern alias CitiesL;
 using Harmony;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ATENA.Patcher.VehicleManagerPatch
 {
@@ -16,7 +7,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
     //[HarmonyPatch("Add")]
     //[HarmonyPatch(new Type[] { typeof(Window) })]
 
-    [HarmonyPatch(typeof(VehicleManager))]
+    [HarmonyPatch(typeof(CitiesL.VehicleManager))]
     [HarmonyPatch("CreateVehicle")]
     //[HarmonyPatch(new Type[] {
     //    typeof(ushort), // vehicle
@@ -29,7 +20,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
     //})]
     class CreateVehicle
     {
-        static void Prefix(ref VehicleInfo info, ref TransferManager.TransferReason type)
+        static void Prefix(ref CitiesL.VehicleInfo info, ref CitiesL.TransferManager.TransferReason type)
         {
             // Debug.Log("patching!!!!");
             // Log.Warn("patching!");
@@ -45,7 +36,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
             info.m_maxSpeed = 100;
             info.m_acceleration = 3;
 
-            type = TransferManager.TransferReason.Worker0;
+            type = CitiesL.TransferManager.TransferReason.Worker0;
         }
         //static void Prefix(VehicleManager instance)
         //{

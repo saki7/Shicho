@@ -1,17 +1,12 @@
-﻿using ICities;
+﻿extern alias CitiesL;
+using ICities;
 using ColossalFramework;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 
 namespace ATENA.Extension
 {
     internal class ManagerSet
     {
-        public VehicleManager vehicle;
+        public CitiesL.VehicleManager vehicle;
     }
 
     public class ThreadExt
@@ -22,7 +17,7 @@ namespace ATENA.Extension
             Log.Info("created");
 
             mgr = new ManagerSet{
-                vehicle = Singleton<VehicleManager>.instance,
+                vehicle = Singleton<CitiesL.VehicleManager>.instance,
             };
 
             Log.Warn(mgr.vehicle.m_maxTrafficFlow);

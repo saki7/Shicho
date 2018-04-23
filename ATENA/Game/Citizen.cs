@@ -1,4 +1,4 @@
-﻿using ICities;
+﻿extern alias CitiesL;
 using ColossalFramework;
 
 using System;
@@ -6,16 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+
 namespace ATENA.Game
 {
     class Citizen
     {
-        private uint id_;
-        public uint ID {
-            get => id_;
-        }
-
-        public Citizen(int age, int family, global::Citizen.Gender? gender)
+        public Citizen(int age, int family, CitiesL.Citizen.Gender? gender)
         {
             var success = false;
 
@@ -30,6 +26,10 @@ namespace ATENA.Game
             }
         }
 
-        private static CitizenManager mgr = Singleton<CitizenManager>.instance;
+        private static CitiesL.CitizenManager mgr = Singleton<CitiesL.CitizenManager>.instance;
+        private uint id_;
+        public uint ID {
+            get => id_;
+        }
     }
 }
