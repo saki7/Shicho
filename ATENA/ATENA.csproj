@@ -70,8 +70,11 @@
     <Compile Include="AtenaConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Extension\ThreadExt.cs" />
+    <Compile Include="FlowGenerator.cs" />
+    <Compile Include="Game\Building.cs" />
     <Compile Include="Game\Citizen.cs" />
     <Compile Include="Game\Error.cs" />
+    <Compile Include="Game\Road.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Manager\ConfigManager.cs" />
     <Compile Include="Mod.cs" />

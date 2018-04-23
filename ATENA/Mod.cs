@@ -16,12 +16,6 @@ namespace ATENA
 
         public void OnEnabled()
         {
-            //harmony.Patch(
-            //    typeof(VehicleManager).GetMethod("TheMethod"),
-            //    new HarmonyMethod(typeof(ATENA.Patcher.VehicleManagerPatch.CreateVehicle).GetMethod("Prefix")),
-            //    null
-            //);
-
             Bootstrapper.Instance.Bootstrap();
             //Log.Info("OnEnabled");
         }
@@ -38,8 +32,6 @@ namespace ATENA
         }
 
         public void OnSettingsUI(UIHelperBase helper)
-        {
-            Bootstrapper.Instance.Atena.OnSettingsUI(helper);
-        }
+            => Atena.Instance.OnSettingsUI(helper);
     }
 }

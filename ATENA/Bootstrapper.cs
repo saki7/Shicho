@@ -121,10 +121,5 @@ namespace ATENA
         private bool bootstrapped_ = false, initialized_ = false;
         private GameObject gobj = null;
         private HarmonyInstance harmony_;
-
-        private Atena atena = null;
-        public Atena Atena {
-            get => atena;
-        }
     }
 }

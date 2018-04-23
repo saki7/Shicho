@@ -33,10 +33,10 @@ namespace ATENA.Patcher.VehicleManagerPatch
 
             //info.m_isLargeVehicle = true;
             //info.m_vehicleType = VehicleInfo.VehicleType.Plane;
-            info.m_maxSpeed = 100;
-            info.m_acceleration = 3;
+            //info.m_maxSpeed = 100;
+            //info.m_acceleration = 3;
 
-            type = CitiesL.TransferManager.TransferReason.Worker0;
+            //type = CitiesL.TransferManager.TransferReason.Worker0;
         }
         //static void Prefix(VehicleManager instance)
         //{
