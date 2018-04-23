@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace ATENA.Core
@@ -41,7 +42,7 @@ namespace ATENA.Core
 
         public static NetNodeBuffer Nodes(CitiesL.NetManager mgr)
         {
-            return new NetNodeBuffer(mgr.m_nodes.m_buffer, (UInt64) mgr.m_nodeCount);
+            return new NetNodeBuffer(mgr.m_nodes.m_buffer, (UInt64)mgr.m_nodeCount);
         }
     }
 }

@@ -31,11 +31,27 @@ namespace ATENA
                 pmgr_.FetchAll();
                 Log.Debug("prefabs loaded");
 
+                Log.Debug("loading traffic...");
+                tcon_ = new TrafficController();
+                tcon_.Fetch();
+
+                Log.Debug(tcon_);
+                Log.Debug("traffic loaded");
+
                 Log.Info("initialized!");
 
             } catch (Exception e) {
                 Log.Error($"failed to initialize: '{e}'");
             }
+        }
+
+        public void PrintStats()
+        {
+            Log.Debug($@"
+                === Atena status ===
+                {tcon_}
+                === end Atena status ===
+            ");
         }
 
         public void Reset()
@@ -61,11 +77,6 @@ namespace ATENA
             }
         }
 
-        public void Fetch()
-        {
-            pmgr_.FetchAll();
-        }
-
         public void OnSettingsUI(UIHelperBase helper)
         {
             cfg_.Populate(helper);
@@ -80,6 +91,7 @@ namespace ATENA
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;
+        private TrafficController tcon_;
 
         private FlowGenerator fgen_ = new FlowGenerator();
         private Dictionary<Game.CitizenID, Game.Citizen> citizens_ = new Dictionary<Game.CitizenID, Game.Citizen>();

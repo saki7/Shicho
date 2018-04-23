@@ -24,7 +24,7 @@ namespace ATENA
             Log.Debug("fetching roads...");
 
             foreach (var collection in CitiesL.NetCollection.FindObjectsOfType<CitiesL.NetCollection>()) {
-                Log.Info("got collection: " + collection.name);
+                // Log.Info("got collection: " + collection.name);
 
                 foreach (var prefab in collection.m_prefabs) {
                     bool isRoadPrefab = prefab.GetComponent<CitiesL.NetInfo>() != null && prefab.GetComponent<CitiesL.RoadBaseAI>() != null;

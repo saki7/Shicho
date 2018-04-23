@@ -1,5 +1,7 @@
 ﻿extern alias CitiesL;
 
+using ATENA.Core;
+
 using ICities;
 using UnityEngine;
 
@@ -10,13 +12,8 @@ namespace ATENA.Mod
         public void Populate(UIHelperBase helper)
         {
             helper.AddButton("Reset", Atena.Instance.Reset);
-            helper.AddButton("Test1", Test1);
+            helper.AddButton("Print Stats", Atena.Instance.PrintStats);
             helper.AddButton("Set flow", SetFlow);
-        }
-
-        private void Test1()
-        {
-            var r = new Game.Road();
         }
 
         private void SetFlow()

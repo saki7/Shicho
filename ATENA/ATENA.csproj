@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Atena.cs" />
     <Compile Include="Core\Buffer.cs" />
+    <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />
     <Compile Include="Mod\ConfigTool.cs" />
     <Compile Include="Bootstrapper.cs" />
@@ -84,7 +85,9 @@
     <Compile Include="Patcher\VehicleManagerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"
