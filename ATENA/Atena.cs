@@ -29,14 +29,15 @@ namespace ATENA
                 Log.Debug("loading prefabs...");
                 pmgr_ = new PrefabManager();
                 pmgr_.FetchAll();
-                Log.Debug("prefabs loaded");
 
                 Log.Debug("loading traffic...");
                 tcon_ = new TrafficController();
                 tcon_.Fetch();
-
                 Log.Debug(tcon_);
-                Log.Debug("traffic loaded");
+
+                Log.Debug("initializing flow generator...");
+                fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
+                fgen_.AddFactory(typeof(CitiesL.Citizen));
 
                 Log.Info("initialized!");
 
@@ -93,7 +94,7 @@ namespace ATENA
         private PrefabManager pmgr_;
         private TrafficController tcon_;
 
-        private FlowGenerator fgen_ = new FlowGenerator();
+        private FlowGenerator fgen_;
         private Dictionary<Game.CitizenID, Game.Citizen> citizens_ = new Dictionary<Game.CitizenID, Game.Citizen>();
     }
 }

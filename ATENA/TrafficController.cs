@@ -13,6 +13,7 @@ using System.Collections.Generic;
 
 namespace ATENA
 {
+    using NetNodeList = List<NetNode>;
     using NetNodeMap = Dictionary<CIC.Service, List<NetNode>>;
     using NetSegmentMap = List<NetSegment>;
 
@@ -32,9 +33,12 @@ namespace ATENA
                     var service = node.Info.GetService();
 
                     if (!nodes_.ContainsKey(service)) {
-                        nodes_.Add(service, new List<NetNode>());
+                        nodes_.Add(service, new NetNodeList());
                     }
                     nodes_[service].Add(node);
+
+                    //Log.Debug($"pos: {node.m_position}");
+
                     ++fetchedCount;
                 }
                 Log.Debug($"nodeCount: {mgr_.m_nodeCount} (fetched: {fetchedCount})");
@@ -65,6 +69,10 @@ namespace ATENA
 
         private static CitiesL.NetManager mgr_ = Singleton<CitiesL.NetManager>.instance;
         private NetNodeMap nodes_ = new NetNodeMap();
+        public NetNodeMap Nodes { get => nodes_; }
+        public NetNodeList RoadNodes { get => nodes_[CIC.Service.Road]; }
+
         private NetSegmentMap segments_ = new NetSegmentMap();
+        public NetSegmentMap Segments { get => segments_; }
     }
 }

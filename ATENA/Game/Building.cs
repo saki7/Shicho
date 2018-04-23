@@ -1,6 +1,10 @@
 ﻿extern alias CitiesL;
+
+using ATENA.Core;
+
 using ColossalFramework;
 using UnityEngine;
+
 
 namespace ATENA.Game
 {
@@ -11,20 +15,21 @@ namespace ATENA.Game
 
     class Building
     {
-        public Building()
+        public Building(Vector3 pos, CitiesL.BuildingInfo info)
         {
-            var info = new CitiesL.BuildingInfo();
-            var pos = new Vector3();
+            Log.Debug($"aaa!! {mgr_}, {pos}, {info}, {Atena.Instance.R}");
 
-            //mgr_.CreateBuilding(
-            //    building: out id_.value,
-            //    randomizer: ref Atena.Instance.R,
-            //    info: info,
-            //    position: pos,
-            //    angle: 180,
-            //    length: 20,
-            //    buildIndex: 0
-            //);
+            var buildIndex = Singleton<CitiesL.SimulationManager>.instance.m_currentBuildIndex;
+
+            mgr_.CreateBuilding(
+                building: out id_.value,
+                randomizer: ref Atena.Instance.R,
+                info: info,
+                position: pos,
+                angle: 1,
+                length: 1,
+                buildIndex: buildIndex
+            );
         }
 
         private static CitiesL.BuildingManager mgr_ = Singleton<CitiesL.BuildingManager>.instance;
