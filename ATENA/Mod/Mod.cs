@@ -1,13 +1,8 @@
-﻿using ICities;
-using UnityEngine;
+﻿using ATENA.Core;
 
-using Harmony;
+using ICities;
 
-using System;
-using System.Reflection;
-
-
-namespace ATENA
+namespace ATENA.Mod
 {
     public class Mod : IUserMod
     {
@@ -18,13 +13,20 @@ namespace ATENA
         {
             Bootstrapper.Instance.Bootstrap();
             //Log.Info("OnEnabled");
+
+            if (cfg_ != null) {
+                Log.Warn("old Config instance remaining");
+            }
+
+            cfg_ = new Config();
+            cfg_.Load();
         }
 
         public void OnDisabled()
         {
             try {
                 //Log.Info("OnDisabled");
-                Manager.ConfigManager.Instance.Save();
+                cfg_.Save();
 
             } finally {
                 Bootstrapper.Instance.Cleanup();
@@ -33,5 +35,7 @@ namespace ATENA
 
         public void OnSettingsUI(UIHelperBase helper)
             => Atena.Instance.OnSettingsUI(helper);
+
+        private Config cfg_;
     }
 }

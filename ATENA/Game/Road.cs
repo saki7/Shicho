@@ -1,20 +1,27 @@
 ﻿extern alias CitiesL;
+
+using ATENA.Core;
+
 using ColossalFramework;
+
 
 namespace ATENA.Game
 {
     class Road
     {
-        public static Road GetMainExternalConnection()
+        public Road()
         {
-            var mgr = Singleton<CitiesL.TransportManager>.instance;
-            mgr.get
+            Log.Debug($"nodeCount: {mgr_.m_nodeCount}");
+            foreach (var node in Buffer.Nodes(mgr_)) {
+                Log.Debug($"node: {node} ({node.Info.GetService()})");
+            }
 
-            var road = new Road();
-            return road;
-
+            Log.Debug($"segmentCount: {mgr_.m_segmentCount}");
+            foreach (var seg in Buffer.Segments(mgr_)) {
+                Log.Debug($"seg: {seg}");
+            }
         }
 
-        private static CitiesL.TransferManager;
+        private static CitiesL.NetManager mgr_ = Singleton<CitiesL.NetManager>.instance;
     }
 }

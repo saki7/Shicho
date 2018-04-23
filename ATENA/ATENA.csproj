@@ -67,18 +67,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Atena.cs" />
-    <Compile Include="AtenaConfig.cs" />
+    <Compile Include="Core\Buffer.cs" />
+    <Compile Include="PrefabManager.cs" />
+    <Compile Include="Mod\ConfigTool.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Extension\ThreadExt.cs" />
+    <Compile Include="Mod\Extension\ThreadExt.cs" />
     <Compile Include="FlowGenerator.cs" />
     <Compile Include="Game\Building.cs" />
     <Compile Include="Game\Citizen.cs" />
     <Compile Include="Game\Error.cs" />
     <Compile Include="Game\Road.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="Manager\ConfigManager.cs" />
-    <Compile Include="Mod.cs" />
-    <Compile Include="ModInfo.cs" />
+    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Mod\Config.cs" />
+    <Compile Include="Mod\Mod.cs" />
+    <Compile Include="Mod\ModInfo.cs" />
     <Compile Include="Patcher\VehicleManagerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

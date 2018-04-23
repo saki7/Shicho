@@ -1,10 +1,10 @@
-﻿using ColossalFramework.Plugins;
-using UnityEngine;
-
-namespace ATENA
+﻿namespace ATENA.Core
 {
-    internal class Log
+    internal static class Log
     {
+        public delegate void DebugFunc(object msg);
+        public static DebugFunc Debug;
+
         public delegate void InfoFunc(object msg);
         public static InfoFunc Info;
 
@@ -16,7 +16,7 @@ namespace ATENA
 
         internal static string Format(object msg)
         {
-            return $"[{ModInfo.ID}] {msg}";
+            return $"[{Mod.ModInfo.ID}] {msg}";
         }
     }
 }

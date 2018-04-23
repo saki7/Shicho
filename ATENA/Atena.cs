@@ -1,4 +1,7 @@
 ﻿extern alias CitiesL;
+
+using ATENA.Core;
+
 using ICities;
 using UnityEngine;
 
@@ -20,10 +23,13 @@ namespace ATENA
             try {
                 Log.Info("initializing...");
 
-                Manager.ConfigManager.Instance.Load();
-                cfg_ = GameObject.Find(ModInfo.ID).AddComponent<AtenaConfig>();
-
+                cfg_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
+
+                Log.Debug("loading prefabs...");
+                pmgr_ = new PrefabManager();
+                pmgr_.FetchAll();
+                Log.Debug("prefabs loaded");
 
                 Log.Info("initialized!");
 
@@ -57,19 +63,7 @@ namespace ATENA
 
         public void Fetch()
         {
-            foreach (var collection in CitiesL.NetCollection.FindObjectsOfType<CitiesL.NetCollection>()) {
-                Log.Warn("collection: " + collection.name);
-
-                foreach (var prefab in collection.m_prefabs) {
-                    bool isRoadPrefab = prefab.GetComponent<CitiesL.NetInfo>() != null && prefab.GetComponent<CitiesL.RoadBaseAI>() != null;
-
-                    if (isRoadPrefab) {
-                        roadPrefabNames[prefab.GetInstanceID()] = prefab.name;
-                        roadPrefabs[prefab.name] = prefab;
-                        //ModDebug.Log("Road Prefab: " + prefab.name + "(" + isRoadPrefab + ")");
-                    }
-                }
-            }
+            pmgr_.FetchAll();
         }
 
         public void OnSettingsUI(UIHelperBase helper)
@@ -82,10 +76,10 @@ namespace ATENA
             return 114514;
         }
 
-        private AtenaConfig cfg_;
+        private Mod.ConfigTool cfg_;
         internal ColossalFramework.Math.Randomizer R;
 
-        private System.Collections.Generic.mu
+        private PrefabManager pmgr_;
 
         private FlowGenerator fgen_ = new FlowGenerator();
         private Dictionary<Game.CitizenID, Game.Citizen> citizens_ = new Dictionary<Game.CitizenID, Game.Citizen>();

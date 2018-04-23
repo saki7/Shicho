@@ -1,4 +1,7 @@
 ﻿extern alias CitiesL;
+
+using ATENA.Core;
+
 using ColossalFramework;
 using ColossalFramework.Plugins;
 using UnityEngine;
@@ -40,6 +43,7 @@ namespace ATENA
             var useUnityLogger = true; // or IsModToolsActive()
 
             if (useUnityLogger) {
+                Log.Debug = Debug.LogWarning;
                 Log.Info  = Debug.Log;
                 Log.Warn  = Debug.LogWarning;
                 Log.Error = Debug.LogError;
@@ -59,13 +63,13 @@ namespace ATENA
 
             Log.Info("bootstrapping...");
             {
-                var oldGameObject = gobj ?? GameObject.Find(ModInfo.ID);
+                var oldGameObject = gobj ?? GameObject.Find(Mod.ModInfo.ID);
 
                 while (oldGameObject) {
                     try {
-                        Log.Warn($"old GameObject found: (\"{ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
+                        Log.Warn($"old GameObject found: (\"{Mod.ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
                         GameObject.DestroyImmediate(oldGameObject);
-                        oldGameObject = GameObject.Find(ModInfo.ID);
+                        oldGameObject = GameObject.Find(Mod.ModInfo.ID);
 
                     } catch (Exception e) {
                         Log.Error(e);
@@ -74,7 +78,7 @@ namespace ATENA
                 }
             }
 
-            gobj = new GameObject(ModInfo.ID);
+            gobj = new GameObject(Mod.ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
             Atena.SetInstance(gobj.AddComponent<Atena>());
@@ -103,7 +107,7 @@ namespace ATENA
 
                 while (true) {
                     try {
-                        var o = GameObject.Find(ModInfo.ID);
+                        var o = GameObject.Find(Mod.ModInfo.ID);
                         if (!o) break;
                         GameObject.DestroyImmediate(o);
 

@@ -1,30 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ATENA.Core;
+
+using System;
 using System.IO;
 using System.Xml.Serialization;
 
 
-namespace ATENA.Manager
+namespace ATENA.Mod
 {
     [Serializable()]
     [XmlRoot(ElementName = "SavedConfig")]
-    public class ConfigManager
+    public class Config
     {
-        public static ConfigManager Instance {
-            get => instance_;
-        }
-
-        private ConfigManager() {}
-
         public void Save()
         {
             Log.Info("saving...");
 
-            var serializer = new XmlSerializer(typeof(ConfigManager));
+            var serializer = new XmlSerializer(typeof(Config));
             var writer = new StreamWriter(FileName);
-            serializer.Serialize(writer, instance_);
+            serializer.Serialize(writer, this);
             writer.Close();
 
             Log.Info("saved.");
@@ -39,21 +32,15 @@ namespace ATENA.Manager
                 return;
             }
 
-            var xmlSerialiser = new XmlSerializer(typeof(ConfigManager));
+            var xmlSerialiser = new XmlSerializer(typeof(Config));
             var reader = new StreamReader(FileName);
-            var mgr = xmlSerialiser.Deserialize(reader) as ConfigManager;
+            var mgr = xmlSerialiser.Deserialize(reader) as Config;
             reader.Close();
 
-            if (mgr != null) {
-                instance_ = mgr;
-            }
             Log.Info("loaded.");
         }
 
         [NonSerialized]
         private const string FileName = "ATENA.xml";
-
-        [NonSerialized]
-        private static ConfigManager instance_ = new ConfigManager();
     }
 }

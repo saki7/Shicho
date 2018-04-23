@@ -1,26 +1,17 @@
 ﻿extern alias CitiesL;
+
+using ATENA.Core;
+
 using ICities;
-using ColossalFramework;
 
-namespace ATENA.Extension
+namespace ATENA.Mod.Extension
 {
-    internal class ManagerSet
-    {
-        public CitiesL.VehicleManager vehicle;
-    }
-
-    public class ThreadExt
+    class ThreadExt
         : ThreadingExtensionBase
     {
         public override void OnCreated(IThreading instance)
         {
-            Log.Info("created");
-
-            mgr = new ManagerSet{
-                vehicle = Singleton<CitiesL.VehicleManager>.instance,
-            };
-
-            Log.Warn(mgr.vehicle.m_maxTrafficFlow);
+            Log.Debug("created");
         }
 
         public override void OnReleased()
@@ -47,7 +38,5 @@ namespace ATENA.Extension
         public override void OnAfterSimulationTick()
         {
         }
-
-        private ManagerSet mgr;
     }
 }
