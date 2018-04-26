@@ -68,7 +68,10 @@
   <ItemGroup>
     <Compile Include="Atena.cs" />
     <Compile Include="Core\DataQuery.cs" />
+    <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="Patcher\RenderGroupPatch.cs" />
+    <Compile Include="PropController.cs" />
     <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />
     <Compile Include="Mod\ConfigTool.cs" />

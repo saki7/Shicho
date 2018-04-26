@@ -37,6 +37,17 @@ namespace ATENA
 
                 Log.Info("initialized!");
 
+                var cams = GameObject.FindObjectsOfType<UnityEngine.Camera>();
+                foreach (var cam in cams) {
+                    //if (cam.name == "Main Camera") {
+                        Log.Debug($"cam: {cam}, {cam.depthTextureMode}, depth: {cam.depth}");
+                    //    cam.depth = -2;
+                    //    cam.depthTextureMode = DepthTextureMode.Depth;
+                    //}
+                }
+                UnityEngine.Shader.globalMaximumLOD = 999999999;
+                Log.Debug($"LOD: {UnityEngine.Shader.globalMaximumLOD}");
+
             } catch (Exception e) {
                 Log.Error($"failed to initialize: '{e}'");
             }
@@ -44,6 +55,10 @@ namespace ATENA
 
         public void OnLevelLoad()
         {
+            Log.Debug("loading props...");
+            pcon_ = new PropController();
+            pcon_.Fetch();
+
             Log.Debug("loading traffic...");
             tcon_ = new TrafficController();
             tcon_.Fetch();
@@ -100,6 +115,8 @@ namespace ATENA
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;
+
+        private PropController pcon_;
         private TrafficController tcon_;
 
         private FlowGenerator fgen_;

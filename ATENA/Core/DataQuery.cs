@@ -8,12 +8,22 @@ using System.Linq;
 
 namespace ATENA.Core
 {
+    using NetLane = CitiesL.NetLane;
     using Building = CitiesL.Building;
     using NetSegment = CitiesL.NetSegment;
     using NetNode = CitiesL.NetNode;
 
     static class DataQuery
     {
+        public static IEnumerable<NetLane>
+        NetLanes(NetLane.Flags flags = NetLane.Flags.Created)
+        {
+            var mgr = Singleton<CitiesL.NetManager>.instance;
+            return mgr.m_lanes.m_buffer.Where(e =>
+                ((NetLane.Flags)e.m_flags & flags) != NetLane.Flags.None
+            );
+        }
+
         public static IEnumerable<Building>
         Buildings(Building.Flags flags = Building.Flags.Created)
         {
@@ -40,6 +50,5 @@ namespace ATENA.Core
                 (e.m_flags & flags) != CitiesL.NetNode.Flags.None
             );
         }
-
     }
 }

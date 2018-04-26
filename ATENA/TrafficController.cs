@@ -4,6 +4,7 @@ using ATENA.Core;
 
 using ColossalFramework;
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -13,11 +14,33 @@ namespace ATENA
     using NetNodeList = List<NetNode>;
     using NetNodeMap = Dictionary<CitiesL.ItemClass.Service, List<NetNode>>;
     using NetSegmentMap = List<NetSegment>;
+    using DistrictList = List<District>;
 
-    class TrafficController
+    class TrafficController : IDisposable
     {
         public void Fetch()
         {
+            var mgr = CitiesL.RenderManager.instance;
+            //mgr.m_overlayBuffer.SetGlobalDepthBias(
+            //    4.12f, 4.12f
+            //);
+            //mgr.lightSystem.m_lightBuffer.SetGlobalDepthBias(
+            //    4.12f, 4.12f
+            //);
+            //UnityEngine.Shader.SetGlobalVector(
+            //    "_ShadowForward",
+            //    mgr.MainLight.transform.forward * 1200f
+            //);
+            // mgr.ShadowDistance = 200f;
+            // Log.Debug($"shadowDistance: {mgr.ShadowDistance}");
+
+            // Log.Debug($"[shadow bias]: shadowBias: {mgr.MainLight.shadowBias}, normalBias: {mgr.MainLight.shadowNormalBias}");
+
+            // mgr.MainLight.shadowBias = 0.6f; // 0.162075f;
+            // mgr.MainLight.shadowNormalBias = 0.6f; // 0.4
+
+            // Log.Debug($"[shadow bias]: shadowBias: {mgr.MainLight.shadowBias}, normalBias: {mgr.MainLight.shadowNormalBias}");
+
             #region Fetch nodes
             {
                 nodes_.Clear();
@@ -43,6 +66,22 @@ namespace ATENA
                 Log.Debug($"segmentCount: {mgr_.m_segmentCount} (fetched: {segments_.Count()})");
             }
             #endregion Fetch segments
+
+            //#region Fetch districts
+            //{
+            //    districts_.Clear();
+            //    foreach (var dist in DataQuery.Districts()) {
+            //        districts_.Add(dist);
+            //    }
+            //}
+            //#endregion Fetch districts
+        }
+
+        public void Dispose()
+        {
+            nodes_.Clear();
+            segments_.Clear();
+            districts_.Clear();
         }
 
         public override string ToString()
@@ -57,5 +96,8 @@ namespace ATENA
 
         private NetSegmentMap segments_ = new NetSegmentMap();
         public NetSegmentMap Segments { get => segments_; }
+
+        private DistrictList districts_ = new DistrictList();
+        public DistrictList Districts { get => districts_; }
     }
 }

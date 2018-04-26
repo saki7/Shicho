@@ -26,7 +26,9 @@ namespace ATENA.Mod
         {
             try {
                 //Log.Info("OnDisabled");
-                cfg_.Save();
+                if (cfg_ != null) {
+                    cfg_.Save();
+                }
 
             } finally {
                 Bootstrapper.Instance.Cleanup();
