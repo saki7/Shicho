@@ -14,9 +14,9 @@ namespace ATENA
     internal class Atena
         : MonoBehaviour
     {
-        private static Atena instance_;
+        internal static Atena instance_;
         public static Atena Instance { get => instance_; }
-        internal static void SetInstance(Atena a) { instance_ = a; }
+        //internal static void SetInstance(Atena a) { instance_ = a; }
 
         public Atena()
         {
@@ -26,24 +26,32 @@ namespace ATENA
                 cfg_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
 
+                // stir up
+                for (var i = 0; i < 123; ++i) {
+                    R.ULong64();
+                }
+
                 Log.Debug("loading prefabs...");
                 pmgr_ = new PrefabManager();
                 pmgr_.FetchAll();
-
-                Log.Debug("loading traffic...");
-                tcon_ = new TrafficController();
-                tcon_.Fetch();
-                Log.Debug(tcon_);
-
-                Log.Debug("initializing flow generator...");
-                fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
-                fgen_.AddFactory(typeof(CitiesL.Citizen));
 
                 Log.Info("initialized!");
 
             } catch (Exception e) {
                 Log.Error($"failed to initialize: '{e}'");
             }
+        }
+
+        public void OnLevelLoad()
+        {
+            Log.Debug("loading traffic...");
+            tcon_ = new TrafficController();
+            tcon_.Fetch();
+            Log.Debug(tcon_);
+
+            Log.Debug("initializing flow generator...");
+            fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
+            fgen_.AddFactory(typeof(CitiesL.Citizen));
         }
 
         public void PrintStats()
@@ -85,7 +93,7 @@ namespace ATENA
 
         public static ulong GetDeviceSeed()
         {
-            return 114514;
+            return 1145144545191912345;
         }
 
         private Mod.ConfigTool cfg_;

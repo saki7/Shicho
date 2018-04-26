@@ -81,10 +81,13 @@ namespace ATENA
             gobj = new GameObject(Mod.ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
-            Atena.SetInstance(gobj.AddComponent<Atena>());
+            Atena.instance_ = gobj.AddComponent<Atena>();
             initialized_ = true;
 
             Log.Info("loaded.");
+
+            // TODO: move this to proper place
+            Atena.Instance.OnLevelLoad();
         }
 
         private static bool IsModToolsActive()

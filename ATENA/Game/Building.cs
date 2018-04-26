@@ -17,7 +17,7 @@ namespace ATENA.Game
     {
         public Building(Vector3 pos, CitiesL.BuildingInfo info)
         {
-            Log.Debug($"aaa!! {mgr_}, {pos}, {info}, {Atena.Instance.R}");
+            // Log.Debug($"aaa!! {mgr_}, {pos}, {info}, {Atena.Instance.R}");
 
             var buildIndex = Singleton<CitiesL.SimulationManager>.instance.m_currentBuildIndex;
 
