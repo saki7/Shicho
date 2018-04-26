@@ -1,17 +1,15 @@
-﻿using ATENA.Mod;
-
-using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.Reflection;
+// using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(ModInfo.ID)]
-[assembly: AssemblyDescription(ModInfo.Description + " (Cities: Skylines mod)")]
+[assembly: AssemblyTitle(ATENA.Mod.ModInfo.ID)]
+[assembly: AssemblyDescription(ATENA.Mod.ModInfo.Description + " (Cities: Skylines mod)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct(ModInfo.ID)]
+[assembly: AssemblyProduct(ATENA.Mod.ModInfo.ID)]
 [assembly: AssemblyCopyright("Copyright (c) 2018 Nana Sakisaka")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

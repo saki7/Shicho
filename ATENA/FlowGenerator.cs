@@ -39,7 +39,7 @@ namespace ATENA
         {
             Log.Debug($"adding factory for target '{targetType}'");
 
-            if (targetType == typeof(Citizen)) {
+            if (targetType == typeof(CitiesL.Citizen)) {
                 var refNode = tcon_.RoadNodes.First();
                 Log.Debug($"reference node: {refNode} [{refNode.m_flags}] ({refNode.m_position})");
 
@@ -50,13 +50,13 @@ namespace ATENA
                 var refInfo = pmgr_.GetDefaultPrefabs(PrefabCategory.Building)
                     .First(p => p.GetService() == CIC.Service.Residential)
                 ;
-;
+
                 Log.Debug($"reference info: {refInfo}");
 
                 sources_.Add(targetType, new FlowSource(
                     building: new Game.Building(
-                        info: (BuildingInfo)refInfo,
-                        pos: refNode.m_position
+                        info: (CitiesL.BuildingInfo)refInfo,
+                        pos: DataQuery.Buildings().First().m_position
                     )
                 ));
 

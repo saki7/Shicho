@@ -1,7 +1,4 @@
 ﻿extern alias CitiesL;
-using CIC = CitiesL.ItemClass;
-using NetNode = CitiesL.NetNode;
-using NetSegment = CitiesL.NetSegment;
 
 using ATENA.Core;
 
@@ -14,7 +11,7 @@ using System.Collections.Generic;
 namespace ATENA
 {
     using NetNodeList = List<NetNode>;
-    using NetNodeMap = Dictionary<CIC.Service, List<NetNode>>;
+    using NetNodeMap = Dictionary<CitiesL.ItemClass.Service, List<NetNode>>;
     using NetSegmentMap = List<NetSegment>;
 
     class TrafficController
@@ -24,40 +21,26 @@ namespace ATENA
             #region Fetch nodes
             {
                 nodes_.Clear();
-                uint fetchedCount = 0;
-
-                foreach (var node in Buffer.Nodes(mgr_)) {
-                    bool hasFlag(NetNode.Flags flag) => (node.m_flags & flag) != NetNode.Flags.None;
-                    if (!hasFlag(NetNode.Flags.Created)) continue;
-
+                foreach (var node in DataQuery.Nodes()) {
                     var service = node.Info.GetService();
 
                     if (!nodes_.ContainsKey(service)) {
                         nodes_.Add(service, new NetNodeList());
                     }
                     nodes_[service].Add(node);
-
                     //Log.Debug($"pos: {node.m_position}");
-
-                    ++fetchedCount;
                 }
-                Log.Debug($"nodeCount: {mgr_.m_nodeCount} (fetched: {fetchedCount})");
+                Log.Debug($"nodeCount: {mgr_.m_nodeCount} (fetched: {nodes_.Count()})");
             }
             #endregion Fetch nodes
 
             #region Fetch segments
             {
                 segments_.Clear();
-                uint fetchedCount = 0;
-
-                foreach (var seg in Buffer.Segments(mgr_)) {
-                    bool hasFlag(NetSegment.Flags flag) => (seg.m_flags & flag) != NetSegment.Flags.None;
-                    if (!hasFlag(NetSegment.Flags.Created)) continue;
-
+                foreach (var seg in DataQuery.Segments()) {
                     segments_.Add(seg);
-                    ++fetchedCount;
                 }
-                Log.Debug($"segmentCount: {mgr_.m_segmentCount} (fetched: {fetchedCount})");
+                Log.Debug($"segmentCount: {mgr_.m_segmentCount} (fetched: {segments_.Count()})");
             }
             #endregion Fetch segments
         }
@@ -70,7 +53,7 @@ namespace ATENA
         private static CitiesL.NetManager mgr_ = Singleton<CitiesL.NetManager>.instance;
         private NetNodeMap nodes_ = new NetNodeMap();
         public NetNodeMap Nodes { get => nodes_; }
-        public NetNodeList RoadNodes { get => nodes_[CIC.Service.Road]; }
+        public NetNodeList RoadNodes { get => nodes_[ItemClass.Service.Road]; }
 
         private NetSegmentMap segments_ = new NetSegmentMap();
         public NetSegmentMap Segments { get => segments_; }
