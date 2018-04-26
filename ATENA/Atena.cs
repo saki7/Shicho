@@ -14,9 +14,9 @@ namespace ATENA
     internal class Atena
         : MonoBehaviour
     {
-        internal static Atena instance_;
+        private static Atena instance_;
         public static Atena Instance { get => instance_; }
-        //internal static void SetInstance(Atena a) { instance_ = a; }
+        internal static void SetInstance(Atena a) { instance_ = a; }
 
         public Atena()
         {

@@ -81,7 +81,7 @@ namespace ATENA
             gobj = new GameObject(Mod.ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
-            Atena.instance_ = gobj.AddComponent<Atena>();
+            Atena.SetInstance(gobj.AddComponent<Atena>());
             initialized_ = true;
 
             Log.Info("loaded.");
