@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 

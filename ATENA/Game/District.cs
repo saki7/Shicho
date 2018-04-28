@@ -1,10 +1,10 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 namespace ATENA.Game
 {
-    using Flags = CitiesL.District.Flags;
+    using Flags = Cities::District.Flags;
 
-    class District : IGameObject<CitiesL.District, Flags>
+    class District : IGameObject<Cities::District, Flags>
     {
         public District()
         {
@@ -13,11 +13,11 @@ namespace ATENA.Game
 
         public void Dispose() {}
 
-        static bool HasFlags(CitiesL.District obj, Flags flags)
+        static bool HasFlags(Cities::District obj, Flags flags)
         {
             return false;
         }
-        bool IGameObject<CitiesL.District, Flags>.HasFlags(CitiesL.District obj, Flags flags)
+        bool IGameObject<Cities::District, Flags>.HasFlags(Cities::District obj, Flags flags)
         {
             return HasFlags(obj, flags);
         }

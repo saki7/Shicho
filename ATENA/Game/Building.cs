@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -11,21 +11,21 @@ using System.Linq;
 
 namespace ATENA.Game
 {
-    using CIC = CitiesL.ItemClass;
-    using Flags = CitiesL.Building.Flags;
+    using CIC = Cities::ItemClass;
+    using Flags = Cities::Building.Flags;
 
     class BuildingID
     {
         public ushort value;
     }
 
-    class Building : IGameObject<CitiesL.Building, CitiesL.Building.Flags>
+    class Building : IGameObject<Cities::Building, Cities::Building.Flags>
     {
-        public Building(CitiesL.BuildingInfo info, Vector3 pos)
+        public Building(Cities::BuildingInfo info, Vector3 pos)
         {
             // Log.Debug($"aaa!! {mgr_}, {pos}, {info}, {Atena.Instance.R}");
 
-            var buildIndex = Singleton<CitiesL.SimulationManager>.instance.m_currentBuildIndex;
+            var buildIndex = Singleton<Cities::SimulationManager>.instance.m_currentBuildIndex;
 
             var success = mgr_.CreateBuilding(
                 building: out id_.value,
@@ -37,7 +37,7 @@ namespace ATENA.Game
                 buildIndex: buildIndex
             );
 
-            var building = new CitiesL.Building();
+            // var building = new Cities::Building();
             obj_ = mgr_.m_buildings.m_buffer[id_.value];
             Log.Debug($"building '{obj_.Info.name}': {obj_.m_position}");
 
@@ -48,12 +48,12 @@ namespace ATENA.Game
             PrintAllInfo();
         }
 
-        public static bool HasFlags(CitiesL.Building obj, Flags flags)
+        public static bool HasFlags(Cities::Building obj, Flags flags)
         {
             return (obj.m_flags & flags) != Flags.None;
         }
 
-        bool IGameObject<CitiesL.Building, CitiesL.Building.Flags>.HasFlags(CitiesL.Building obj, Flags flags)
+        bool IGameObject<Cities::Building, Cities::Building.Flags>.HasFlags(Cities::Building obj, Flags flags)
         {
             return Building.HasFlags(obj, flags);
         }
@@ -71,10 +71,10 @@ namespace ATENA.Game
         }
 
 
-        private static CitiesL.BuildingManager mgr_ = Singleton<CitiesL.BuildingManager>.instance;
+        private static Cities::BuildingManager mgr_ = Singleton<Cities::BuildingManager>.instance;
         private BuildingID id_ = new BuildingID();
         public BuildingID ID { get => id_; }
 
-        private CitiesL.Building obj_;
+        private Cities::Building obj_;
     }
 }

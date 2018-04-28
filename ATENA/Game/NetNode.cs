@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -7,20 +7,20 @@ using ColossalFramework;
 
 namespace ATENA.Game
 {
-    using Flags = CitiesL.NetNode.Flags;
-    class NetNode : IGameObject<CitiesL.NetNode, Flags>
+    using Flags = Cities::NetNode.Flags;
+    class NetNode : IGameObject<Cities::NetNode, Flags>
     {
         public NetNode()
         {
 
         }
 
-        public static bool HasFlags(CitiesL.NetNode obj, Flags flags)
+        public static bool HasFlags(Cities::NetNode obj, Flags flags)
         {
             return (obj.m_flags & flags) != Flags.None;
         }
 
-        bool IGameObject<CitiesL.NetNode, Flags>.HasFlags(CitiesL.NetNode obj, Flags flags)
+        bool IGameObject<Cities::NetNode, Flags>.HasFlags(Cities::NetNode obj, Flags flags)
         {
             return NetNode.HasFlags(obj, flags);
         }

@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -13,6 +13,7 @@ namespace ATENA
 {
     internal class Atena
         : MonoBehaviour
+        , IDisposable
     {
         private static Atena instance_;
         public static Atena Instance { get => instance_; }
@@ -56,7 +57,7 @@ namespace ATENA
         public void OnLevelLoad()
         {
             Log.Debug("loading props...");
-            pcon_ = new PropController();
+            pcon_ = new PropManager();
             pcon_.Fetch();
 
             Log.Debug("loading traffic...");
@@ -66,7 +67,7 @@ namespace ATENA
 
             Log.Debug("initializing flow generator...");
             fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
-            fgen_.AddFactory(typeof(CitiesL.Citizen));
+            fgen_.AddFactory(typeof(Cities::Citizen));
         }
 
         public void PrintStats()
@@ -86,11 +87,11 @@ namespace ATENA
         }
 
         public void SetFlow(
-            CitiesL.ItemClass.Service service,
+            Cities::ItemClass.Service service,
             uint flow
         ) {
-            if (service != CitiesL.ItemClass.Service.Citizen) {
-                throw new NotImplementedException("service != CitiesL.ItemClass.Service.Citizen");
+            if (service != Cities::ItemClass.Service.Citizen) {
+                throw new NotImplementedException("service != Cities::ItemClass.Service.Citizen");
             }
 
             for (uint i = 0; i < flow; ++i) {
@@ -111,12 +112,18 @@ namespace ATENA
             return 1145144545191912345;
         }
 
+        public void Dispose()
+        {
+            pmgr_.Dispose();
+            tcon_.Dispose();
+        }
+
         private Mod.ConfigTool cfg_;
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;
 
-        private PropController pcon_;
+        private PropManager pcon_;
         private TrafficController tcon_;
 
         private FlowGenerator fgen_;

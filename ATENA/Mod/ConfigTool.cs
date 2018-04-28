@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -18,7 +18,7 @@ namespace ATENA.Mod
 
         private void SetFlow()
         {
-            Atena.Instance.SetFlow(CitiesL.ItemClass.Service.Citizen, 200);
+            Atena.Instance.SetFlow(Cities::ItemClass.Service.Citizen, 200);
         }
     }
 }

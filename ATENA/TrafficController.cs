@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -11,16 +11,16 @@ using System.Collections.Generic;
 
 namespace ATENA
 {
-    using NetNodeList = List<NetNode>;
-    using NetNodeMap = Dictionary<CitiesL.ItemClass.Service, List<NetNode>>;
-    using NetSegmentMap = List<NetSegment>;
-    using DistrictList = List<District>;
+    using NetNodeList = List<Cities::NetNode>;
+    using NetNodeMap = Dictionary<Cities::ItemClass.Service, List<Cities::NetNode>>;
+    using NetSegmentMap = List<Cities::NetSegment>;
+    using DistrictList = List<Cities::District>;
 
     class TrafficController : IDisposable
     {
         public void Fetch()
         {
-            var mgr = CitiesL.RenderManager.instance;
+            var mgr = Cities::RenderManager.instance;
             //mgr.m_overlayBuffer.SetGlobalDepthBias(
             //    4.12f, 4.12f
             //);
@@ -89,10 +89,10 @@ namespace ATENA
             return $@"Traffic nodes: ({string.Join(", ", nodes_.Select(kv => $"{kv.Key}: {kv.Value.Count}").ToArray())})";
         }
 
-        private static CitiesL.NetManager mgr_ = Singleton<CitiesL.NetManager>.instance;
+        private static Cities::NetManager mgr_ = Singleton<Cities::NetManager>.instance;
         private NetNodeMap nodes_ = new NetNodeMap();
         public NetNodeMap Nodes { get => nodes_; }
-        public NetNodeList RoadNodes { get => nodes_[ItemClass.Service.Road]; }
+        public NetNodeList RoadNodes { get => nodes_[Cities::ItemClass.Service.Road]; }
 
         private NetSegmentMap segments_ = new NetSegmentMap();
         public NetSegmentMap Segments { get => segments_; }

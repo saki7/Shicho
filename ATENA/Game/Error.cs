@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ATENA.Game
 {
+    [Serializable]
     public class GameError : Exception
     {
         public GameError(Type type, string message)

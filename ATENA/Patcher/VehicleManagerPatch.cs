@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 using Harmony;
 
 namespace ATENA.Patcher.VehicleManagerPatch
@@ -7,7 +7,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
     //[HarmonyPatch("Add")]
     //[HarmonyPatch(new Type[] { typeof(Window) })]
 
-    [HarmonyPatch(typeof(CitiesL.VehicleManager))]
+    [HarmonyPatch(typeof(Cities::VehicleManager))]
     [HarmonyPatch("CreateVehicle")]
     //[HarmonyPatch(new Type[] {
     //    typeof(ushort), // vehicle
@@ -20,7 +20,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
     //})]
     class CreateVehicle
     {
-        static void Prefix(ref CitiesL.VehicleInfo info, ref CitiesL.TransferManager.TransferReason type)
+        static void Prefix(ref Cities::VehicleInfo info, ref Cities::TransferManager.TransferReason type)
         {
             // Debug.Log("patching!!!!");
             // Log.Warn("patching!");
@@ -36,7 +36,7 @@ namespace ATENA.Patcher.VehicleManagerPatch
             //info.m_maxSpeed = 100;
             //info.m_acceleration = 3;
 
-            //type = CitiesL.TransferManager.TransferReason.Worker0;
+            //type = Cities::TransferManager.TransferReason.Worker0;
         }
         //static void Prefix(VehicleManager instance)
         //{

@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace ATENA
 {
-    using LogCh = CODebugBase<CitiesL.LogChannel>;
+    using LogCh = CODebugBase<Cities::LogChannel>;
 
     internal class Bootstrapper
     {
@@ -29,11 +29,11 @@ namespace ATENA
         public void Bootstrap()
         {
             if (!bootstrapped_) {
-                harmony_ = HarmonyInstance.Create("com.github.setnahq.atena");
+                harmony_ = HarmonyInstance.Create("com.setnahq.atena");
                 harmony_.PatchAll(Assembly.GetExecutingAssembly());
 
                 LogCh.verbose = true;
-                LogCh.EnableChannels(CitiesL.LogChannel.All);
+                LogCh.EnableChannels(Cities::LogChannel.All);
                 bootstrapped_ = true;
             }
 
@@ -52,7 +52,7 @@ namespace ATENA
 
             } else {
                 void emit(PluginManager.MessageType type, object msg) =>
-                    CitiesL.DebugOutputPanel.AddMessage(type, Log.Format(msg))
+                    Cities::DebugOutputPanel.AddMessage(type, Log.Format(msg))
                 ;
                 Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
                 Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);

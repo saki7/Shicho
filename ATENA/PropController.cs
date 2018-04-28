@@ -1,4 +1,4 @@
-﻿extern alias CitiesL;
+﻿extern alias Cities;
 
 using ATENA.Core;
 
@@ -7,18 +7,16 @@ using System.Linq;
 
 namespace ATENA
 {
-    using PropManager = CitiesL.PropManager;
-
-    class PropController
+    class PropManager
     {
-        public PropController()
+        public PropManager()
         {}
 
         public void Fetch()
         {
-            var mgr = NetManager.instance;
+            var mgr = Cities::NetManager.instance;
             var segments = mgr.m_segments.m_buffer.Where(e =>
-                (e.m_flags & NetSegment.Flags.Created) != NetSegment.Flags.None
+                (e.m_flags & Cities::NetSegment.Flags.Created) != Cities::NetSegment.Flags.None
             );
 
             foreach (var seg in segments) {
@@ -69,6 +67,6 @@ namespace ATENA
             }
         }
 
-        private static PropManager mgr_ = PropManager.instance;
+        private static Cities::PropManager mgr_ = Cities::PropManager.instance;
     }
 }
