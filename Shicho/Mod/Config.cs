@@ -1,13 +1,19 @@
 ﻿using Shicho.Core;
 
+using UnityEngine;
+
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
 
 namespace Shicho.Mod
 {
-    [Serializable()]
+    using KeyMod = Input.KeyMod;
+    using KeyModMap = Dictionary<Input.KeyMod, string>;
+
+    [Serializable]
     [XmlRoot(ElementName = "SavedConfig")]
     public class Config
     {
@@ -39,6 +45,17 @@ namespace Shicho.Mod
 
             Log.Info("loaded.");
         }
+
+        public static readonly KeyModMap ModMap = new KeyModMap() {
+            {KeyMod.Ctrl, "Ctrl"}, {KeyMod.Shift, "Shift"}, {KeyMod.Alt, "Alt"},
+            {KeyMod.Ctrl | KeyMod.Shift, "Ctrl-Shift"},
+            {KeyMod.Ctrl | KeyMod.Alt, "Ctrl-Alt"},
+            {KeyMod.Ctrl | KeyMod.Alt | KeyMod.Shift, "Ctrl-Alt-Shift"},
+            {KeyMod.Alt | KeyMod.Shift, "Alt-Shift"},
+        };
+
+        public KeyMod boundKeyMod = KeyMod.Alt;
+        public KeyCode boundKey = KeyCode.S;
 
         [NonSerialized]
         private const string FileName = ModInfo.ID + ".xml";

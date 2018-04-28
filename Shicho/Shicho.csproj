@@ -30,7 +30,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -47,13 +47,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, processorArchitecture=MSIL" Condition="'$(Configuration)' == 'Debug'">
+    <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Harmony\Debug\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="0Harmony, Version=1.0.9.1, Culture=neutral, processorArchitecture=MSIL" Condition="'$(Configuration)' == 'Release'">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Harmony\Release\0Harmony.dll</HintPath>
+      <HintPath Condition=" '$(Configuration)' == 'Debug' ">..\Harmony\Debug\0Harmony.dll</HintPath>
+      <HintPath Condition=" '$(Configuration)' == 'Release' ">..\Harmony\Release\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -86,6 +83,7 @@
     <Compile Include="Core\DataQuery.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Patcher\RenderGroupPatch.cs" />
     <Compile Include="PropController.cs" />
     <Compile Include="TrafficController.cs" />

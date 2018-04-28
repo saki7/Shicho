@@ -12,23 +12,13 @@ namespace Shicho.Mod
         public void OnEnabled()
         {
             Bootstrapper.Instance.Bootstrap();
-            //Log.Info("OnEnabled");
-
-            if (cfg_ != null) {
-                Log.Warn("old Config instance remaining");
-            }
-
-            cfg_ = new Config();
-            cfg_.Load();
+            App.Instance.LoadConfig();
         }
 
         public void OnDisabled()
         {
             try {
-                //Log.Info("OnDisabled");
-                if (cfg_ != null) {
-                    cfg_.Save();
-                }
+                App.Instance.SaveConfig();
 
             } finally {
                 Bootstrapper.Instance.Cleanup();
@@ -37,7 +27,5 @@ namespace Shicho.Mod
 
         public void OnSettingsUI(UIHelperBase helper)
             => App.Instance.OnSettingsUI(helper);
-
-        private Config cfg_;
     }
 }

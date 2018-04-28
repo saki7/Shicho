@@ -24,7 +24,7 @@ namespace Shicho
             try {
                 Log.Info("initializing...");
 
-                cfg_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
+                cfgTool_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
 
                 // stir up
@@ -70,22 +70,6 @@ namespace Shicho
             fgen_.AddFactory(typeof(Cities::Citizen));
         }
 
-        public void PrintStats()
-        {
-            Log.Debug($@"
-                === {Mod.ModInfo.ID} status ===
-                {tcon_}
-                === end {Mod.ModInfo.ID} status ===
-            ");
-        }
-
-        public void Reset()
-        {
-            Log.Warn("resetting...");
-            citizens_.Clear();
-            Log.Warn("reset done");
-        }
-
         public void SetFlow(
             Cities::ItemClass.Service service,
             uint flow
@@ -102,9 +86,30 @@ namespace Shicho
             }
         }
 
+        public void LoadConfig()
+        {
+            cfg_.Load();
+        }
+
+        public void SaveConfig()
+        {
+            cfg_.Save();
+        }
+
+        public void ChangeKeyBinding(Input.KeyMod? mod, KeyCode? key = null)
+        {
+            if (mod.HasValue) {
+                cfg_.boundKeyMod = mod.Value;
+            }
+
+            if (key.HasValue) {
+                cfg_.boundKey = key.Value;
+            }
+        }
+
         public void OnSettingsUI(UIHelperBase helper)
         {
-            cfg_.Populate(helper);
+            cfgTool_.Populate(helper, cfg_);
         }
 
         public static ulong GetDeviceSeed()
@@ -116,9 +121,12 @@ namespace Shicho
         {
             pmgr_.Dispose();
             tcon_.Dispose();
+            fgen_.Dispose();
+            citizens_.Clear();
         }
 
-        private Mod.ConfigTool cfg_;
+        private Mod.Config cfg_ = new Mod.Config();
+        private Mod.ConfigTool cfgTool_;
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;

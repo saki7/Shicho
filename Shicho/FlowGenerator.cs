@@ -27,7 +27,7 @@ namespace Shicho
         public Game.Building Building { get => bldg_; }
     }
 
-    class FlowGenerator
+    class FlowGenerator : IDisposable
     {
         public FlowGenerator(ref PrefabManager pmgr, ref TrafficController tcon)
         {
@@ -63,6 +63,11 @@ namespace Shicho
             } else {
                 throw new NotImplementedException($"targetType '{targetType}'");
             }
+        }
+
+        public void Dispose()
+        {
+            sources_.Clear();
         }
 
         private PrefabManager pmgr_;
