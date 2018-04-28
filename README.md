@@ -4,7 +4,8 @@
 
 ## About
 
-- Author: Nana Sakisaka (@saki7) (see [LICENSE](LICENSE))
-- Icon design: Ryuichi Kaminogi (@kaminogi)
+- License: [MIT License](LICENSE)
+- Author: Nana Sakisaka ([@saki7](https://github.com/saki7))
+- Icon design: Ryuichi Kaminogi ([@kaminogi](https://github.com/kaminogi))
 - Original repo: <https://github.com/SETNAHQ/Shicho>
 
