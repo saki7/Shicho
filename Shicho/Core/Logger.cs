@@ -1,4 +1,4 @@
-﻿namespace ATENA.Core
+﻿namespace Shicho.Core
 {
     internal static class Log
     {

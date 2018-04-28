@@ -1,7 +1,7 @@
 ﻿extern alias Cities;
 using Harmony;
 
-namespace ATENA.Patcher.VehicleManagerPatch
+namespace Shicho.Patcher.VehicleManagerPatch
 {
     //[HarmonyPatch(typeof(WindowStack))]
     //[HarmonyPatch("Add")]

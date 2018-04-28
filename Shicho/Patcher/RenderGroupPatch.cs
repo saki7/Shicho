@@ -1,10 +1,10 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using Harmony;
 
-namespace ATENA.Patcher.DayNightPropertiesPatch
+namespace Shicho.Patcher.DayNightPropertiesPatch
 {
     [HarmonyPatch(typeof(Cities::DayNightProperties))]
     [HarmonyPatch("UpdateLighting")]

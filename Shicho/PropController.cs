@@ -1,11 +1,11 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using System.Linq;
 
 
-namespace ATENA
+namespace Shicho
 {
     class PropManager
     {

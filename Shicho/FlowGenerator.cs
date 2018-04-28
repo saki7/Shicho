@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using Citizen = Cities::Citizen;
 using BuildingInfo = Cities::BuildingInfo;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace ATENA
+namespace Shicho
 {
     using FlowSourceMap = Dictionary<Type, FlowSource>;
 

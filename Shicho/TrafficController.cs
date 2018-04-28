@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ColossalFramework;
 
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 
-namespace ATENA
+namespace Shicho
 {
     using NetNodeList = List<Cities::NetNode>;
     using NetNodeMap = Dictionary<Cities::ItemClass.Service, List<Cities::NetNode>>;

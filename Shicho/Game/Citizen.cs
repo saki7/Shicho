@@ -2,7 +2,7 @@
 using ColossalFramework;
 using System;
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     class CitizenID
     {
@@ -17,9 +17,9 @@ namespace ATENA.Game
             var success = false;
 
             if (gender.HasValue) {
-                success = mgr.CreateCitizen(out id_.value, (int)age, (int)family, ref Atena.Instance.R, gender.Value);
+                success = mgr.CreateCitizen(out id_.value, (int)age, (int)family, ref App.Instance.R, gender.Value);
             } else {
-                success = mgr.CreateCitizen(out id_.value, (int)age, (int)family, ref Atena.Instance.R);
+                success = mgr.CreateCitizen(out id_.value, (int)age, (int)family, ref App.Instance.R);
             }
 
             if (!success) {

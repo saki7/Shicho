@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ColossalFramework;
 using ColossalFramework.Plugins;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Threading;
 
 
-namespace ATENA
+namespace Shicho
 {
     using LogCh = CODebugBase<Cities::LogChannel>;
 
@@ -29,7 +29,7 @@ namespace ATENA
         public void Bootstrap()
         {
             if (!bootstrapped_) {
-                harmony_ = HarmonyInstance.Create("com.setnahq.atena");
+                harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
                 harmony_.PatchAll(Assembly.GetExecutingAssembly());
 
                 LogCh.verbose = true;
@@ -81,13 +81,13 @@ namespace ATENA
             gobj = new GameObject(Mod.ModInfo.ID);
             Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
 
-            Atena.SetInstance(gobj.AddComponent<Atena>());
+            App.SetInstance(gobj.AddComponent<App>());
             initialized_ = true;
 
             Log.Info("loaded.");
 
             // TODO: move this to proper place
-            Atena.Instance.OnLevelLoad();
+            App.Instance.OnLevelLoad();
         }
 
         private static bool IsModToolsActive()

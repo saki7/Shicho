@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace ATENA.Core
+namespace Shicho.Core
 {
     using NetLane = Cities::NetLane;
     using Building = Cities::Building;

@@ -7,8 +7,8 @@
     <ProjectGuid>{3075872D-7032-407A-9E18-E5636A90DA25}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ATENA</RootNamespace>
-    <AssemblyName>ATENA</AssemblyName>
+    <RootNamespace>Shicho</RootNamespace>
+    <AssemblyName>Shicho</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
@@ -77,7 +77,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Atena.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="Core\DataQuery.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />

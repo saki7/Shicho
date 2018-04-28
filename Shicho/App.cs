@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ICities;
 using UnityEngine;
@@ -9,17 +9,17 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ATENA
+namespace Shicho
 {
-    internal class Atena
+    internal class App
         : MonoBehaviour
         , IDisposable
     {
-        private static Atena instance_;
-        public static Atena Instance { get => instance_; }
-        internal static void SetInstance(Atena a) { instance_ = a; }
+        private static App instance_;
+        public static App Instance { get => instance_; }
+        internal static void SetInstance(App a) { instance_ = a; }
 
-        public Atena()
+        public App()
         {
             try {
                 Log.Info("initializing...");
@@ -73,9 +73,9 @@ namespace ATENA
         public void PrintStats()
         {
             Log.Debug($@"
-                === Atena status ===
+                === {Mod.ModInfo.ID} status ===
                 {tcon_}
-                === end Atena status ===
+                === end {Mod.ModInfo.ID} status ===
             ");
         }
 

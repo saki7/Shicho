@@ -1,11 +1,11 @@
-﻿using ATENA.Core;
+﻿using Shicho.Core;
 
 using System;
 using System.IO;
 using System.Xml.Serialization;
 
 
-namespace ATENA.Mod
+namespace Shicho.Mod
 {
     [Serializable()]
     [XmlRoot(ElementName = "SavedConfig")]
@@ -41,6 +41,6 @@ namespace ATENA.Mod
         }
 
         [NonSerialized]
-        private const string FileName = "ATENA.xml";
+        private const string FileName = ModInfo.ID + ".xml";
     }
 }

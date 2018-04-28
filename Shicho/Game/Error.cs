@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     [Serializable]
     public class GameError : Exception

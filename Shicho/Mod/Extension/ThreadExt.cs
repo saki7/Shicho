@@ -1,10 +1,10 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ICities;
 
-namespace ATENA.Mod.Extension
+namespace Shicho.Mod.Extension
 {
     class ThreadExt
         : ThreadingExtensionBase

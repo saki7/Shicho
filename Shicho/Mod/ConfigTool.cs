@@ -1,24 +1,24 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ICities;
 using UnityEngine;
 
-namespace ATENA.Mod
+namespace Shicho.Mod
 {
     class ConfigTool : MonoBehaviour
     {
         public void Populate(UIHelperBase helper)
         {
-            helper.AddButton("Reset", Atena.Instance.Reset);
-            helper.AddButton("Print Stats", Atena.Instance.PrintStats);
+            helper.AddButton("Reset", App.Instance.Reset);
+            helper.AddButton("Print Stats", App.Instance.PrintStats);
             helper.AddButton("Set flow", SetFlow);
         }
 
         private void SetFlow()
         {
-            Atena.Instance.SetFlow(Cities::ItemClass.Service.Citizen, 200);
+            App.Instance.SetFlow(Cities::ItemClass.Service.Citizen, 200);
         }
     }
 }

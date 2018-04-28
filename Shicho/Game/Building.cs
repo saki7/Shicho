@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ColossalFramework;
 using UnityEngine;
@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     using CIC = Cities::ItemClass;
     using Flags = Cities::Building.Flags;
@@ -23,13 +23,11 @@ namespace ATENA.Game
     {
         public Building(Cities::BuildingInfo info, Vector3 pos)
         {
-            // Log.Debug($"aaa!! {mgr_}, {pos}, {info}, {Atena.Instance.R}");
-
             var buildIndex = Singleton<Cities::SimulationManager>.instance.m_currentBuildIndex;
 
             var success = mgr_.CreateBuilding(
                 building: out id_.value,
-                randomizer: ref Atena.Instance.R,
+                randomizer: ref App.Instance.R,
                 info: info,
                 position: pos,
                 angle: 1,

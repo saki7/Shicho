@@ -1,11 +1,11 @@
 ﻿extern alias Cities;
 
-using ATENA.Core;
+using Shicho.Core;
 
 using ColossalFramework;
 
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     using Flags = Cities::NetNode.Flags;
     class NetNode : IGameObject<Cities::NetNode, Flags>

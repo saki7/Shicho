@@ -1,8 +1,8 @@
-﻿using ATENA.Core;
+﻿using Shicho.Core;
 
 using ICities;
 
-namespace ATENA.Mod
+namespace Shicho.Mod
 {
     public class Mod : IUserMod
     {
@@ -36,7 +36,7 @@ namespace ATENA.Mod
         }
 
         public void OnSettingsUI(UIHelperBase helper)
-            => Atena.Instance.OnSettingsUI(helper);
+            => App.Instance.OnSettingsUI(helper);
 
         private Config cfg_;
     }

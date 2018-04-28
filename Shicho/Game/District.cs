@@ -1,6 +1,6 @@
 ﻿extern alias Cities;
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     using Flags = Cities::District.Flags;
 

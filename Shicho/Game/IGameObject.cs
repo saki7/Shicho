@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ATENA.Game
+namespace Shicho.Game
 {
     internal interface IGameObject<T, FlagsT> : IDisposable
     {
