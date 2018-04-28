@@ -22,7 +22,7 @@ namespace Shicho
         public App()
         {
             try {
-                Log.Info("initializing...");
+                // Log.Info("initializing...");
 
                 cfgTool_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
@@ -32,30 +32,19 @@ namespace Shicho
                     R.ULong64();
                 }
 
-                Log.Debug("loading prefabs...");
-                pmgr_ = new PrefabManager();
-                pmgr_.FetchAll();
-
-                Log.Info("initialized!");
-
-                var cams = GameObject.FindObjectsOfType<UnityEngine.Camera>();
-                foreach (var cam in cams) {
-                    //if (cam.name == "Main Camera") {
-                        Log.Debug($"cam: {cam}, {cam.depthTextureMode}, depth: {cam.depth}");
-                    //    cam.depth = -2;
-                    //    cam.depthTextureMode = DepthTextureMode.Depth;
-                    //}
-                }
-                UnityEngine.Shader.globalMaximumLOD = 999999999;
-                Log.Debug($"LOD: {UnityEngine.Shader.globalMaximumLOD}");
+                // Log.Info("initialized");
 
             } catch (Exception e) {
                 Log.Error($"failed to initialize: '{e}'");
             }
         }
 
-        public void OnLevelLoad()
+        public void LoadLevelData()
         {
+            Log.Debug("loading prefabs...");
+            pmgr_ = new PrefabManager();
+            pmgr_.FetchAll();
+
             Log.Debug("loading props...");
             pcon_ = new PropManager();
             pcon_.Fetch();
@@ -68,6 +57,19 @@ namespace Shicho
             Log.Debug("initializing flow generator...");
             fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
             fgen_.AddFactory(typeof(Cities::Citizen));
+        }
+
+        public void UnloadLevelData()
+        {
+            if (pmgr_ != null) pmgr_.Dispose();
+            if (tcon_ != null) tcon_.Dispose();
+            if (fgen_ != null) fgen_.Dispose();
+        }
+
+        private void UnloadAllData()
+        {
+            UnloadLevelData();
+            citizens_.Clear();
         }
 
         public void SetFlow(
@@ -88,12 +90,12 @@ namespace Shicho
 
         public void LoadConfig()
         {
-            cfg_.Load();
+            Mod.Config.Load();
         }
 
         public void SaveConfig()
         {
-            cfg_.Save();
+            Mod.Config.Save();
         }
 
         public void ChangeKeyBinding(Input.KeyMod? mod, KeyCode? key = null)
@@ -119,13 +121,11 @@ namespace Shicho
 
         public void Dispose()
         {
-            pmgr_.Dispose();
-            tcon_.Dispose();
-            fgen_.Dispose();
-            citizens_.Clear();
+            UnloadAllData();
+            GameObject.DestroyImmediate(cfgTool_);
         }
 
-        private Mod.Config cfg_ = new Mod.Config();
+        private Mod.Config cfg_ = Mod.Config.Instance;
         private Mod.ConfigTool cfgTool_;
         internal ColossalFramework.Math.Randomizer R;
 

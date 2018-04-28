@@ -48,7 +48,7 @@ namespace Shicho
                 Log.Warn  = Debug.LogWarning;
                 Log.Error = Debug.LogError;
 
-                Log.Info("using Unity logger");
+                // Log.Info("using Unity logger");
 
             } else {
                 void emit(PluginManager.MessageType type, object msg) =>
@@ -58,36 +58,25 @@ namespace Shicho
                 Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);
                 Log.Error = (msg) => emit(PluginManager.MessageType.Error, msg);
 
-                Log.Warn("using Colossal logger");
+                // Log.Warn("using Colossal logger");
             }
 
             Log.Info("bootstrapping...");
-            {
-                var oldGameObject = gobj ?? GameObject.Find(Mod.ModInfo.ID);
+            try {
+                DestroyOldInstance();
 
-                while (oldGameObject) {
-                    try {
-                        Log.Warn($"old GameObject found: (\"{Mod.ModInfo.ID}\", 0x{oldGameObject.GetInstanceID():X})");
-                        GameObject.DestroyImmediate(oldGameObject);
-                        oldGameObject = GameObject.Find(Mod.ModInfo.ID);
-
-                    } catch (Exception e) {
-                        Log.Error(e);
-                        break;
-                    }
-                }
+            } catch (Exception e) {
+                Log.Error(e);
             }
 
-            gobj = new GameObject(Mod.ModInfo.ID);
-            Log.Info($"new instance: 0x{gobj.GetInstanceID():X}");
+            gobj_ = new GameObject(Mod.ModInfo.ID);
+            // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
 
-            App.SetInstance(gobj.AddComponent<App>());
+            App.SetInstance(gobj_.AddComponent<App>());
+            gobj_.SetActive(true);
             initialized_ = true;
 
             Log.Info("loaded.");
-
-            // TODO: move this to proper place
-            App.Instance.OnLevelLoad();
         }
 
         private static bool IsModToolsActive()
@@ -103,30 +92,30 @@ namespace Shicho
             ).FirstOrDefault();
         }
 
+        private void DestroyOldInstance()
+        {
+            var obj = gobj_;
+            while (obj != null) {
+                // Log.Warn($"destroying: (\"{obj.name}\", 0x{obj.GetInstanceID():X})");
+                GameObject.DestroyImmediate(obj);
+            }
+        }
+
         internal void Cleanup()
         {
+            if (!initialized_) return;
+
             try {
-                GameObject.DestroyImmediate(gobj);
-
-                while (true) {
-                    try {
-                        var o = GameObject.Find(Mod.ModInfo.ID);
-                        if (!o) break;
-                        GameObject.DestroyImmediate(o);
-
-                    } finally {
-                        Thread.Sleep(0);
-                    }
-                }
+                DestroyOldInstance();
 
             } finally {
-                gobj = null; // deref
+                gobj_ = null; // deref
                 initialized_ = false;
             }
         }
 
         private bool bootstrapped_ = false, initialized_ = false;
-        private GameObject gobj = null;
+        private GameObject gobj_ = null;
         private HarmonyInstance harmony_;
     }
 }

@@ -14,24 +14,28 @@ namespace Shicho.Mod
     using KeyModMap = Dictionary<Input.KeyMod, string>;
 
     [Serializable]
-    [XmlRoot(ElementName = "SavedConfig")]
+    [XmlRoot(ElementName = "Shicho")]
     public class Config
     {
-        public void Save()
+        private static Config instance_ = new Config();
+        public static Config Instance { get => instance_; }
+        private Config() {}
+
+        public static void Save()
         {
             Log.Info("saving...");
 
             var serializer = new XmlSerializer(typeof(Config));
             var writer = new StreamWriter(FileName);
-            serializer.Serialize(writer, this);
+            serializer.Serialize(writer, instance_);
             writer.Close();
 
-            Log.Info("saved.");
+            // Log.Info("saved.");
         }
 
-        public void Load()
+        public static void Load()
         {
-            Log.Info("loading...");
+            // Log.Debug("loading...");
 
             if (!File.Exists(FileName)) {
                 Log.Warn($"file '{FileName}' does not exist!");
@@ -40,10 +44,10 @@ namespace Shicho.Mod
 
             var xmlSerialiser = new XmlSerializer(typeof(Config));
             var reader = new StreamReader(FileName);
-            var mgr = xmlSerialiser.Deserialize(reader) as Config;
+            instance_ = xmlSerialiser.Deserialize(reader) as Config;
             reader.Close();
 
-            Log.Info("loaded.");
+            // Log.Debug("loaded.");
         }
 
         public static readonly KeyModMap ModMap = new KeyModMap() {

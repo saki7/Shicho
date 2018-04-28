@@ -5,6 +5,7 @@ using Shicho.Core;
 using ICities;
 using UnityEngine;
 
+using System;
 using System.Linq;
 
 
@@ -33,8 +34,8 @@ namespace Shicho.Mod
 
                 grp.AddDropdown(
                     "Key",
-                    Enumerable.Range((int)'A', (int)'Z')
-                        .Select(i => ('A' + i).ToString())
+                    Enumerable.Range((int)'A', (int)'Z' - (int)'A' + 1)
+                        .Select(i => ((char)i).ToString())
                         .ToArray(),
                     (int)cfg.boundKey - (int)KeyCode.A,
                     (i) => {

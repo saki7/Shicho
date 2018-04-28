@@ -2,6 +2,7 @@
 
 namespace Shicho.Input
 {
+    [Flags]
     public enum KeyMod : UInt32
     {
         Ctrl  = 0b00000001,
