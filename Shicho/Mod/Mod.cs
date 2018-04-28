@@ -16,7 +16,7 @@ namespace Shicho.Mod
 
             if (Cities.ToolsModifierControl.toolController != null)  {
                 if (Cities.ToolsModifierControl.toolController.m_mode == Cities.ItemClass.Availability.Game) {
-                    App.Instance.LoadLevelData();
+                    App.Instance.InitGameMode();
                 }
             }
         }

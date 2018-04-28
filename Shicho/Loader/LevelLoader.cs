@@ -9,12 +9,12 @@ namespace Shicho.Loader
     {
         override public void OnLevelLoaded(LoadMode mode)
         {
-            // App.Instance.LoadLevelData();
+            App.Instance.InitGameMode();
         }
 
         override public void OnLevelUnloading()
         {
-            // App.Instance.UnloadLevelData();
+            App.Instance.UnloadLevelData();
         }
     }
 }

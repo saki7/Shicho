@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Shicho.Core;
+
+using UnityEngine;
 //using UnityEngine.UI;
 
 using System;
@@ -15,6 +17,7 @@ namespace Shicho.Tool
         public void Start()
         {
             ID = GetInstanceID();
+            cfg_ = App.Config.GUI.SupportTool;
         }
 
         public void Update()
@@ -23,23 +26,25 @@ namespace Shicho.Tool
 
             if (UInput.GetKey(KeyCode.LeftControl) || UInput.GetKey(KeyCode.RightControl)) {
                 keyMod |= Input.KeyMod.Ctrl;
-            } else if (UInput.GetKey(KeyCode.LeftAlt) || UInput.GetKey(KeyCode.RightAlt)) {
+            }
+            if (UInput.GetKey(KeyCode.LeftAlt) || UInput.GetKey(KeyCode.RightAlt)) {
                 keyMod |= Input.KeyMod.Alt;
-            } else if (UInput.GetKey(KeyCode.LeftShift) || UInput.GetKey(KeyCode.RightShift)) {
+            }
+            if (UInput.GetKey(KeyCode.LeftShift) || UInput.GetKey(KeyCode.RightShift)) {
                 keyMod |= Input.KeyMod.Shift;
             }
 
             if (UInput.GetKeyDown(App.Config.mainKey.Code)) {
                 if ((App.Config.mainKey.Mod & keyMod) == App.Config.mainKey.Mod) {
-                    isVisible_ = !isVisible_;
+                    cfg_.IsVisible = !cfg_.IsVisible;
                 }
             }
         }
 
         public void OnGUI()
         {
-            if (isVisible_) {
-                GUI.Window(ID, windowRect_, DrawWindow, "Shicho");
+            if (cfg_.IsVisible) {
+                cfg_.Rect = GUI.Window(ID, cfg_.Rect, DrawWindow, "Shicho");
             }
         }
 
@@ -56,13 +61,18 @@ namespace Shicho.Tool
             };
             GUILayout.SelectionGrid(0, shadowBiasMethods.Keys.ToArray(), 1, "Toggle");
             GUI.EndGroup();
+
+            // NB: last for entire rect
+            GUI.DragWindow();
         }
 
         const int sliderWidth = 200;
+        public static readonly Rect DefaultRect = new Rect(
+            0f, 0f, 280f, 800f
+        );
+
+        private Mod.Config.GUIData cfg_;
 
         private int ID { get; set; }
-        private Rect windowRect_ = new Rect(new Vector2(0f, 0f), new Vector2(280f, 800f));
-
-        private bool isVisible_ = false;
     }
 }

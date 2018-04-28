@@ -70,10 +70,29 @@ namespace Shicho.Mod
             public KeyMod Mod { get; set; }
             public KeyCode Code { get; set; }
         }
-
         public BoundKeyData mainKey = new BoundKeyData() {
             Mod = KeyMod.Alt,
             Code = KeyCode.S,
+        };
+
+        [Serializable]
+        public struct GUIData
+        {
+            public bool IsVisible { get; set; }
+            public Rect Rect { get; set; }
+        }
+
+        [Serializable]
+        public struct GUIDataSet
+        {
+            public GUIData SupportTool { get; set; }
+        }
+
+        public GUIDataSet GUI = new GUIDataSet() {
+            SupportTool = new GUIData() {
+                IsVisible = true,
+                Rect = Tool.SupportTool.DefaultRect,
+            },
         };
 
         public class GraphicData

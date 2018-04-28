@@ -38,6 +38,12 @@ namespace Shicho
             }
         }
 
+        public void InitGameMode()
+        {
+            LoadLevelData();
+            gameObject.AddComponent<Tool.SupportTool>();
+        }
+
         private void InitGUI()
         {
 
@@ -48,7 +54,7 @@ namespace Shicho
 
         }
 
-        public void LoadLevelData()
+        private void LoadLevelData()
         {
             Log.Debug("loading prefabs...");
             pmgr_ = new PrefabManager();
