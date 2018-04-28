@@ -13,7 +13,6 @@ namespace Shicho.Mod
         public void OnEnabled()
         {
             Bootstrapper.Instance.Bootstrap();
-            App.Instance.LoadConfig();
 
             if (Cities.ToolsModifierControl.toolController != null)  {
                 if (Cities.ToolsModifierControl.toolController.m_mode == Cities.ItemClass.Availability.Game) {
@@ -33,6 +32,6 @@ namespace Shicho.Mod
         }
 
         public void OnSettingsUI(UIHelperBase helper)
-            => App.Instance.OnSettingsUI(helper);
+            => App.OnSettingsUI(helper);
     }
 }

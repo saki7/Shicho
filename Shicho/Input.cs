@@ -5,6 +5,7 @@ namespace Shicho.Input
     [Flags]
     public enum KeyMod : UInt32
     {
+        None  = 0,
         Ctrl  = 0b00000001,
         Shift = 0b00000010,
         Alt   = 0b00000100,

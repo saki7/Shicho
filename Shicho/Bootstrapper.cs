@@ -37,7 +37,7 @@ namespace Shicho
                 bootstrapped_ = true;
             }
 
-            if (initialized_) return;
+            if (IsInitialized()) return;
 
             // Switch logger based on (mostly) `ModTools` presence
             var useUnityLogger = true; // or IsModToolsActive()
@@ -76,10 +76,9 @@ namespace Shicho
             gobj_ = new GameObject(Mod.ModInfo.ID);
             // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
 
-            App.SetInstance(gobj_.AddComponent<App>());
+            // App.SetInstance(gobj_.AddComponent<App>());
+            app_ = gobj_.AddComponent<App>();
             gobj_.SetActive(true);
-            initialized_ = true;
-
             Log.Info("loaded.");
         }
 
@@ -98,28 +97,31 @@ namespace Shicho
 
         private void DestroyOldInstance()
         {
-            var obj = gobj_;
-            while (obj != null) {
-                // Log.Warn($"destroying: (\"{obj.name}\", 0x{obj.GetInstanceID():X})");
-                GameObject.DestroyImmediate(obj);
-            }
+            if (gobj_ == null) return;
+            // Log.Warn($"destroying: (\"{obj.name}\", 0x{obj.GetInstanceID():X})");
+            GameObject.DestroyImmediate(gobj_);
         }
 
         internal void Cleanup()
         {
-            if (!initialized_) return;
+            if (!IsInitialized()) return;
 
             try {
                 DestroyOldInstance();
 
             } finally {
-                gobj_ = null; // deref
-                initialized_ = false;
+                gobj_ = null;
             }
         }
 
-        private bool bootstrapped_ = false, initialized_ = false;
+        private bool IsInitialized() => gobj_ != null;
+
+        private bool bootstrapped_ = false;
         private GameObject gobj_ = null;
+
+        private App app_ = null;
+        public static App AppInstance { get => Instance.app_; }
+
         private HarmonyInstance harmony_;
     }
 }

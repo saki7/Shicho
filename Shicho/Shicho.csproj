@@ -86,7 +86,8 @@
     <Compile Include="Input.cs" />
     <Compile Include="Loader\LevelLoader.cs" />
     <Compile Include="Patcher\RenderGroupPatch.cs" />
-    <Compile Include="PropController.cs" />
+    <Compile Include="PropManager.cs" />
+    <Compile Include="Tool\SupportTool.cs" />
     <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />
     <Compile Include="Mod\ConfigTool.cs" />

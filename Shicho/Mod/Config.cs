@@ -17,36 +17,31 @@ namespace Shicho.Mod
     [XmlRoot(ElementName = "Shicho")]
     public class Config
     {
-        private static Config instance_ = new Config();
-        public static Config Instance { get => instance_; }
-        private Config() {}
-
-        public static void Save()
+        public void Save(string path)
         {
             Log.Info("saving...");
 
             var serializer = new XmlSerializer(typeof(Config));
-            var writer = new StreamWriter(FileName);
-            serializer.Serialize(writer, instance_);
+            var writer = new StreamWriter(path);
+            serializer.Serialize(writer, this);
             writer.Close();
 
             // Log.Info("saved.");
         }
 
-        public static void Load()
+        public static Config LoadFile(string path)
         {
             // Log.Debug("loading...");
 
-            if (!File.Exists(FileName)) {
-                Log.Warn($"file '{FileName}' does not exist!");
-                return;
+            if (!File.Exists(path)) {
+                Log.Warn($"file '{path}' does not exist!");
+                return new Config();
             }
 
             var xmlSerialiser = new XmlSerializer(typeof(Config));
-            var reader = new StreamReader(FileName);
-            instance_ = xmlSerialiser.Deserialize(reader) as Config;
-            reader.Close();
-
+            using (var reader = new StreamReader(path)) {
+                return xmlSerialiser.Deserialize(reader) as Config;
+            }
             // Log.Debug("loaded.");
         }
 
@@ -61,7 +56,10 @@ namespace Shicho.Mod
         public KeyMod boundKeyMod = KeyMod.Alt;
         public KeyCode boundKey = KeyCode.S;
 
-        [NonSerialized]
-        private const string FileName = ModInfo.ID + ".xml";
+        public class GraphicData
+        {
+            float shadowBias = 0.01f, shadowNormalBias = 0.3f;
+        }
+        public GraphicData Graphic { get; } = new GraphicData();
     }
 }

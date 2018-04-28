@@ -6,21 +6,20 @@ using ICities;
 using UnityEngine;
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 
 namespace Shicho
 {
-    internal class App
+    class App
         : MonoBehaviour
         , IDisposable
     {
-        private static App instance_;
-        public static App Instance { get => instance_; }
-        internal static void SetInstance(App a) { instance_ = a; }
-
-        public App()
+        public void Awake()
         {
+            cfg_ = Mod.Config.LoadFile(ConfigPath);
+
             try {
                 // Log.Info("initializing...");
 
@@ -37,6 +36,16 @@ namespace Shicho
             } catch (Exception e) {
                 Log.Error($"failed to initialize: '{e}'");
             }
+        }
+
+        private void InitGUI()
+        {
+
+        }
+
+        private void InitPhysics()
+        {
+
         }
 
         public void LoadLevelData()
@@ -87,16 +96,6 @@ namespace Shicho
             }
         }
 
-        public void LoadConfig()
-        {
-            Mod.Config.Load();
-        }
-
-        public void SaveConfig()
-        {
-            Mod.Config.Save();
-        }
-
         public void ChangeKeyBinding(Input.KeyMod? mod, KeyCode? key = null)
         {
             if (mod.HasValue) {
@@ -108,9 +107,12 @@ namespace Shicho
             }
         }
 
-        public void OnSettingsUI(UIHelperBase helper)
+        // NB: this method will be called by the env, regardless of
+        //     the actual existence of the App instance :(
+        public static void OnSettingsUI(UIHelperBase helper)
         {
-            cfgTool_.Populate(helper, cfg_);
+            Bootstrapper.Instance.Bootstrap();
+            Instance.cfgTool_.Populate(helper, Instance.cfg_);
         }
 
         public static ulong GetDeviceSeed()
@@ -118,14 +120,26 @@ namespace Shicho
             return 1145144545191912345;
         }
 
-        public void Dispose()
+        public void OnDestroy()
         {
-            UnloadAllData();
-            GameObject.DestroyImmediate(cfgTool_);
+            Dispose();
         }
 
-        private Mod.Config cfg_ = Mod.Config.Instance;
-        private Mod.ConfigTool cfgTool_;
+        public void Dispose()
+        {
+            // Log.Debug("Dispose()");
+            UnloadAllData();
+        }
+
+        public void SaveConfig() => cfg_.Save(ConfigPath);
+
+        public static App Instance { get => Bootstrapper.AppInstance; }
+
+        private const string ConfigPath = Mod.ModInfo.ID + ".xml";
+        private Mod.Config cfg_ = null;
+        public static Mod.Config Config { get => Instance.cfg_; }
+
+        private Mod.ConfigTool cfgTool_ = null;
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;
