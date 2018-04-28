@@ -63,8 +63,6 @@ namespace Shicho
                     }
                 }
             }
-
-            Log.Info($"prefabs: {pset}");
         }
 
         public void FetchRoads()
@@ -86,7 +84,6 @@ namespace Shicho
                     }
                 }
             }
-            Log.Info($"prefabs: {pset}");
         }
 
         private Dictionary<PrefabCategory, PrefabSet> prefabs_ = new Dictionary<PrefabCategory, PrefabSet>();

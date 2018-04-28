@@ -61,6 +61,10 @@ namespace Shicho
                 // Log.Warn("using Colossal logger");
             }
 
+            #if !DEBUG
+                Log.Debug = (_) => {};
+            #endif
+
             Log.Info("bootstrapping...");
             try {
                 DestroyOldInstance();

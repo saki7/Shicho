@@ -1,5 +1,6 @@
-﻿using Shicho.Core;
+﻿extern alias Cities;
 
+using Shicho.Core;
 using ICities;
 
 namespace Shicho.Mod
@@ -13,6 +14,12 @@ namespace Shicho.Mod
         {
             Bootstrapper.Instance.Bootstrap();
             App.Instance.LoadConfig();
+
+            if (Cities.ToolsModifierControl.toolController != null)  {
+                if (Cities.ToolsModifierControl.toolController.m_mode == Cities.ItemClass.Availability.Game) {
+                    App.Instance.LoadLevelData();
+                }
+            }
         }
 
         public void OnDisabled()

@@ -43,7 +43,7 @@ namespace Shicho.Game
             if (!success) {
                 throw new GameError(typeof(Building), "failed: CreateBuilding()");
             }
-            PrintAllInfo();
+            //PrintAllInfo();
         }
 
         public static bool HasFlags(Cities::Building obj, Flags flags)

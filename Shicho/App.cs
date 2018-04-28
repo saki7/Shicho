@@ -52,11 +52,10 @@ namespace Shicho
             Log.Debug("loading traffic...");
             tcon_ = new TrafficController();
             tcon_.Fetch();
-            Log.Debug(tcon_);
 
             Log.Debug("initializing flow generator...");
             fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);
-            fgen_.AddFactory(typeof(Cities::Citizen));
+            // fgen_.AddFactory(typeof(Cities::Citizen));
         }
 
         public void UnloadLevelData()

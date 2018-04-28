@@ -41,7 +41,7 @@ namespace Shicho
 
             if (targetType == typeof(Cities::Citizen)) {
                 var refNode = tcon_.RoadNodes.First();
-                Log.Debug($"reference node: {refNode} [{refNode.m_flags}] ({refNode.m_position})");
+                // Log.Debug($"reference node: {refNode} [{refNode.m_flags}] ({refNode.m_position})");
 
                 //foreach (var p in pmgr_.GetDefaultPrefabs(PrefabCategory.Building)) {
                 //    Log.Debug($"{p.name}: {p.GetService()}, {p.GetSubService()}");
@@ -51,7 +51,7 @@ namespace Shicho
                     .First(p => p.GetService() == CIC.Service.Residential)
                 ;
 
-                Log.Debug($"reference info: {refInfo}");
+                // Log.Debug($"reference info: {refInfo}");
 
                 sources_.Add(targetType, new FlowSource(
                     building: new Game.Building(
