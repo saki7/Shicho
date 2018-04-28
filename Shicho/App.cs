@@ -115,7 +115,7 @@ namespace Shicho
             Instance.cfgTool_.Populate(helper, Instance.cfg_);
         }
 
-        public static ulong GetDeviceSeed()
+        private static ulong GetDeviceSeed()
         {
             return 1145144545191912345;
         }
