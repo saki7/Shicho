@@ -13,22 +13,22 @@ namespace Shicho.Tool
 {
     class ConfigTool : MonoBehaviour
     {
-        public void Populate(UIHelperBase helper, Mod.Config cfg)
+        public void Populate(UIHelperBase gui, Mod.Config cfg)
         {
             {
-                var grp = helper.AddGroup("Main key binding");
+                var grp = gui.AddGroup("Main key binding");
                 var keyModChoices = Mod.Config.ModMap.Reverse().ToArray();
 
                 grp.AddDropdown(
                     "Mod",
                     keyModChoices.Select(kv => kv.Value).ToArray(),
                     keyModChoices
-                        .Select((s, i) => new {i, s})
-                        .Where(t => t.s.Key == cfg.boundKeyMod)
-                        .Select((m, i) => i)
+                        .Select((kv, i) => new {Index = i, KV = kv})
+                        .Where(t => t.KV.Key == cfg.mainKey.Mod)
+                        .Select(res => res.Index)
                         .First(),
                     (i) => {
-                        App.Instance.ChangeKeyBinding(keyModChoices[i].Key);
+                        App.Config.ChangeKeyBinding(keyModChoices[i].Key);
                     }
                 );
 
@@ -37,9 +37,9 @@ namespace Shicho.Tool
                     Enumerable.Range((int)'A', (int)'Z' - (int)'A' + 1)
                         .Select(i => ((char)i).ToString())
                         .ToArray(),
-                    (int)cfg.boundKey - (int)KeyCode.A,
+                    (int)cfg.mainKey.Code - (int)KeyCode.A,
                     (i) => {
-                        App.Instance.ChangeKeyBinding(null, (KeyCode)((int)KeyCode.A) + i);
+                        App.Config.ChangeKeyBinding(null, (KeyCode)((int)KeyCode.A) + i);
                     }
                 );
             }

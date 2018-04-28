@@ -45,6 +45,17 @@ namespace Shicho.Mod
             // Log.Debug("loaded.");
         }
 
+        public void ChangeKeyBinding(KeyMod? mod, KeyCode? key = null)
+        {
+            if (mod.HasValue) {
+                mainKey.Mod = mod.Value;
+            }
+
+            if (key.HasValue) {
+                mainKey.Code = key.Value;
+            }
+        }
+
         public static readonly KeyModMap ModMap = new KeyModMap() {
             {KeyMod.Ctrl, "Ctrl"}, {KeyMod.Shift, "Shift"}, {KeyMod.Alt, "Alt"},
             {KeyMod.Ctrl | KeyMod.Shift, "Ctrl-Shift"},
@@ -53,8 +64,17 @@ namespace Shicho.Mod
             {KeyMod.Alt | KeyMod.Shift, "Alt-Shift"},
         };
 
-        public KeyMod boundKeyMod = KeyMod.Alt;
-        public KeyCode boundKey = KeyCode.S;
+        [Serializable]
+        public struct BoundKeyData
+        {
+            public KeyMod Mod { get; set; }
+            public KeyCode Code { get; set; }
+        }
+
+        public BoundKeyData mainKey = new BoundKeyData() {
+            Mod = KeyMod.Alt,
+            Code = KeyCode.S,
+        };
 
         public class GraphicData
         {

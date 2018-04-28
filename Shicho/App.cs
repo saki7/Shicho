@@ -96,17 +96,6 @@ namespace Shicho
             }
         }
 
-        public void ChangeKeyBinding(Input.KeyMod? mod, KeyCode? key = null)
-        {
-            if (mod.HasValue) {
-                cfg_.boundKeyMod = mod.Value;
-            }
-
-            if (key.HasValue) {
-                cfg_.boundKey = key.Value;
-            }
-        }
-
         // NB: this method will be called by the env, regardless of
         //     the actual existence of the App instance :(
         public static void OnSettingsUI(UIHelperBase helper)

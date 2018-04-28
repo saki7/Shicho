@@ -29,8 +29,8 @@ namespace Shicho.Tool
                 keyMod |= Input.KeyMod.Shift;
             }
 
-            if (UInput.GetKeyDown(App.Config.boundKey)) {
-                if ((App.Config.boundKeyMod & keyMod) == App.Config.boundKeyMod) {
+            if (UInput.GetKeyDown(App.Config.mainKey.Code)) {
+                if ((App.Config.mainKey.Mod & keyMod) == App.Config.mainKey.Mod) {
                     isVisible_ = !isVisible_;
                 }
             }
