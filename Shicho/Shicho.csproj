@@ -90,7 +90,7 @@
     <Compile Include="Tool\SupportTool.cs" />
     <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />
-    <Compile Include="Mod\ConfigTool.cs" />
+    <Compile Include="Tool\ConfigTool.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Mod\Extension\ThreadExt.cs" />
     <Compile Include="FlowGenerator.cs" />

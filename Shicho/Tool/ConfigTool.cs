@@ -9,15 +9,15 @@ using System;
 using System.Linq;
 
 
-namespace Shicho.Mod
+namespace Shicho.Tool
 {
     class ConfigTool : MonoBehaviour
     {
-        public void Populate(UIHelperBase helper, Config cfg)
+        public void Populate(UIHelperBase helper, Mod.Config cfg)
         {
             {
                 var grp = helper.AddGroup("Main key binding");
-                var keyModChoices = Config.ModMap.Reverse().ToArray();
+                var keyModChoices = Mod.Config.ModMap.Reverse().ToArray();
 
                 grp.AddDropdown(
                     "Mod",

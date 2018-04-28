@@ -23,7 +23,7 @@ namespace Shicho
             try {
                 // Log.Info("initializing...");
 
-                cfgTool_ = GameObject.Find(Mod.ModInfo.ID).AddComponent<Mod.ConfigTool>();
+                cfgTool_ = gameObject.AddComponent<Tool.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
 
                 // stir up
@@ -139,7 +139,7 @@ namespace Shicho
         private Mod.Config cfg_ = null;
         public static Mod.Config Config { get => Instance.cfg_; }
 
-        private Mod.ConfigTool cfgTool_ = null;
+        private Tool.ConfigTool cfgTool_ = null;
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;
