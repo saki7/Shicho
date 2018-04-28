@@ -14,10 +14,13 @@ namespace Shicho.Tool
 
     class SupportTool : MonoBehaviour
     {
-        public void Start()
+        public void Awake()
         {
             ID = GetInstanceID();
             cfg_ = App.Config.GUI.SupportTool;
+            if (cfg_.Tab.Index > Tabs.Length) {
+                cfg_.Tab.Index = 0;
+            }
         }
 
         public void Update()
@@ -44,7 +47,10 @@ namespace Shicho.Tool
         public void OnGUI()
         {
             if (cfg_.IsVisible) {
-                cfg_.Rect = GUI.Window(ID, cfg_.Rect, DrawWindow, "Shicho");
+                var style = new GUIStyle(GUI.skin.window);
+                style.onNormal.background = null;
+
+                cfg_.Rect = GUI.Window(ID, cfg_.Rect, DrawWindow, "Shicho", style);
             }
         }
 
@@ -52,7 +58,27 @@ namespace Shicho.Tool
         {
         }
 
+        private delegate void TabContentFunc();
+
         private void DrawWindow(int id)
+        {
+            cfg_.Tab.Index = GUI.Toolbar(new Rect(0, HUnit, cfg_.Rect.width, HUnit), cfg_.Tab.Index, Tabs);
+            var tabID = Tabs[cfg_.Tab.Index];
+
+            switch (tabID) {
+            case "Graphics":
+                GraphicsTab();
+                break;
+
+            default:
+                throw new NotImplementedException($"unknown tab {tabID}");
+            }
+
+            // NB: last for entire rect
+            GUI.DragWindow();
+        }
+
+        private void GraphicsTab()
         {
             GUI.BeginGroup(new Rect(0, 0, sliderWidth, 400));
             var shadowBiasMethods = new Dictionary<string, ShadowBiasMethod>() {
@@ -61,17 +87,17 @@ namespace Shicho.Tool
             };
             GUILayout.SelectionGrid(0, shadowBiasMethods.Keys.ToArray(), 1, "Toggle");
             GUI.EndGroup();
-
-            // NB: last for entire rect
-            GUI.DragWindow();
         }
 
+        readonly string[] Tabs = new[] {"Graphics", "Log"};
+        const float HUnit = 24f;
         const int sliderWidth = 200;
+
         public static readonly Rect DefaultRect = new Rect(
             0f, 0f, 280f, 800f
         );
 
-        private Mod.Config.GUIData cfg_;
+        private Mod.Config.GUIWindowData cfg_;
 
         private int ID { get; set; }
     }

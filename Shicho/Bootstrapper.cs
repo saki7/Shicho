@@ -76,7 +76,6 @@ namespace Shicho
             gobj_ = new GameObject(Mod.ModInfo.ID);
             // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
 
-            // App.SetInstance(gobj_.AddComponent<App>());
             app_ = gobj_.AddComponent<App>();
             gobj_.SetActive(true);
             Log.Info("loaded.");

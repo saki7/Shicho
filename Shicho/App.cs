@@ -18,18 +18,18 @@ namespace Shicho
     {
         public void Awake()
         {
-            cfg_ = Mod.Config.LoadFile(ConfigPath);
-
             try {
                 // Log.Info("initializing...");
+                cfg_ = Mod.Config.LoadFile(ConfigPath);
 
-                cfgTool_ = gameObject.AddComponent<Tool.ConfigTool>();
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
 
                 // stir up
                 for (var i = 0; i < 123; ++i) {
                     R.ULong64();
                 }
+
+                InitGUI();
 
                 // Log.Info("initialized");
 
@@ -46,7 +46,7 @@ namespace Shicho
 
         private void InitGUI()
         {
-
+            cfgTool_ = gameObject.AddComponent<Tool.ConfigTool>();
         }
 
         private void InitPhysics()
@@ -102,14 +102,6 @@ namespace Shicho
             }
         }
 
-        // NB: this method will be called by the env, regardless of
-        //     the actual existence of the App instance :(
-        public static void OnSettingsUI(UIHelperBase helper)
-        {
-            Bootstrapper.Instance.Bootstrap();
-            Instance.cfgTool_.Populate(helper, Instance.cfg_);
-        }
-
         private static ulong GetDeviceSeed()
         {
             return 1145144545191912345;
@@ -126,15 +118,24 @@ namespace Shicho
             UnloadAllData();
         }
 
-        public void SaveConfig() => cfg_.Save(ConfigPath);
+        public void OnSettingsUI(UIHelperBase helper)
+        {
+            cfgTool_.Populate(helper);
+        }
+
+        public void SaveConfig()
+        {
+            cfg_.Save(ConfigPath);
+        }
 
         public static App Instance { get => Bootstrapper.AppInstance; }
 
-        private const string ConfigPath = Mod.ModInfo.ID + ".xml";
+        public const string ConfigPath = Mod.ModInfo.ID + ".xml";
         private Mod.Config cfg_ = null;
         public static Mod.Config Config { get => Instance.cfg_; }
 
-        private Tool.ConfigTool cfgTool_ = null;
+        public Tool.ConfigTool cfgTool_ = null;
+
         internal ColossalFramework.Math.Randomizer R;
 
         private PrefabManager pmgr_;

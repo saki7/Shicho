@@ -5,7 +5,9 @@ using ICities;
 
 namespace Shicho.Mod
 {
-    public class Mod : IUserMod
+    public class Mod
+        : IUserMod
+        , ILoadingExtension
     {
         public string Name { get => ModInfo.ID; }
         public string Description { get => ModInfo.Description; }
@@ -24,6 +26,7 @@ namespace Shicho.Mod
         public void OnDisabled()
         {
             try {
+                Bootstrapper.Instance.Bootstrap();
                 App.Instance.SaveConfig();
 
             } finally {
@@ -31,7 +34,28 @@ namespace Shicho.Mod
             }
         }
 
+        public void OnCreated(ILoading loading)
+        {
+        }
+
+        public void OnReleased()
+        {
+        }
+
+        public void OnLevelLoaded(LoadMode mode)
+        {
+            App.Instance.InitGameMode();
+        }
+
+        public void OnLevelUnloading()
+        {
+            App.Instance.UnloadLevelData();
+        }
+
         public void OnSettingsUI(UIHelperBase helper)
-            => App.OnSettingsUI(helper);
+        {
+            Bootstrapper.Instance.Bootstrap();
+            App.Instance.OnSettingsUI(helper);
+        }
     }
 }

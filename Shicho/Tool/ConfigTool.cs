@@ -13,7 +13,7 @@ namespace Shicho.Tool
 {
     class ConfigTool : MonoBehaviour
     {
-        public void Populate(UIHelperBase gui, Mod.Config cfg)
+        public void Populate(UIHelperBase gui)
         {
             {
                 var grp = gui.AddGroup("Main key binding");
@@ -24,7 +24,7 @@ namespace Shicho.Tool
                     keyModChoices.Select(kv => kv.Value).ToArray(),
                     keyModChoices
                         .Select((kv, i) => new {Index = i, KV = kv})
-                        .Where(t => t.KV.Key == cfg.mainKey.Mod)
+                        .Where(t => t.KV.Key == App.Config.mainKey.Mod)
                         .Select(res => res.Index)
                         .First(),
                     (i) => {
@@ -37,17 +37,12 @@ namespace Shicho.Tool
                     Enumerable.Range((int)'A', (int)'Z' - (int)'A' + 1)
                         .Select(i => ((char)i).ToString())
                         .ToArray(),
-                    (int)cfg.mainKey.Code - (int)KeyCode.A,
+                    (int)App.Config.mainKey.Code - (int)KeyCode.A,
                     (i) => {
                         App.Config.ChangeKeyBinding(null, (KeyCode)((int)KeyCode.A) + i);
                     }
                 );
             }
-        }
-
-        private void SetFlow()
-        {
-            App.Instance.SetFlow(Cities::ItemClass.Service.Citizen, 200);
         }
     }
 }
