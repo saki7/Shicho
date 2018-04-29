@@ -83,10 +83,14 @@
     <Compile Include="Core\DataQuery.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="GUI\IConfigurable.cs" />
+    <Compile Include="GUI\Config.cs" />
+    <Compile Include="GUI\Panel.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Patcher\RenderGroupPatch.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Tool\SupportTool.cs" />
+    <Compile Include="Tool\ToolBase.cs" />
     <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />
     <Compile Include="Tool\ConfigTool.cs" />

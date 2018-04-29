@@ -76,28 +76,13 @@ namespace Shicho.Mod
         };
 
         [Serializable]
-        public struct GUITabData
+        public class GUIConfigSet
         {
-            public int Index;
+            public GUI.TabbedWindowConfig SupportTool;
         }
 
-        [Serializable]
-        public class GUIWindowData
-        {
-            public bool IsVisible { get; set; }
-            public Rect Rect { get; set; }
-
-            public GUITabData Tab = new GUITabData();
-        }
-
-        [Serializable]
-        public class GUIDataSet
-        {
-            public GUIWindowData SupportTool;
-        }
-
-        public GUIDataSet GUI = new GUIDataSet() {
-            SupportTool = new GUIWindowData() {
+        public GUIConfigSet GUI = new GUIConfigSet() {
+            SupportTool = new GUI.TabbedWindowConfig() {
                 IsVisible = true,
                 Rect = Tool.SupportTool.DefaultRect,
             },
