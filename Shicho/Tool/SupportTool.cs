@@ -14,14 +14,19 @@ namespace Shicho.Tool
     using Shicho.GUI;
     using UInput = UnityEngine.Input;
 
-    class SupportTool : ToolBase<GUI.TabbedWindowConfig>
+    class SupportTool : ToolBase
     {
-        public override void Start()
+        public override void Awake()
         {
-            base.Start();
+            base.Awake();
+            Log.Debug($"{Config}, {Config != null}");
             if (Config.TabIndex > Tabs.Length) {
                 Config.TabIndex = 0;
             }
+        }
+
+        public void Start()
+        {
             Window.Show();
         }
 

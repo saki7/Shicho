@@ -83,7 +83,7 @@
     <Compile Include="Core\DataQuery.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
-    <Compile Include="GUI\IConfigurable.cs" />
+    <Compile Include="GUI\IComponent.cs" />
     <Compile Include="GUI\Config.cs" />
     <Compile Include="GUI\Panel.cs" />
     <Compile Include="Input.cs" />

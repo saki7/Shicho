@@ -4,16 +4,13 @@ using System;
 
 namespace Shicho.GUI
 {
-    class Panel<ConfigT>
-        : UIPanel
-        , IConfigurable<ConfigT>
-        where ConfigT: IConfig, new()
+    class Panel : UIPanel
     {
         public override void Awake()
         {
             base.Awake();
             Config.ID = new ConfigID() {
-                Value = (UInt64)GetInstanceID(),
+                Value = (Int64)GetInstanceID(),
             };
         }
 
@@ -29,6 +26,6 @@ namespace Shicho.GUI
             this.Show();
         }
 
-        public ConfigT Config { get; set; } = new ConfigT();
+        public TabbedWindowConfig Config { get; set; } = new TabbedWindowConfig();
     }
 }

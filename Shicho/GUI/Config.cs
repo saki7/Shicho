@@ -10,7 +10,7 @@ namespace Shicho.GUI
     [Serializable]
     public struct ConfigID
     {
-        public UInt64 Value;
+        public Int64 Value;
     }
 
     interface IConfig

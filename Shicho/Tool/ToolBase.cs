@@ -5,26 +5,22 @@ using System;
 
 namespace Shicho.Tool
 {
-    interface ITool<ConfigT>
-        : GUI.IConfigurable<ConfigT>
-        where ConfigT: GUI.IConfig, new()
+    interface ITool : GUI.IComponent<GUI.TabbedWindowConfig>
     {
         GUI.ConfigID ID { get; }
-        ConfigT ConfigProxy { get; set; }
+        GUI.TabbedWindowConfig ConfigProxy { get; set; }
 
         void SetVisible(bool flag);
     }
 
-    abstract class ToolBase<ConfigT>
+    abstract class ToolBase
         : MonoBehaviour
-        , GUI.IConfigurable<ConfigT>
-        , ITool<ConfigT>
-        where ConfigT: GUI.IConfig, new()
+        , ITool
     {
-        public virtual void Start()
+        public virtual void Awake()
         {
+            win_ = UIView.GetAView().AddUIComponent(typeof(GUI.Panel)) as GUI.Panel;
             win_.Config = ConfigProxy;
-            win_ = UIView.GetAView().AddUIComponent(typeof(GUI.Panel<ConfigT>)) as GUI.Panel<ConfigT>;
         }
 
         public virtual void OnDestroy()
@@ -45,9 +41,9 @@ namespace Shicho.Tool
 
         public GUI.ConfigID ID { get => Config.ID; }
 
-        private GUI.Panel<ConfigT> win_;
-        protected GUI.Panel<ConfigT> Window { get => win_; }
-        public ConfigT Config { get => win_.Config; set => win_.Config = value; }
-        public abstract ConfigT ConfigProxy { get; set; }
+        private GUI.Panel win_;
+        protected GUI.Panel Window { get => win_; }
+        public GUI.TabbedWindowConfig Config { get => win_.Config; set => win_.Config = value; }
+        public abstract GUI.TabbedWindowConfig ConfigProxy { get; set; }
     }
 }

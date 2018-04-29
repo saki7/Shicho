@@ -5,7 +5,8 @@ using System;
 
 namespace Shicho.GUI
 {
-    interface IConfigurable<ConfigT>
+    interface IComponent<ConfigT>
+        where ConfigT : IConfig
     {
         ConfigT Config { get; set; }
     }
