@@ -19,14 +19,12 @@ namespace Shicho.Tool
         public override void Awake()
         {
             base.Awake();
-            Log.Debug($"{Config}, {Config != null}");
-            if (Config.TabIndex > Tabs.Length) {
-                Config.TabIndex = 0;
-            }
         }
 
-        public void Start()
+        public override void Start()
         {
+            base.Start();
+            Title = $"Shicho (v{Mod.ModInfo.Version})";
             Window.Show();
         }
 
@@ -46,8 +44,7 @@ namespace Shicho.Tool
 
             if (UInput.GetKeyDown(App.Config.mainKey.Code)) {
                 if ((App.Config.mainKey.Mod & keyMod) == App.Config.mainKey.Mod) {
-                    Config.IsVisible = !Config.IsVisible;
-                    SetVisible(Config.IsVisible);
+                    SetVisible(!Config.IsVisible);
                 }
             }
         }
@@ -57,7 +54,7 @@ namespace Shicho.Tool
         }
 
         private delegate void TabContentFunc();
-        readonly string[] Tabs = new[] {"Graphics", "Log"};
+        public override string[] Tabs { get => new[] {"Graphics", "Log"}; }
 
         const float HUnit = 24f;
         const int sliderWidth = 200;

@@ -13,7 +13,7 @@ namespace Shicho.GUI
         public Int64 Value;
     }
 
-    interface IConfig
+    interface IConfig : ICloneable
     {
         ConfigID ID { get; set; }
     }
@@ -52,7 +52,7 @@ namespace Shicho.GUI
 
         [NonSerialized]
         public Rect Rect;
-        internal SimpleRect? RectS;
+        private SimpleRect? RectS;
 
         IConfig[] Children;
 
@@ -82,6 +82,8 @@ namespace Shicho.GUI
         {
             RectS = null;
         }
+
+        public object Clone() => MemberwiseClone();
     }
 
     [Serializable]

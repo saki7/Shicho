@@ -69,6 +69,11 @@ namespace Shicho.Mod
         {
             public KeyMod Mod { get; set; }
             public KeyCode Code { get; set; }
+
+            public override string ToString()
+            {
+                return $"{ModMap[Mod]}-{Code}";
+            }
         }
         public BoundKeyData mainKey = new BoundKeyData() {
             Mod = KeyMod.Alt,
