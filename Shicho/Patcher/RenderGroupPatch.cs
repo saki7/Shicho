@@ -15,7 +15,7 @@ namespace Shicho.Patcher.DayNightPropertiesPatch
         {
             var mgr = Cities::RenderManager.instance;
             if (mgr == null) return;
-            mgr.MainLight.shadowBias = 0.6f;
+            // mgr.MainLight.shadowBias = 0.6f;
         }
     }
 }

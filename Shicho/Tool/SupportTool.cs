@@ -16,9 +16,38 @@ namespace Shicho.Tool
 
     class SupportTool : ToolBase
     {
+        class GraphicsPanel : GUI.Panel
+        {
+            public override void Start()
+            {
+                base.Start();
+                backgroundSprite = "Airport";
+                autoSize = true;
+                width = 220;
+                height = 240;
+            }
+        }
+
         public override void Awake()
         {
             base.Awake();
+
+            Tabs = new[] {
+                new TabTemplate() {
+                    name = "Graphics",
+                    icons = new IconSet() {
+                        Normal = "MapSettingsSnapshot",
+                        Hovered = "MapSettingsSnapshotHovered",
+                        Pressed = "MapSettingsSnapshotPressed",
+                        Focused = "MapSettingsSnapshotFocused",
+                    },
+                    content = new GraphicsPanel(),
+                },
+                new TabTemplate() {
+                    name = "Log",
+                    content = new GUI.Panel(),
+                },
+            };
         }
 
         public override void Start()
@@ -52,12 +81,6 @@ namespace Shicho.Tool
         class ShadowBiasMethod
         {
         }
-
-        private delegate void TabContentFunc();
-        public override string[] Tabs { get => new[] {"Graphics", "Log"}; }
-
-        const float HUnit = 24f;
-        const int sliderWidth = 200;
 
         static class Defaults
         {
