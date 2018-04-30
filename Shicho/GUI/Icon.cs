@@ -7,27 +7,32 @@ namespace Shicho.GUI
     {
         public string Normal, Hovered, Focused, Pressed;
 
+        public override string ToString()
+        {
+            return $"Normal: {Normal}, Hovered: {Hovered}, Focused: {Focused}, Pressed: {Pressed}";
+        }
+
         public static void AssignRaw(ref UIButton btn, string normal, string hovered, string pressed, string focused = null)
         {
-            btn.normalBgSprite = normal;
-            btn.hoveredBgSprite = hovered;
-            btn.focusedBgSprite = focused;
-            btn.pressedBgSprite = pressed;
+            btn.normalFgSprite = normal;
+            btn.hoveredFgSprite = hovered;
+            btn.focusedFgSprite = focused;
+            btn.pressedFgSprite = pressed;
         }
 
 
         public void AssignTo(ref UIInteractiveComponent c)
         {
-            c.normalBgSprite = Normal;
-            c.hoveredBgSprite = Hovered;
-            c.focusedBgSprite = Focused;
+            c.normalFgSprite = Normal;
+            c.hoveredFgSprite = Hovered;
+            c.focusedFgSprite = Focused;
         }
 
         public void AssignTo(ref UIButton btn)
         {
             var obj = btn as UIInteractiveComponent;
             AssignTo(ref obj);
-            btn.pressedBgSprite = Pressed;
+            btn.pressedFgSprite = Pressed;
         }
     }
 }

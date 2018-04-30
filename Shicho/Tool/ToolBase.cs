@@ -4,9 +4,12 @@ using ColossalFramework.UI;
 using UnityEngine;
 
 using System;
+using System.Linq;
+
 
 namespace Shicho.Tool
 {
+    using Helper = GUI.Helper;
     using GUI.Extension;
 
     interface ITool : GUI.IConfigurableComponent<GUI.TabbedWindowConfig>
@@ -59,38 +62,73 @@ namespace Shicho.Tool
 
             win_.Content.SetAutoLayout(LayoutDirection.Horizontal);
 
-            var nav = win_.Content.AddUIComponent<GUI.Panel>();
-            nav.backgroundSprite = "IconAssetParks";
-            nav.SetAutoLayout(LayoutDirection.Vertical);
-
             {
-                tabc_ = win_.Content.AddUIComponent<UITabContainer>();
+                tabs_ = win_.Content.AddUIComponent<UITabstrip>();
+                tabs_.relativePosition = Vector2.zero;
+                tabs_.tabPages = win_.AddUIComponent<UITabContainer>();
 
                 // tabc_.autoSize = true;
                 // tabc_.autoSize = true;
                 // tabc_.relativePosition = Vector3.zero;
 
-                foreach (var tab in Tabs) {
+                var tabTemplate = FindObjectOfType<UITabstrip>()
+                    .GetComponentInChildren<UIButton>()
+                ;
+
+                foreach (var v in Tabs.Select((tab, i) => new {tab, i})) {
                     {
-                        var btn = nav.AddUIComponent<UIButton>();
-                        tab.icons.AssignTo(ref btn);
+                        var btn = tabs_.AddTab(v.tab.name, tabTemplate, true);
+                        tabs_.selectedIndex = v.i;
+
+                        btn.relativePosition = Vector2.zero;
+                        btn.text = "";
+                        btn.tooltip = v.tab.name;
+                        Log.Debug($"{v.tab.icons}");
+                        v.tab.icons.AssignTo(ref btn);
+
+                        btn.normalBgSprite = "ButtonMenu";
+                        btn.hoveredBgSprite = "ButtonMenuHovered";
+                        btn.pressedBgSprite = "ButtonMenuPressed";
+                        btn.focusedBgSprite = "ButtonMenuFocused";
+                        btn.disabledBgSprite = "ButtonMenuDisabled";
+
+                        //btn.spritePadding = Helper.Padding(4, 22);
+                        btn.width = btn.height = 32;
                     }
 
-                    var page = tabc_.AddTabPage(tab.name, tab.content);
-                    var desc = GUI.Helper.AddDefaultComponent<UILabel>(page);
-                    desc.text = $"'{tab.name}' here!!!";
+                    var page = tabs_.tabContainer.components[v.i] as UIPanel;
+                    page.isVisible = false;
+
+                    Window.Content.eventSizeChanged += (c, size) => {
+                        page.width = size.x;
+                    };
+
+                    // page.relativePosition = Vector2.zero;
+                    page.SetAutoLayout(LayoutDirection.Vertical);
+
+                    var bg = page.AddUIComponent<UITiledSprite>();
+                    bg.spriteName = "InfoPanelBack";
+                    bg.width = 200;
+                    bg.height = 400;
+                    bg.relativePosition = Vector2.zero;
+
+                    var desc = page.AddUIComponent<UILabel>();
+                    desc.text = $"'{v.tab.name}' here!!!";
+                    bg.zOrder = 1;
                 }
-                // tabc_.tabIndex = 0;
-                // tabc_.selectedIndex = 0;
-                // tabc_.Show();
-                //tabc_.BringToFront();
+
+                tabs_.eventTabIndexChanged += (c, i) => {
+                    //tabs_.tab
+                    //tabs_.tabContainer.components[i].is
+                };
             }
         }
 
         public virtual void OnDestroy()
         {
             ConfigProxy = Config.Clone() as GUI.TabbedWindowConfig;
-            Destroy(tabc_);
+
+            //Destroy(tabs_);
             Destroy(win_);
         }
 
@@ -118,6 +156,6 @@ namespace Shicho.Tool
         public abstract GUI.TabbedWindowConfig ConfigProxy { get; set; }
 
         public GUI.TabTemplate[] Tabs { get; protected set; }
-        private UITabContainer tabc_;
+        private UITabstrip tabs_;
     }
 }

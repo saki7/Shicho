@@ -22,10 +22,13 @@ namespace Shicho.Tool
             public override void Start()
             {
                 base.Start();
-                backgroundSprite = "Airport";
-                autoSize = true;
-                width = 220;
-                height = 240;
+                //backgroundSprite = "Airport";
+                //autoSize = true;
+                //width = 220;
+                //height = 240;
+
+                var mes = AddUIComponent<UILabel>();
+                mes.text = "fffff!!!!!";
             }
         }
 
@@ -37,15 +40,18 @@ namespace Shicho.Tool
                 new TabTemplate() {
                     name = "Graphics",
                     icons = new IconSet() {
-                        Normal = "MapSettingsSnapshot",
-                        Hovered = "MapSettingsSnapshotHovered",
-                        Pressed = "MapSettingsSnapshotPressed",
-                        Focused = "MapSettingsSnapshotFocused",
+                        Normal = "Options",
+                        Hovered = "OptionsHovered",
+                        Pressed = "OptionsPressed",
+                        Focused = "OptionsFocused",
                     },
                     content = new GraphicsPanel(),
                 },
                 new TabTemplate() {
-                    name = "Log",
+                    name = "About",
+                    icons = new IconSet() {
+                        Normal = "InfoPanelIconInfo",
+                    },
                     content = new GUI.Panel(),
                 },
             };

@@ -35,19 +35,19 @@ namespace Shicho.GUI
             backgroundSprite = "MenuPanel";
 
             titleBar_ = AddUIComponent<TitleBar>();
-            titleBar_.absolutePosition = Vector3.zero;
+            titleBar_.relativePosition = Vector3.zero;
             titleBar_.ControlType |= WindowControlType.Closable;
             titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
 
             content_ = AddUIComponent<Panel>();
-            OnSizeChanged();
+            content_.relativePosition = Vector2.zero;
+            content_.minimumSize = new Vector2(400, 200);
+            //OnSizeChanged();
         }
 
         public override void Start()
         {
             base.Start();
-
-            content_ = AddUIComponent<GUI.Panel>();
         }
 
         public new T AddUIComponent<T>()
@@ -67,13 +67,18 @@ namespace Shicho.GUI
             //titleBar_.Control.width = width;
 
             content_.width = width;
+            content_.height = height - titleBar_.height;
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
-            Destroy(titleBar_);
-            Destroy(content_);
+            //Destroy(titleBar_);
+            //Destroy(content_);
+
+            foreach (var child in GetComponentsInChildren<UIComponent>()) {
+                Destroy(child);
+            }
         }
 
         public TabbedWindowConfig Config { get; set; } = new TabbedWindowConfig();

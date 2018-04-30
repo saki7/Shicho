@@ -7,9 +7,9 @@ namespace Shicho
     internal static class Resources
     {
         public static readonly Texture2D shicho_logo_outline_white_24
-            = Load("shicho_logo_outline_white_24.png", 512, 512);
+            = LoadImage("shicho_logo_outline_white_24.png", 512, 512);
 
-        private static Texture2D Load(string name, int width, int height)
+        private static Texture2D LoadImage(string name, int width, int height)
         {
             var asm = Assembly.GetExecutingAssembly();
             var s = asm.GetManifestResourceStream("Shicho.Resources." + name);

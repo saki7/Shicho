@@ -72,12 +72,12 @@ namespace Shicho.GUI
             autoLayout = false;
 
             title_ = AddUIComponent<UILabel>();
-            title_.text = "(Unnamed panel)";
             title_.padding = Helper.Padding(10, 8, 0, 8);
 
             title_.eventTextChanged += (c, text) => {
-                OnSizeChanged();
+                height = c.height;
             };
+            title_.text = "(Unnamed panel)";
 
             control_ = AddUIComponent<WindowControl>();
             control_.eventTypeChanged += (c) => {
