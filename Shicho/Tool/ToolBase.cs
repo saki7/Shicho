@@ -30,11 +30,7 @@ namespace Shicho.Tool
             win_ = UIView.GetAView().AddUIComponent(typeof(GUI.Window)) as GUI.Window;
             win_.Config = ConfigProxy;
 
-            var scr = new Rect(0, 0, Screen.width, Screen.height);
-            Config.Rect.xMin = 0;
-            Config.Rect.xMax = Screen.width - Config.Rect.width;
-            Config.Rect.yMin = 0;
-            Config.Rect.yMax = Screen.height - Config.Rect.height;
+            Config.Rect.RelocateIn(new Rect(0, 0, Screen.width, Screen.height));
         }
 
         public virtual void Start()

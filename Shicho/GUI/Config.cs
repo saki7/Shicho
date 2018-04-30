@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-
+using System.Xml.Serialization;
 
 namespace Shicho.GUI
 {
@@ -19,11 +19,25 @@ namespace Shicho.GUI
     }
 
     [Serializable]
-    struct SimpleRect
+    public struct SimpleRect
     {
-        public float x, y, width, height;
+        [NonSerialized]
+        [XmlIgnore]
+        public Vector2 position, size;
 
-        public static explicit operator SimpleRect(UnityEngine.Rect rect)
+        public float x { get => position.x; set => position.x = value; }
+        public float y { get => position.y; set => position.y = value; }
+
+        public float width  { get => size.x; set => size.x = value; }
+        public float height { get => size.y; set => size.y = value; }
+
+        public void RelocateIn(UnityEngine.Rect outer)
+        {
+            x = Mathf.Clamp(x, outer.x, outer.xMax - width);
+            y = Mathf.Clamp(x, outer.y, outer.yMax - height);
+        }
+
+        public static implicit operator SimpleRect(UnityEngine.Rect rect)
         {
             return new SimpleRect() {
                 x = rect.x,
@@ -45,43 +59,21 @@ namespace Shicho.GUI
     public class WindowConfig : IConfig
     {
         [NonSerialized]
+        [XmlIgnore]
         private ConfigID id_;
+
+        [XmlIgnore]
         public ConfigID ID { get => id_; set => id_ = value; }
 
+        [SerializeField]
         public bool IsVisible = false;
 
-        [NonSerialized]
-        public Rect Rect;
-        private SimpleRect? RectS;
+        [SerializeField]
+        public SimpleRect Rect;
 
+        [SerializeField]
+        [XmlArray]
         IConfig[] Children;
-
-
-        //[OnDeserializing]
-        //private void OnDeserializingMethod(StreamingContext ctx)
-        //{
-        //}
-
-        [OnDeserialized]
-        private void OnDeserializedMethod(StreamingContext ctx)
-        {
-            if (RectS.HasValue) {
-                Rect = (UnityEngine.Rect)RectS;
-                RectS = null;
-            }
-        }
-
-        [OnSerializing]
-        private void OnSerializingMethod(StreamingContext ctx)
-        {
-            RectS = (SimpleRect)Rect;
-        }
-
-        [OnSerialized]
-        private void OnSerializedMethod(StreamingContext ctx)
-        {
-            RectS = null;
-        }
 
         public object Clone() => MemberwiseClone();
     }
