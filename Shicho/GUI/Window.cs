@@ -86,5 +86,10 @@ namespace Shicho.GUI
             get => titleBar_.Title;
             set => titleBar_.Title = value;
         }
+
+        public Texture2D Icon {
+            get => titleBar_.Icon;
+            set => titleBar_.Icon = value;
+        }
     }
 }

@@ -73,7 +73,7 @@ namespace Shicho.GUI
 
             title_ = AddUIComponent<UILabel>();
             title_.text = "(Unnamed panel)";
-            title_.padding = Helper.Padding(8, 8, 0, 8);
+            title_.padding = Helper.Padding(10, 8, 0, 8);
 
             title_.eventTextChanged += (c, text) => {
                 OnSizeChanged();
@@ -113,6 +113,7 @@ namespace Shicho.GUI
         public override void OnDestroy()
         {
             base.OnDestroy();
+            if (icon_ != null) Destroy(icon_);
             Destroy(title_);
             Destroy(control_);
             Destroy(drag_);
@@ -128,6 +129,27 @@ namespace Shicho.GUI
         }
 
         public event MouseEventHandler eventClosed;
+
+        private UITextureSprite icon_;
+        private Texture2D iconData_;
+
+        public Texture2D Icon {
+            get => iconData_;
+
+            set {
+                iconData_ = value;
+                if (icon_ == null) {
+                    icon_ = AddUIComponent<UITextureSprite>();
+                    icon_.relativePosition = new Vector2(4, 3);
+                    icon_.width = icon_.height = 24;
+                    icon_.SendToBack();
+
+                    title_.padding.left += 24 + 1;
+                }
+
+                icon_.texture = iconData_;
+            }
+        }
 
         private UILabel title_;
         public string Title {

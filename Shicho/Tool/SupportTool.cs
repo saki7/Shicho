@@ -12,6 +12,7 @@ using System.Linq;
 namespace Shicho.Tool
 {
     using Shicho.GUI;
+    using System.IO;
     using UInput = UnityEngine.Input;
 
     class SupportTool : ToolBase
@@ -54,6 +55,8 @@ namespace Shicho.Tool
         {
             base.Start();
             Title = $"Shicho (v{Mod.ModInfo.Version})";
+
+            Window.Icon = Resources.shicho_logo_outline_white_24;
             Window.Show();
         }
 
