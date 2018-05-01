@@ -72,12 +72,13 @@ namespace Shicho.GUI
             autoLayout = false;
 
             title_ = AddUIComponent<UILabel>();
+            title_.text = "(Unnamed panel)";
             title_.padding = Helper.Padding(10, 8, 0, 8);
 
             title_.eventTextChanged += (c, text) => {
-                height = c.height;
+                height = c.size.y; // include padding
+                eventTitleChanged?.Invoke(c, text);
             };
-            title_.text = "(Unnamed panel)";
 
             control_ = AddUIComponent<WindowControl>();
             control_.eventTypeChanged += (c) => {
@@ -86,28 +87,32 @@ namespace Shicho.GUI
             };
 
             drag_ = AddUIComponent<UIDragHandle>();
-            drag_.relativePosition = Vector3.zero;
-
             eventSizeChanged += OnSizeChanged;
-        }
-
-        private void OnSizeChanged(UIComponent c, Vector2 size)
-        {
-            control_.relativePosition = new Vector2(width - control_.width, 0);
-
-            drag_.width = size.x - control_.width;
-            drag_.height = title_.height;
         }
 
         public override void Start()
         {
             base.Start();
-            width = parent.width;
-            drag_.target = parent;
 
-            control_.Close.eventClicked += (c, param) => {
-                eventClosed?.Invoke(c, param);
-            };
+            width = parent.width;
+            height = title_.size.y; // include padding
+            Log.Debug($"fooooo: {height}, {title_.size.y}");
+
+            if (icon_) {
+                icon_.relativePosition = new Vector2(4, 3);
+                icon_.width = icon_.height = 24;
+                icon_.SendToBack();
+
+                title_.padding.left += (int)icon_.width + 1;
+            }
+
+            if (control_.Close) {
+                control_.Close.eventClicked += (c, param) => {
+                    eventClosed?.Invoke(c, param);
+                };
+            }
+
+            drag_.target = parent;
         }
 
         public override void OnDestroy()
@@ -119,6 +124,14 @@ namespace Shicho.GUI
             Destroy(drag_);
         }
 
+        private void OnSizeChanged(UIComponent c, Vector2 size)
+        {
+            control_.relativePosition = new Vector2(width - control_.width, 0);
+
+            drag_.width = size.x - control_.width;
+            drag_.height = title_.height;
+        }
+
         private UIDragHandle drag_;
 
         private WindowControl control_;
@@ -128,6 +141,7 @@ namespace Shicho.GUI
             set => control_.Type = value;
         }
 
+        public event PropertyChangedEventHandler<string> eventTitleChanged;
         public event MouseEventHandler eventClosed;
 
         private UITextureSprite icon_;
@@ -140,11 +154,6 @@ namespace Shicho.GUI
                 iconData_ = value;
                 if (icon_ == null) {
                     icon_ = AddUIComponent<UITextureSprite>();
-                    icon_.relativePosition = new Vector2(4, 3);
-                    icon_.width = icon_.height = 24;
-                    icon_.SendToBack();
-
-                    title_.padding.left += 24 + 1;
                 }
 
                 icon_.texture = iconData_;

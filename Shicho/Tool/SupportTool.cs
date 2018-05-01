@@ -40,10 +40,10 @@ namespace Shicho.Tool
                 new TabTemplate() {
                     name = "Graphics",
                     icons = new IconSet() {
-                        Normal = "Options",
+                        Normal = "OptionsDisabled",
                         Hovered = "OptionsHovered",
                         Pressed = "OptionsPressed",
-                        Focused = "OptionsFocused",
+                        Focused = "Options",
                     },
                     content = new GraphicsPanel(),
                 },

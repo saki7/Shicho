@@ -1,4 +1,6 @@
-﻿using ColossalFramework.UI;
+﻿using Shicho.Core;
+
+using ColossalFramework.UI;
 using UnityEngine;
 
 using System;
@@ -25,29 +27,43 @@ namespace Shicho.GUI
                 Value = GetInstanceID(),
             };
 
-            isInteractive = true;
-            color = new UnityEngine.Color32(20, 20, 40, 255);
-            minimumSize = new Vector2(220, 120);
-            maximumSize = new Vector2(Screen.width, Screen.height) / 4;
-            autoSize = true;
-            this.SetAutoLayout(LayoutDirection.Vertical);
-
-            backgroundSprite = "MenuPanel";
-
             titleBar_ = AddUIComponent<TitleBar>();
-            titleBar_.relativePosition = Vector3.zero;
-            titleBar_.ControlType |= WindowControlType.Closable;
-            titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
+            //titleBar_.eventTitleChanged += (c, text) => {
+            //    content_.relativePosition = new Vector2(0, c.height);
+            //};
 
             content_ = AddUIComponent<Panel>();
-            content_.relativePosition = Vector2.zero;
-            content_.minimumSize = new Vector2(400, 200);
-            //OnSizeChanged();
+
+            Log.Debug($"Window: {position}, {size}");
+            Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
+            Log.Debug($"content: {content_.position}, {content_.size}");
         }
 
         public override void Start()
         {
             base.Start();
+
+            isInteractive = true;
+            color = new UnityEngine.Color32(20, 20, 40, 255);
+            //minimumSize = new Vector2(220, 120);
+            //maximumSize = new Vector2(Screen.width, Screen.height) / 4;
+            //autoSize = true;
+            backgroundSprite = "MenuPanel";
+            this.SetAutoLayout(LayoutDirection.Vertical);
+
+            titleBar_.width = width;
+            titleBar_.relativePosition = Vector3.zero;
+            titleBar_.ControlType |= WindowControlType.Closable;
+            titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
+
+            content_.width = width;
+            content_.height = height - titleBar_.height;
+            content_.relativePosition = Vector2.zero;
+            //content_.minimumSize = new Vector2(400, 200);
+
+            Log.Debug($"Window: {position}, {size}");
+            Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
+            Log.Debug($"content: {content_.position}, {content_.size}");
         }
 
         public new T AddUIComponent<T>()

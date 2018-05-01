@@ -30,17 +30,19 @@ namespace Shicho.Tool
             win_ = UIView.GetAView().AddUIComponent(typeof(GUI.Window)) as GUI.Window;
             win_.Config = ConfigProxy;
 
+            Config.ID = new GUI.ConfigID() {
+                Value = GetInstanceID(),
+            };
+
             Config.Rect.RelocateIn(new Rect(0, 0, Screen.width, Screen.height));
         }
 
         public virtual void Start()
         {
-            Config.ID = new GUI.ConfigID() {
-                Value = GetInstanceID(),
-            };
-
             win_.position = Config.Rect.position;
             win_.size = Config.Rect.size;
+
+            Log.Debug($"{win_.position}, {win_.size}");
 
             win_.eventClosed += (c, param) => {
                 SetVisible(false);
@@ -56,20 +58,21 @@ namespace Shicho.Tool
                 Config.TabIndex = 0;
             }
 
-            win_.Content.SetAutoLayout(LayoutDirection.Horizontal);
+            win_.Content.SetAutoLayout(LayoutDirection.Vertical);
 
             {
+                var tabTemplate = FindObjectOfType<UITabstrip>()
+                    .GetComponentInChildren<UIButton>()
+                ;
+
                 tabs_ = win_.Content.AddUIComponent<UITabstrip>();
                 tabs_.relativePosition = Vector2.zero;
                 tabs_.tabPages = win_.AddUIComponent<UITabContainer>();
+                tabs_.tabContainer.position = Vector2.zero;
 
                 // tabc_.autoSize = true;
                 // tabc_.autoSize = true;
                 // tabc_.relativePosition = Vector3.zero;
-
-                var tabTemplate = FindObjectOfType<UITabstrip>()
-                    .GetComponentInChildren<UIButton>()
-                ;
 
                 foreach (var v in Tabs.Select((tab, i) => new {tab, i})) {
                     {
@@ -79,14 +82,7 @@ namespace Shicho.Tool
                         btn.relativePosition = Vector2.zero;
                         btn.text = "";
                         btn.tooltip = v.tab.name;
-                        Log.Debug($"{v.tab.icons}");
                         v.tab.icons.AssignTo(ref btn);
-
-                        btn.normalBgSprite = "ButtonMenu";
-                        btn.hoveredBgSprite = "ButtonMenuHovered";
-                        btn.pressedBgSprite = "ButtonMenuPressed";
-                        btn.focusedBgSprite = "ButtonMenuFocused";
-                        btn.disabledBgSprite = "ButtonMenuDisabled";
 
                         //btn.spritePadding = Helper.Padding(4, 22);
                         btn.width = btn.height = 32;
@@ -94,6 +90,9 @@ namespace Shicho.Tool
 
                     var page = tabs_.tabContainer.components[v.i] as UIPanel;
                     page.isVisible = false;
+
+                    Log.Debug($"{tabs_.tabContainer.absolutePosition}, {tabs_.tabContainer.position}, {tabs_.tabContainer.relativePosition}, {tabs_.tabContainer.padding}");
+                    Log.Debug($"{page.absolutePosition}, {page.position}, {page.relativePosition}, {page.padding}, {page.autoLayoutPadding}");
 
                     Window.Content.eventSizeChanged += (c, size) => {
                         page.width = size.x;
@@ -107,10 +106,11 @@ namespace Shicho.Tool
                     bg.width = 200;
                     bg.height = 400;
                     bg.relativePosition = Vector2.zero;
+                    //bg.zOrder = 0;
 
                     var desc = page.AddUIComponent<UILabel>();
                     desc.text = $"'{v.tab.name}' here!!!";
-                    bg.zOrder = 1;
+                    //desc.zOrder = 1;
                 }
 
                 tabs_.eventTabIndexChanged += (c, i) => {
