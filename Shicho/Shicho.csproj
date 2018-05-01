@@ -95,6 +95,7 @@
     <Compile Include="GUI\Config.cs" />
     <Compile Include="GUI\Panel.cs" />
     <Compile Include="GUI\TitleBar.cs" />
+    <Compile Include="GUI\UIRect.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Patcher\RenderGroupPatch.cs" />

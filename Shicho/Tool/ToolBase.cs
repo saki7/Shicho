@@ -15,7 +15,7 @@ namespace Shicho.Tool
     interface ITool : GUI.IConfigurableComponent<GUI.TabbedWindowConfig>
     {
         GUI.ConfigID ID { get; }
-        GUI.TabbedWindowConfig ConfigProxy { get; set; }
+        GUI.TabbedWindowConfig ConfigProxy { get; }
         GUI.TabTemplate[] Tabs { get; }
 
         void SetVisible(bool flag);
@@ -34,7 +34,7 @@ namespace Shicho.Tool
                 Value = GetInstanceID(),
             };
 
-            Config.Rect.RelocateIn(new Rect(0, 0, Screen.width, Screen.height));
+            Config.Rect.RelocateIn(Helper.ScreenRectAsUI);
         }
 
         public virtual void Start()
@@ -42,7 +42,7 @@ namespace Shicho.Tool
             win_.position = Config.Rect.position;
             win_.size = Config.Rect.size;
 
-            Log.Debug($"{win_.position}, {win_.size}");
+            //Log.Debug($"{win_.position}, {win_.size}");
 
             win_.eventClosed += (c, param) => {
                 SetVisible(false);
@@ -54,8 +54,8 @@ namespace Shicho.Tool
                 Config.Rect.position = pos;
             };
 
-            if (Config.TabIndex > Tabs.Length) {
-                Config.TabIndex = 0;
+            if (Config.SelectedTabIndex > Tabs.Length) {
+                Config.SelectedTabIndex = 0;
             }
 
             win_.Content.SetAutoLayout(LayoutDirection.Vertical);
@@ -66,8 +66,9 @@ namespace Shicho.Tool
                 ;
 
                 tabs_ = win_.Content.AddUIComponent<UITabstrip>();
-                tabs_.relativePosition = Vector2.zero;
+                //tabs_.relativePosition = Vector2.zero;
                 tabs_.tabPages = win_.AddUIComponent<UITabContainer>();
+                //tabs_.tabContainer.position = Vector2.zero;
                 tabs_.tabContainer.position = Vector2.zero;
 
                 // tabc_.autoSize = true;
@@ -77,8 +78,9 @@ namespace Shicho.Tool
                 foreach (var v in Tabs.Select((tab, i) => new {tab, i})) {
                     {
                         var btn = tabs_.AddTab(v.tab.name, tabTemplate, true);
-                        tabs_.selectedIndex = v.i;
+                        tabs_.selectedIndex = v.i; // important for setting current target obj
 
+                        btn.tabIndex = v.i; // misc value
                         btn.relativePosition = Vector2.zero;
                         btn.text = "";
                         btn.tooltip = v.tab.name;
@@ -91,8 +93,8 @@ namespace Shicho.Tool
                     var page = tabs_.tabContainer.components[v.i] as UIPanel;
                     page.isVisible = false;
 
-                    Log.Debug($"{tabs_.tabContainer.absolutePosition}, {tabs_.tabContainer.position}, {tabs_.tabContainer.relativePosition}, {tabs_.tabContainer.padding}");
-                    Log.Debug($"{page.absolutePosition}, {page.position}, {page.relativePosition}, {page.padding}, {page.autoLayoutPadding}");
+                    //Log.Debug($"{tabs_.tabContainer.absolutePosition}, {tabs_.tabContainer.position}, {tabs_.tabContainer.relativePosition}, {tabs_.tabContainer.padding}");
+                    //Log.Debug($"{page.absolutePosition}, {page.position}, {page.relativePosition}, {page.padding}, {page.autoLayoutPadding}");
 
                     Window.Content.eventSizeChanged += (c, size) => {
                         page.width = size.x;
@@ -101,29 +103,31 @@ namespace Shicho.Tool
                     // page.relativePosition = Vector2.zero;
                     page.SetAutoLayout(LayoutDirection.Vertical);
 
-                    var bg = page.AddUIComponent<UITiledSprite>();
-                    bg.spriteName = "InfoPanelBack";
-                    bg.width = 200;
-                    bg.height = 400;
-                    bg.relativePosition = Vector2.zero;
-                    //bg.zOrder = 0;
+                    //var bg = page.AddUIComponent<UITiledSprite>();
+                    //bg.spriteName = "InfoPanelBack";
+                    //bg.width = 200;
+                    //bg.height = 400;
+                    //bg.relativePosition = Vector2.zero;
 
                     var desc = page.AddUIComponent<UILabel>();
                     desc.text = $"'{v.tab.name}' here!!!";
                     //desc.zOrder = 1;
                 }
 
-                tabs_.eventTabIndexChanged += (c, i) => {
-                    //tabs_.tab
-                    //tabs_.tabContainer.components[i].is
+                Log.Debug($"si: {Config.SelectedTabIndex}");
+                tabs_.startSelectedIndex = Config.SelectedTabIndex;
+                //tabs_.tabIndex = Config.SelectedTabIndex;
+                // tabs_.selectedIndex = Config.SelectedTabIndex;
+                tabs_.eventSelectedIndexChanged += (c, i) => {
+                    Log.Debug($"tab: {i}");
+                    Config.SelectedTabIndex = i;
                 };
             }
         }
 
         public virtual void OnDestroy()
         {
-            ConfigProxy = Config.Clone() as GUI.TabbedWindowConfig;
-
+            //Log.Debug($"OnDestroy()");
             //Destroy(tabs_);
             Destroy(win_);
         }
@@ -149,7 +153,7 @@ namespace Shicho.Tool
         private GUI.Window win_;
         protected GUI.Window Window { get => win_; }
         public GUI.TabbedWindowConfig Config { get => win_.Config; set => win_.Config = value; }
-        public abstract GUI.TabbedWindowConfig ConfigProxy { get; set; }
+        public abstract GUI.TabbedWindowConfig ConfigProxy { get; }
 
         public GUI.TabTemplate[] Tabs { get; protected set; }
         private UITabstrip tabs_;

@@ -108,7 +108,6 @@ namespace Shicho.Tool
 
         public override TabbedWindowConfig ConfigProxy {
             get => App.Config.GUI.SupportTool;
-            set => App.Config.GUI.SupportTool = value;
         }
     }
 }

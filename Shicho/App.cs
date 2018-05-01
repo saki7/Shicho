@@ -41,7 +41,7 @@ namespace Shicho
         public void InitGameMode()
         {
             LoadLevelData();
-            gameObject.AddComponent<Tool.SupportTool>();
+            supportTool_ = gameObject.AddComponent<Tool.SupportTool>();
         }
 
         private void InitGUI()
@@ -125,6 +125,9 @@ namespace Shicho
 
         public void SaveConfig()
         {
+            if (supportTool_) {
+                cfg_.GUI.SupportTool = supportTool_.Config.Clone() as GUI.TabbedWindowConfig;
+            }
             cfg_.Save(ConfigPath);
         }
 
@@ -134,6 +137,7 @@ namespace Shicho
         private Mod.Config cfg_ = null;
         public static Mod.Config Config { get => Instance.cfg_; }
 
+        private Tool.SupportTool supportTool_ = null;
         public Tool.ConfigTool cfgTool_ = null;
 
         internal ColossalFramework.Math.Randomizer R;

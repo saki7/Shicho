@@ -23,6 +23,8 @@ namespace Shicho.GUI
         public override void Awake()
         {
             base.Awake();
+            this.SetAutoLayout(LayoutDirection.Vertical);
+
             Config.ID = new ConfigID() {
                 Value = GetInstanceID(),
             };
@@ -33,10 +35,6 @@ namespace Shicho.GUI
             //};
 
             content_ = AddUIComponent<Panel>();
-
-            Log.Debug($"Window: {position}, {size}");
-            Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
-            Log.Debug($"content: {content_.position}, {content_.size}");
         }
 
         public override void Start()
@@ -47,23 +45,19 @@ namespace Shicho.GUI
             color = new UnityEngine.Color32(20, 20, 40, 255);
             //minimumSize = new Vector2(220, 120);
             //maximumSize = new Vector2(Screen.width, Screen.height) / 4;
-            //autoSize = true;
             backgroundSprite = "MenuPanel";
-            this.SetAutoLayout(LayoutDirection.Vertical);
 
             titleBar_.width = width;
-            titleBar_.relativePosition = Vector3.zero;
             titleBar_.ControlType |= WindowControlType.Closable;
             titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
 
             content_.width = width;
             content_.height = height - titleBar_.height;
-            content_.relativePosition = Vector2.zero;
             //content_.minimumSize = new Vector2(400, 200);
 
-            Log.Debug($"Window: {position}, {size}");
-            Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
-            Log.Debug($"content: {content_.position}, {content_.size}");
+            //Log.Debug($"Window: {position}, {size}");
+            //Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
+            //Log.Debug($"content: {content_.position}, {content_.size}");
         }
 
         public new T AddUIComponent<T>()

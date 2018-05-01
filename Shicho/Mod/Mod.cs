@@ -3,6 +3,8 @@
 using Shicho.Core;
 using ICities;
 
+using UnityEngine;
+
 namespace Shicho.Mod
 {
     public class Mod

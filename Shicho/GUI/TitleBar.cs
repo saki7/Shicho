@@ -96,7 +96,6 @@ namespace Shicho.GUI
 
             width = parent.width;
             height = title_.size.y; // include padding
-            Log.Debug($"fooooo: {height}, {title_.size.y}");
 
             if (icon_) {
                 icon_.relativePosition = new Vector2(4, 3);

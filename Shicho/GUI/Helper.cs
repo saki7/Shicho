@@ -10,6 +10,37 @@ namespace Shicho.GUI
             get => new RectOffset(0, 0, 0, 0);
         }
 
+        public static Vector2 ScreenResolution {
+            get => UIView.GetAView().GetScreenResolution();
+        }
+
+        public static Rect ScreenRectAsScreen {
+            get {
+                //Log.Debug($"{v.GetScreenResolution()}, {v.scale}, {v.ratio}, {v.inputScale}");
+
+                var res = ScreenResolution;
+                return new Rect(
+                    x: 0, y: 0, width: res.x, height: res.y
+                );
+            }
+        }
+
+        public static Rect ScreenRectAsUI {
+            get => ScreenToUI(ScreenRectAsScreen);
+        }
+
+        // UI coordinates = same axis as Screen, center point at "center"
+        public static Rect ScreenToUI(Rect r)
+        {
+            var res = ScreenResolution;
+            return new Rect(
+                x: r.x - res.x / 2,
+                y: r.y - res.y / 2,
+                width: r.width,
+                height: r.height
+            );
+        }
+
         public static RectOffset Padding(int top, int? right = null, int? bottom = null, int? left = null)
         {
             if (!right.HasValue) {
