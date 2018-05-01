@@ -4,6 +4,7 @@ using ColossalFramework.UI;
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 
@@ -42,7 +43,7 @@ namespace Shicho.Tool
             win_.position = Config.Rect.position;
             win_.size = Config.Rect.size;
 
-            Log.Debug($"Window: {win_.position}, {win_.size}");
+            //Log.Debug($"Window: {win_.position}, {win_.size}");
 
             win_.eventClosed += (c, param) => {
                 SetVisible(false);
@@ -58,37 +59,31 @@ namespace Shicho.Tool
                 Config.SelectedTabIndex = 0;
             }
 
+            win_.Content.clipChildren = true;
             win_.Content.SetAutoLayout(LayoutDirection.Vertical);
 
             {
-                var tabTemplate = FindObjectOfType<UITabstrip>()
-                    .GetComponentInChildren<UIButton>()
-                ;
-
-
                 tabs_ = win_.Content.AddUIComponent<UITabstrip>();
                 tabs_.autoSize = true;
                 tabs_.width = win_.Content.width;
+                tabs_.backgroundSprite = "Menubar";
+                tabs_.color = new Color32(20, 20, 40, 255);
+                tabs_.zOrder = 2;
+                //tabs_.clipChildren = true;
+                tabs_.padding.bottom = 4;
                 Log.Debug($"Tab: {tabs_.position}, {tabs_.size}");
 
                 //tabs_.relativePosition = Vector2.zero;
                 tabs_.tabPages = win_.Content.AddUIComponent<UITabContainer>();
-                tabs_.tabContainer.relativePosition = Vector2.zero;
-                tabs_.tabContainer.width = tabs_.width;
-                tabs_.tabContainer.backgroundSprite = "buttonclose";
+                var container = tabs_.tabContainer;
 
-                {
-                    var c = tabs_.tabContainer;
-                    Log.Debug($"TabContainer: !{c.relativePosition}! {c.position}, {c.size}");
-                }
-
-                // tabc_.autoSize = true;
-                // tabc_.autoSize = true;
-                // tabc_.relativePosition = Vector3.zero;
+                container.relativePosition = Vector2.zero;
+                container.width = tabs_.width;
+                //container.clipChildren = true;
 
                 foreach (var v in Tabs.Select((tab, i) => new {tab, i})) {
                     {
-                        var btn = tabs_.AddTab(v.tab.name, tabTemplate, true);
+                        var btn = tabs_.AddTab(v.tab.name, true);
                         tabs_.selectedIndex = v.i; // important for setting current target obj
 
                         btn.tabIndex = v.i; // misc value
@@ -97,18 +92,39 @@ namespace Shicho.Tool
                         btn.tooltip = v.tab.name;
                         v.tab.icons.AssignTo(ref btn);
 
+                        btn.normalBgSprite = "GenericTab";
+                        btn.hoveredBgSprite = "GenericTabHovered";
+                        btn.pressedBgSprite = "GenericTabPressed";
+                        btn.focusedBgSprite = "GenericTabFocused";
+
                         //btn.spritePadding = Helper.Padding(4, 22);
                         btn.width = btn.height = 32;
+                        tabs_.height = Math.Max(tabs_.height, btn.height);
                     }
 
-                    var page = tabs_.tabContainer.components[v.i] as UIPanel;
+                    var page = container.components[v.i] as UIPanel;
+                    //Log.Debug($"{page.name}");
+
+                    {
+                        //var bg = page.AddUIComponent<UITiledSprite>();
+                        //bg.spriteName = "MenuPanel2";
+                        //bg.size = page.size;
+                        //bg.SendToBack();
+                        //bg.tileScale = new Vector2(
+                        //    bg.width / bg.spriteInfo.width,
+                        //    bg.height / bg.spriteInfo.height
+                        //);
+                    }
+                    //page.clipChildren = true;
+                    tabPages_.Add(v.tab.name, page);
+
                     //page.relativePosition = Vector2.zero;
                     page.isVisible = false;
                     page.autoSize = false;
                     page.width = tabs_.width;
                     page.height = win_.Content.height - tabs_.height;
 
-                    Log.Debug($"{page.position}, {page.size}");
+                    //Log.Debug($"{page.position}, {page.size}");
 
                     Window.Content.eventSizeChanged += (c, size) => {
                         page.width = size.x;
@@ -124,22 +140,35 @@ namespace Shicho.Tool
                     //bg.height = 400;
                     //bg.relativePosition = Vector2.zero;
 
-                    var desc = page.AddUIComponent<UILabel>();
-                    desc.text = $"'{v.tab.name}' here!!!";
+                    //var desc = page.AddUIComponent<UILabel>();
+                    //desc.text = $"'{v.tab.name}' here!!!";
                     //desc.zOrder = 1;
                 }
 
-                Log.Debug($"tab.size: {tabs_.size}");
+                //Log.Debug($"tab.size: {tabs_.size}");
 
-                Log.Debug($"si: {Config.SelectedTabIndex}");
+                //Log.Debug($"si: {Config.SelectedTabIndex}");
                 tabs_.startSelectedIndex = Config.SelectedTabIndex;
+
                 //tabs_.tabIndex = Config.SelectedTabIndex;
                 // tabs_.selectedIndex = Config.SelectedTabIndex;
                 tabs_.eventSelectedIndexChanged += (c, i) => {
-                    Log.Debug($"tab: {i}");
+                    //Log.Debug($"tab: {i}");
                     Config.SelectedTabIndex = i;
                 };
             }
+
+            //win_.eventSizeChanged += (c, size) => {
+            //    Log.Debug($"sizeChanged: {size}");
+            //};
+
+            //win_.Content.autoSize = true;
+            //win_.Content.autoFitChildrenVertically = true;
+            //win_.Content.FitChildrenVertically();
+
+            //win_.autoSize = true;
+            //win_.autoFitChildrenVertically = true;
+            //win_.FitChildrenVertically();
         }
 
         public virtual void OnDestroy()
@@ -174,5 +203,8 @@ namespace Shicho.Tool
 
         public GUI.TabTemplate[] Tabs { get; protected set; }
         private UITabstrip tabs_;
+
+        private Dictionary<string, UIPanel> tabPages_ = new Dictionary<string, UIPanel>();
+        public UIPanel TabPage(string name) => tabPages_[name];
     }
 }

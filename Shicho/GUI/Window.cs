@@ -11,9 +11,8 @@ namespace Shicho.GUI
 
     struct TabTemplate
     {
-        public IconSet icons;
         public string name;
-        public Panel content;
+        public IconSet icons;
     }
 
     public class Window
@@ -42,10 +41,9 @@ namespace Shicho.GUI
             base.Start();
 
             isInteractive = true;
-            color = new UnityEngine.Color32(20, 20, 40, 255);
             //minimumSize = new Vector2(220, 120);
             //maximumSize = new Vector2(Screen.width, Screen.height) / 4;
-            backgroundSprite = "MenuPanel";
+            backgroundSprite = "MenuPanel2";
 
             titleBar_.width = width;
             titleBar_.ControlType |= WindowControlType.Closable;
@@ -73,6 +71,7 @@ namespace Shicho.GUI
 
         protected override void OnSizeChanged()
         {
+            base.OnSizeChanged();
             titleBar_.width = width;
             //titleBar_.Control.width = width;
 

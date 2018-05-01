@@ -68,6 +68,7 @@ namespace Shicho.GUI
             title_ = AddUIComponent<UILabel>();
             title_.text = "(Unnamed panel)";
             title_.padding = Helper.Padding(10, 8, 0, 8);
+            zOrder = 0;
 
             title_.eventTextChanged += (c, text) => {
                 height = c.size.y; // include padding
@@ -88,8 +89,11 @@ namespace Shicho.GUI
         {
             base.Start();
 
+            color = new Color32(20, 20, 40, 255);
+            backgroundSprite = "MenuPanel";
+
             width = parent.width;
-            height = title_.size.y; // include padding
+            height = title_.height; // include padding
 
             if (icon_) {
                 icon_.relativePosition = new Vector2(4, 3);

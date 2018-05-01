@@ -17,42 +17,34 @@ namespace Shicho.Tool
 
     class SupportTool : ToolBase
     {
-        class GraphicsPanel : GUI.Panel
-        {
-            public override void Start()
-            {
-                base.Start();
-                //backgroundSprite = "Airport";
-                //autoSize = true;
-                //width = 220;
-                //height = 240;
-
-                var mes = AddUIComponent<UILabel>();
-                mes.text = "fffff!!!!!";
-            }
-        }
-
         public override void Awake()
         {
             base.Awake();
 
             Tabs = new[] {
                 new TabTemplate() {
-                    name = "Graphics",
+                    name = "Road",
                     icons = new IconSet() {
-                        Normal = "OptionsDisabled",
-                        Hovered = "OptionsHovered",
-                        Pressed = "OptionsPressed",
-                        Focused = "Options",
+                        Normal = "ToolbarIconRoadsDisabled",
+                        Hovered = "ToolbarIconRoadsHovered",
+                        Pressed = "ToolbarIconRoadsPressed",
+                        Focused = "ToolbarIconRoads",
                     },
-                    content = new GraphicsPanel(),
                 },
+                //new TabTemplate() {
+                //    name = "Misc",
+                //    icons = new IconSet() {
+                //        Normal = "OptionsDisabled",
+                //        Hovered = "OptionsHovered",
+                //        Pressed = "OptionsPressed",
+                //        Focused = "Options",
+                //    },
+                //},
                 new TabTemplate() {
                     name = "About",
                     icons = new IconSet() {
                         Normal = "InfoPanelIconInfo",
                     },
-                    content = new GUI.Panel(),
                 },
             };
         }
@@ -61,6 +53,12 @@ namespace Shicho.Tool
         {
             base.Start();
             Title = $"Shicho (v{Mod.ModInfo.Version})";
+
+            {
+                var page = TabPage("Road");
+                var desc = page.AddUIComponent<UILabel>();
+                desc.text = "Road config here!!";
+            }
 
             Window.Icon = Resources.shicho_logo_outline_white_24;
             Window.Show();
