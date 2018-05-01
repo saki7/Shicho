@@ -1,4 +1,5 @@
-﻿extern alias Cities;
+﻿#if false
+extern alias Cities;
 
 using Shicho.Core;
 
@@ -40,3 +41,4 @@ namespace Shicho.Mod.Extension
         }
     }
 }
+#endif

@@ -49,8 +49,10 @@ namespace Shicho.GUI
             titleBar_.ControlType |= WindowControlType.Closable;
             titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
 
+            content_.padding.top = 6;
             content_.width = width;
             content_.height = height - titleBar_.height;
+
             //content_.minimumSize = new Vector2(400, 200);
 
             //Log.Debug($"Window: {position}, {size}");
