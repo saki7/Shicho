@@ -97,7 +97,7 @@ namespace Shicho
         private void DestroyOldInstance()
         {
             if (gobj_ == null) return;
-            // Log.Warn($"destroying: (\"{obj.name}\", 0x{obj.GetInstanceID():X})");
+            //Log.Warn($"destroying: (\"{gobj_.name}\", 0x{gobj_.GetInstanceID():X})");
             GameObject.DestroyImmediate(gobj_);
         }
 

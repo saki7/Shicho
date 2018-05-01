@@ -114,8 +114,21 @@ namespace Shicho
 
         public void Dispose()
         {
-            // Log.Debug("Dispose()");
-            UnloadAllData();
+            //Log.Debug("Dispose()");
+
+            try {
+                foreach (var c in GetComponentsInChildren<MonoBehaviour>()) {
+                    //Log.Debug($"\"{c.name}\": [{c.gameObject}] {c.tag}, {c}");
+                    Destroy(c.gameObject);
+                }
+
+            } catch (Exception e) {
+                Log.Error($"could not dispose object: {e}");
+
+            } finally {
+                // at last, delete all data
+                UnloadAllData();
+            }
         }
 
         public void OnSettingsUI(UIHelperBase helper)

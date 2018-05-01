@@ -30,12 +30,6 @@ namespace Shicho.GUI
             base.Start();
         }
 
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (Close != null) Destroy(Close);
-        }
-
         public WindowControlType Type {
             get => type_;
 
@@ -112,15 +106,6 @@ namespace Shicho.GUI
             }
 
             drag_.target = parent;
-        }
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (icon_ != null) Destroy(icon_);
-            Destroy(title_);
-            Destroy(control_);
-            Destroy(drag_);
         }
 
         private void OnSizeChanged(UIComponent c, Vector2 size)

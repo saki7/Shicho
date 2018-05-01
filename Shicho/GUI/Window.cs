@@ -80,17 +80,6 @@ namespace Shicho.GUI
             content_.height = height - titleBar_.height;
         }
 
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            //Destroy(titleBar_);
-            //Destroy(content_);
-
-            foreach (var child in GetComponentsInChildren<UIComponent>()) {
-                Destroy(child);
-            }
-        }
-
         public TabbedWindowConfig Config { get; set; } = new TabbedWindowConfig();
 
         private TitleBar titleBar_;

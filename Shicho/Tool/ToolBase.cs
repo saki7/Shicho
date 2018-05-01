@@ -42,7 +42,7 @@ namespace Shicho.Tool
             win_.position = Config.Rect.position;
             win_.size = Config.Rect.size;
 
-            //Log.Debug($"{win_.position}, {win_.size}");
+            Log.Debug($"Window: {win_.position}, {win_.size}");
 
             win_.eventClosed += (c, param) => {
                 SetVisible(false);
@@ -65,11 +65,22 @@ namespace Shicho.Tool
                     .GetComponentInChildren<UIButton>()
                 ;
 
+
                 tabs_ = win_.Content.AddUIComponent<UITabstrip>();
+                tabs_.autoSize = true;
+                tabs_.width = win_.Content.width;
+                Log.Debug($"Tab: {tabs_.position}, {tabs_.size}");
+
                 //tabs_.relativePosition = Vector2.zero;
-                tabs_.tabPages = win_.AddUIComponent<UITabContainer>();
-                //tabs_.tabContainer.position = Vector2.zero;
-                tabs_.tabContainer.position = Vector2.zero;
+                tabs_.tabPages = win_.Content.AddUIComponent<UITabContainer>();
+                tabs_.tabContainer.relativePosition = Vector2.zero;
+                tabs_.tabContainer.width = tabs_.width;
+                tabs_.tabContainer.backgroundSprite = "buttonclose";
+
+                {
+                    var c = tabs_.tabContainer;
+                    Log.Debug($"TabContainer: !{c.relativePosition}! {c.position}, {c.size}");
+                }
 
                 // tabc_.autoSize = true;
                 // tabc_.autoSize = true;
@@ -91,13 +102,17 @@ namespace Shicho.Tool
                     }
 
                     var page = tabs_.tabContainer.components[v.i] as UIPanel;
+                    //page.relativePosition = Vector2.zero;
                     page.isVisible = false;
+                    page.autoSize = false;
+                    page.width = tabs_.width;
+                    page.height = win_.Content.height - tabs_.height;
 
-                    //Log.Debug($"{tabs_.tabContainer.absolutePosition}, {tabs_.tabContainer.position}, {tabs_.tabContainer.relativePosition}, {tabs_.tabContainer.padding}");
-                    //Log.Debug($"{page.absolutePosition}, {page.position}, {page.relativePosition}, {page.padding}, {page.autoLayoutPadding}");
+                    Log.Debug($"{page.position}, {page.size}");
 
                     Window.Content.eventSizeChanged += (c, size) => {
                         page.width = size.x;
+                        page.height = c.height - tabs_.height;
                     };
 
                     // page.relativePosition = Vector2.zero;
@@ -114,6 +129,8 @@ namespace Shicho.Tool
                     //desc.zOrder = 1;
                 }
 
+                Log.Debug($"tab.size: {tabs_.size}");
+
                 Log.Debug($"si: {Config.SelectedTabIndex}");
                 tabs_.startSelectedIndex = Config.SelectedTabIndex;
                 //tabs_.tabIndex = Config.SelectedTabIndex;
@@ -127,8 +144,8 @@ namespace Shicho.Tool
 
         public virtual void OnDestroy()
         {
-            //Log.Debug($"OnDestroy()");
-            //Destroy(tabs_);
+            // very important
+            // contains root gameObjct for all Colossal UI components
             Destroy(win_);
         }
 
