@@ -68,34 +68,9 @@ namespace Shicho
 
             #region Harmony initialization
             harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
-            var hostiles = new List<KeyValuePair<MethodBase, MethodInfo>>();
 
-            // TODO: unpatch based on config options
-
-            foreach (var target in harmony_.GetPatchedMethods()) {
-                //Log.Debug($"found patched method: {target} [{target.Attributes}]");
-                var info = harmony_.GetPatchInfo(target);
-
-                foreach (var p in info.Prefixes) {
-                    // TODO: if we have prefix patches, remove others
-                    Log.Warn($"found patch: {p} (ignoring)");
-                }
-
-                foreach (var p in info.Postfixes) {
-                    Log.Warn($"found patch: {p.GetMethod(target)} [by {p.owner}]");
-
-                    if (p.owner != Mod.ModInfo.COMIdentifier) {
-                        Log.Warn($"Unknown Harmony patcher `{p.owner}` found! This will lead to undesired behavior; please report.");
-                    }
-
-                    hostiles.Add(new KeyValuePair<MethodBase, MethodInfo>(target, p.GetMethod(target)));
-                }
-            }
-
-            foreach (var kv in hostiles) {
-                Log.Warn($"unpatching: {kv.Value} for {kv.Key}");
-                harmony_.RemovePatch(kv.Key, kv.Value);
-            }
+            // unpatch other mods
+            Tool.Watcher.UnpatchHostiles();
 
             Log.Debug($"applying Harmony...");
             harmony_.PatchAll(Assembly.GetExecutingAssembly());
@@ -113,6 +88,8 @@ namespace Shicho
             // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
 
             app_ = gobj_.AddComponent<App>();
+            watcher_ = gobj_.AddComponent<Tool.Watcher>();
+
             gobj_.SetActive(true);
             Log.Info("loaded.");
         }
@@ -134,6 +111,9 @@ namespace Shicho
         {
             if (gobj_ == null) return;
             //Log.Warn($"destroying: (\"{gobj_.name}\", 0x{gobj_.GetInstanceID():X})");
+
+            GameObject.DestroyImmediate(watcher_);
+            GameObject.DestroyImmediate(app_);
             GameObject.DestroyImmediate(gobj_);
         }
 
@@ -187,6 +167,11 @@ namespace Shicho
         private App app_ = null;
         public static App AppInstance { get => Instance.app_; }
 
+        private Tool.Watcher watcher_;
+
         private HarmonyInstance harmony_;
+        internal HarmonyInstance Harmony {
+            get => harmony_;
+        }
     }
 }

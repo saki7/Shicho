@@ -144,7 +144,10 @@ namespace Shicho
 
         public static App Instance { get => Bootstrapper.AppInstance; }
 
-        public Light MainLight = GameObject.FindWithTag("MainLight").GetComponent<Light>();
+        // TODO: cache this (GetComponent should be slow)
+        public Light MainLight {
+            get => GameObject.FindWithTag("MainLight").GetComponent<Light>();
+        }
 
         public const string ConfigPath = Mod.ModInfo.ID + ".xml";
         public static Mod.Config Config { get => Bootstrapper.Instance.Config; }
