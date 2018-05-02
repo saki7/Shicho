@@ -106,6 +106,7 @@
     <Compile Include="GUI\UIRect.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Patcher\CameraControllerPatch.cs" />
     <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Resources.cs" />

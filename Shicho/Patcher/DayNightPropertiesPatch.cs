@@ -11,11 +11,10 @@ namespace Shicho.Patcher.DayNightPropertiesPatch
     {
         static void Postfix()
         {
-            var mgr = Cities::RenderManager.instance;
-            if (mgr == null) return;
+            var light = App.Instance.MainLight;
 
             lock (App.Config.GraphicsLock) {
-                mgr.MainLight.shadowBias = App.Config.Graphics.shadowBias;
+                light.shadowBias = App.Config.Graphics.shadowBias;
             }
         }
     }

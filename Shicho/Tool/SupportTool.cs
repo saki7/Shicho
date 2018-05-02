@@ -66,6 +66,115 @@ namespace Shicho.Tool
             };
         }
 
+        struct SliderOption
+        {
+            public float minValue, maxValue, stepSize;
+            public PropertyChangedEventHandler<float> eventValueChanged;
+        }
+
+        private void AddConfig(out UISlider slider, out UITextField field, ref UIPanel page, string label, string tooltip, SliderOption sliderOption)
+        {
+            {
+                var labelObj = page.AddUIComponent<UILabel>();
+                labelObj.text = label;
+                labelObj.tooltip = tooltip;
+                labelObj.font = Instantiate(labelObj.font);
+                labelObj.font.size = 12;
+                labelObj.padding.bottom = 2;
+            }
+
+            {
+                var panel = page.AddUIComponent<UIPanel>();
+                panel.width = panel.parent.width - page.padding.horizontal;
+                panel.autoSize = false;
+                panel.autoLayout = false;
+                panel.autoLayoutDirection = LayoutDirection.Horizontal;
+                //panel.backgroundSprite = "Menubar";
+                panel.pivot = UIPivotPoint.MiddleLeft;
+
+                var sliderObj = panel.AddUIComponent<UISlider>();
+                slider = sliderObj;
+
+                sliderObj.autoSize = true;
+                sliderObj.relativePosition = Vector2.zero;
+                sliderObj.pivot = UIPivotPoint.MiddleLeft;
+                sliderObj.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
+
+                sliderObj.minValue = sliderOption.minValue;
+                sliderObj.maxValue = sliderOption.maxValue;
+                sliderObj.stepSize = sliderOption.stepSize;
+                sliderObj.scrollWheelAmount = sliderObj.stepSize * 2 + float.Epsilon;
+                sliderObj.backgroundSprite = "BudgetSlider";
+
+                {
+                    var thumb = slider.AddUIComponent<UISprite>();
+                    slider.thumbObject = thumb;
+                    thumb.spriteName = "SliderBudget";
+                    sliderObj.height = thumb.height + 8;
+                    sliderObj.thumbOffset = new Vector2(1, 1);
+                }
+                sliderObj.width = page.width - 88;
+
+                var fieldObj = panel.AddUIComponent<UITextField>();
+                field = fieldObj;
+
+                fieldObj.autoSize = false;
+                fieldObj.width = page.width - sliderObj.width - page.padding.horizontal - 20;
+                fieldObj.relativePosition = new Vector2(fieldObj.parent.width - fieldObj.width, 0);
+                fieldObj.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
+                fieldObj.height -= 4;
+
+                fieldObj.readOnly = false;
+                fieldObj.builtinKeyNavigation = true;
+
+                fieldObj.numericalOnly = true;
+                fieldObj.allowFloats = true;
+
+                fieldObj.canFocus = true;
+                fieldObj.selectOnFocus = true;
+                fieldObj.submitOnFocusLost = true;
+
+                fieldObj.cursorBlinkTime = 0.5f;
+                fieldObj.cursorWidth = 1;
+                fieldObj.selectionSprite = "EmptySprite";
+                fieldObj.normalBgSprite = "TextFieldPanel";
+                //field.hoveredBgSprite = "TextFieldPanelHovered";
+                fieldObj.focusedBgSprite = "TextFieldPanel";
+
+                fieldObj.clipChildren = true;
+
+                fieldObj.colorizeSprites = true;
+                fieldObj.color = new Color32(30, 30, 30, 255);
+                fieldObj.textColor = new Color32(250, 250, 250, 255);
+                fieldObj.font = Instantiate(fieldObj.font);
+                fieldObj.font.size = 11;
+                fieldObj.horizontalAlignment = UIHorizontalAlignment.Left;
+                fieldObj.padding = Helper.Padding(0, 6);
+
+                //field.padding.top -= 5;
+                panel.height = fieldObj.height;
+
+                //Log.Debug($"Page: {page.position}, {page.size}");
+                //Log.Debug($"Panel: {panel.position}, {panel.size}");
+                //Log.Debug($"Slider: {slider.position}, {slider.size}");
+                //Log.Debug($"Field: {field.position}, {field.size}");
+
+                sliderObj.eventValueChanged += (c, value) => {
+                    fieldObj.text = value.ToString();
+                    sliderOption.eventValueChanged?.Invoke(c, value);
+                };
+
+                fieldObj.eventTextSubmitted += (c, text) => {
+                    try {
+                        sliderObj.value = float.Parse(text);
+
+                    } catch (Exception e) {
+                        Log.Error($"failed to set new value \"{text}\": {e}");
+                    }
+                };
+            }
+        }
+
         public override void Start()
         {
             base.Start();
@@ -79,101 +188,60 @@ namespace Shicho.Tool
                 page.autoLayoutDirection = LayoutDirection.Vertical;
                 page.autoFitChildrenHorizontally = true;
 
-                var label = page.AddUIComponent<UILabel>();
-                label.text = "Self-shadow mitigation";
-                label.tooltip = "a.k.a. \"Shadow acne\" fix";
-                label.font = Instantiate(label.font);
-                label.font.size = 12;
-                label.padding.bottom = 2;
-
-                {
-                    var panel = page.AddUIComponent<UIPanel>();
-                    panel.width = panel.parent.width - page.padding.horizontal;
-                    panel.autoSize = false;
-                    panel.autoLayout = false;
-                    panel.autoLayoutDirection = LayoutDirection.Horizontal;
-                    //panel.backgroundSprite = "Menubar";
-                    panel.pivot = UIPivotPoint.MiddleLeft;
-
-                    var slider = panel.AddUIComponent<UISlider>();
-                    shadowBiasSlider_ = slider;
-                    slider.autoSize = true;
-                    slider.relativePosition = Vector2.zero;
-                    slider.pivot = UIPivotPoint.MiddleLeft;
-                    slider.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
-
-                    slider.minValue = 0.01f;
-                    slider.maxValue = 1.00f;
-                    slider.stepSize = 0.01f;
-                    slider.scrollWheelAmount = slider.stepSize * 2 + float.Epsilon;
-                    slider.backgroundSprite = "BudgetSlider";
-
-                    {
-                        var thumb = shadowBiasSlider_.AddUIComponent<UISprite>();
-                        shadowBiasSlider_.thumbObject = thumb;
-                        thumb.spriteName = "SliderBudget";
-                        slider.height = thumb.height + 8;
-                        slider.thumbOffset = new Vector2(1, 1);
+                AddConfig(
+                    out var shadowStrengthSlider_,
+                    out var shadowStrength_,
+                    ref page,
+                    "Shadow strength",
+                    "default: 0.8",
+                    sliderOption: new SliderOption() {
+                        minValue = 0.1f,
+                        maxValue = 1.0f,
+                        stepSize = 0.05f,
+                        eventValueChanged = (c, value) => {
+                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.shadowStrength, value);
+                        },
                     }
-                    slider.width = page.width - 88;
+                );
 
-                    var field = panel.AddUIComponent<UITextField>();
-                    shadowBias_ = field;
-                    field.autoSize = false;
-                    field.width = page.width - slider.width - page.padding.horizontal - 20;
-                    field.relativePosition = new Vector2(field.parent.width - field.width, 0);
-                    field.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
-                    field.height -= 4;
+                AddConfig(
+                    out var lightIntensitySlider_,
+                    out var lightIntensity_,
+                    ref page,
+                    "Light intensity",
+                    "default: ≈4.2",
+                    sliderOption: new SliderOption() {
+                        minValue = 0.05f,
+                        maxValue = 8.0f,
+                        stepSize = 0.05f,
+                        eventValueChanged = (c, value) => {
+                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.lightIntensity, value);
+                        },
+                    }
+                );
 
-                    field.readOnly = false;
-                    field.builtinKeyNavigation = true;
-
-                    field.numericalOnly = true;
-                    field.allowFloats = true;
-
-                    field.canFocus = true;
-                    field.selectOnFocus = true;
-                    field.submitOnFocusLost = true;
-
-                    field.cursorBlinkTime = 0.5f;
-                    field.cursorWidth = 1;
-                    field.selectionSprite = "EmptySprite";
-                    field.normalBgSprite = "TextFieldPanel";
-                    //field.hoveredBgSprite = "TextFieldPanelHovered";
-                    field.focusedBgSprite = "TextFieldPanel";
-
-                    field.clipChildren = true;
-
-                    field.colorizeSprites = true;
-                    field.color = new Color32(30, 30, 30, 255);
-                    field.textColor = new Color32(250, 250, 250, 255);
-                    field.font = Instantiate(field.font);
-                    field.font.size = 11;
-                    field.horizontalAlignment = UIHorizontalAlignment.Left;
-                    field.padding = Helper.Padding(0, 6);
-
-                    //field.padding.top -= 5;
-                    panel.height = field.height;
-
-                    //Log.Debug($"Page: {page.position}, {page.size}");
-                    //Log.Debug($"Panel: {panel.position}, {panel.size}");
-                    //Log.Debug($"Slider: {slider.position}, {slider.size}");
-                    //Log.Debug($"Field: {field.position}, {field.size}");
-                }
-
-                shadowBiasSlider_.eventValueChanged += (c, value) => {
-                    shadowBias_.text = value.ToString();
-                    ApplyShadowBias(value);
-                };
+                AddConfig(
+                    out shadowBiasSlider_,
+                    out shadowBias_,
+                    ref page,
+                    "Self-shadow mitigation",
+                    "a.k.a. \"Shadow acne\" fix (default: minimal, recommended: 0.1-0.3)",
+                    sliderOption: new SliderOption() {
+                        minValue = 0.01f,
+                        maxValue = 1.00f,
+                        stepSize = 0.01f,
+                        eventValueChanged = (c, value) => {
+                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.shadowBias, value);
+                        },
+                    }
+                );
 
                 lock (App.Config.GraphicsLock) {
+                    shadowStrengthSlider_.value = App.Config.Graphics.shadowStrength;
+                    lightIntensitySlider_.value = App.Config.Graphics.lightIntensity;
                     shadowBiasSlider_.value = App.Config.Graphics.shadowBias;
                 }
 
-                shadowBias_.eventTextSubmitted += (c, text) => {
-                    SyncShadowBiasInput(text);
-                    ApplyShadowBias(shadowBiasSlider_.value);
-                };
                 //shadowBias_.eventKeyDown += (c, param) => {
                 //    if (param.keycode == KeyCode.Return) {
                 //        SyncShadowBiasInput(shadowBias_.text);
@@ -247,22 +315,11 @@ namespace Shicho.Tool
         private UISlider shadowBiasSlider_;
         private UITextField shadowBias_;
 
-        private void SyncShadowBiasInput(string text)
+        private void LockedApply(ref object lockObj, ref float target, float value)
         {
-            try {
-                shadowBiasSlider_.value = float.Parse(text);
-
-            } catch (Exception e) {
-                Log.Error($"failed to set new value \"{text}\": {e}");
-            }
-        }
-
-        private void ApplyShadowBias(float value)
-        {
-            Log.Debug($"ApplyShadowBias: {value}");
-
-            lock (App.Config.GraphicsLock) {
-                App.Config.Graphics.shadowBias = value;
+            //Log.Debug($"LockedApply: {value}");
+            lock (lockObj) {
+                target = value;
             }
         }
 

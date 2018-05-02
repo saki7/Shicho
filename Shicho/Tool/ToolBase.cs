@@ -70,7 +70,7 @@ namespace Shicho.Tool
                 tabs_.color = new Color32(20, 20, 40, 255);
                 tabs_.zOrder = 2;
                 //tabs_.clipChildren = true;
-                Log.Debug($"Tab: {tabs_.position}, {tabs_.size}");
+                //Log.Debug($"Tab: {tabs_.position}, {tabs_.size}");
 
                 //tabs_.relativePosition = Vector2.zero;
                 tabs_.tabPages = win_.Content.AddUIComponent<UITabContainer>();

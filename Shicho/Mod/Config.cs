@@ -100,13 +100,15 @@ namespace Shicho.Mod
         [Serializable]
         public class GraphicsData
         {
-            public float shadowBias;
+            public float shadowBias, shadowStrength, lightIntensity;
         }
 
         [SerializeField]
         [XmlElement(ElementName = "Graphics")]
         public GraphicsData Graphics = new GraphicsData() {
             shadowBias = 0.20f,
+            shadowStrength = 0.8f,
+            lightIntensity = 4.2f,
         };
     }
 }
