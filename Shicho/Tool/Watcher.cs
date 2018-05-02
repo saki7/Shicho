@@ -22,7 +22,7 @@ namespace Shicho.Tool
         {
             elapsed_ += Time.deltaTime;
 
-            if (elapsed_ - lastFiredAt_ > 1.5f) {
+            if (elapsed_ - lastFiredAt_ > 3f) {
                 UnpatchHostiles();
             }
         }

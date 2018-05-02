@@ -56,15 +56,15 @@ namespace Shicho
         {
             Log.Debug("loading prefabs...");
             pmgr_ = new PrefabManager();
-            pmgr_.FetchAll();
+            //pmgr_.FetchAll();
 
             Log.Debug("loading props...");
             pcon_ = new PropManager();
-            pcon_.Fetch();
+            //pcon_.Fetch();
 
             Log.Debug("loading traffic...");
             tcon_ = new TrafficController();
-            tcon_.Fetch();
+            //tcon_.Fetch();
 
             Log.Debug("initializing flow generator...");
             fgen_ = new FlowGenerator(ref pmgr_, ref tcon_);

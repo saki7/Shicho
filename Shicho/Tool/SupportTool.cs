@@ -340,8 +340,10 @@ namespace Shicho.Tool
         {
             var isToolActive = Cities::InfoManager.instance.CurrentMode != Cities::InfoManager.InfoMode.None;
 
-            lightIntensitySlider_.isEnabled = !isToolActive;
-            Window.Content.isEnabled = !isToolActive;
+            if (Window.Content.isEnabled == isToolActive) {
+                lightIntensitySlider_.isEnabled = !isToolActive;
+                Window.Content.isEnabled = !isToolActive;
+            }
         }
 
         private UISlider shadowBiasSlider_, lightIntensitySlider_;
