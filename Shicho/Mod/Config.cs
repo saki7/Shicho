@@ -93,6 +93,10 @@ namespace Shicho.Mod
             },
         };
 
+        [NonSerialized]
+        [XmlIgnore]
+        public object GraphicsLock = new object();
+
         [Serializable]
         public class GraphicsData
         {

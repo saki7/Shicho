@@ -103,7 +103,7 @@
     <Compile Include="GUI\UIRect.cs" />
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Input.cs" />
-    <Compile Include="Patcher\RenderGroupPatch.cs" />
+    <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Tool\SupportTool.cs" />

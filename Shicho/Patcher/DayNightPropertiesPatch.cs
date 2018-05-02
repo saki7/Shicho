@@ -1,7 +1,5 @@
 ﻿extern alias Cities;
 
-using Shicho.Core;
-
 using Harmony;
 
 namespace Shicho.Patcher.DayNightPropertiesPatch
@@ -15,7 +13,10 @@ namespace Shicho.Patcher.DayNightPropertiesPatch
         {
             var mgr = Cities::RenderManager.instance;
             if (mgr == null) return;
-            // mgr.MainLight.shadowBias = 0.6f;
+
+            lock (App.Config.GraphicsLock) {
+                mgr.MainLight.shadowBias = App.Config.Graphics.shadowBias;
+            }
         }
     }
 }

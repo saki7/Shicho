@@ -78,8 +78,9 @@ namespace Shicho.Tool
                 page.autoFitChildrenHorizontally = true;
 
                 var label = page.AddUIComponent<UILabel>();
-                label.text = "Surface shadow smoothness";
+                label.text = "Self-shadow mitigation";
                 label.tooltip = "a.k.a. \"Shadow acne\" fix";
+                label.font = Instantiate(label.font);
                 label.font.size = 12;
                 label.padding.bottom = 2;
 
@@ -160,13 +161,16 @@ namespace Shicho.Tool
 
                 shadowBiasSlider_.eventValueChanged += (c, value) => {
                     shadowBias_.text = value.ToString();
-                    SetShadowBias(value);
+                    ApplyShadowBias(value);
                 };
-                shadowBiasSlider_.value = App.Config.Graphics.shadowBias;
+
+                lock (App.Config.GraphicsLock) {
+                    shadowBiasSlider_.value = App.Config.Graphics.shadowBias;
+                }
 
                 shadowBias_.eventTextSubmitted += (c, text) => {
                     SyncShadowBiasInput(text);
-                    SetShadowBias(shadowBiasSlider_.value);
+                    ApplyShadowBias(shadowBiasSlider_.value);
                 };
                 //shadowBias_.eventKeyDown += (c, param) => {
                 //    if (param.keycode == KeyCode.Return) {
@@ -214,10 +218,13 @@ namespace Shicho.Tool
             }
         }
 
-        private void SetShadowBias(float value)
+        private void ApplyShadowBias(float value)
         {
-            Log.Debug($"SetShadowBias: {value}");
-            App.Config.Graphics.shadowBias = value;
+            Log.Debug($"ApplyShadowBias: {value}");
+
+            lock (App.Config.GraphicsLock) {
+                App.Config.Graphics.shadowBias = value;
+            }
         }
 
         class ShadowBiasMethod

@@ -20,8 +20,6 @@ namespace Shicho
         {
             try {
                 // Log.Info("initializing...");
-                cfg_ = Mod.Config.LoadFile(ConfigPath);
-
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
 
                 // stir up
@@ -139,16 +137,15 @@ namespace Shicho
         public void SaveConfig()
         {
             if (supportTool_) {
-                cfg_.GUI.SupportTool = supportTool_.Config.Clone() as GUI.TabbedWindowConfig;
+                Config.GUI.SupportTool = supportTool_.Config.Clone() as GUI.TabbedWindowConfig;
             }
-            cfg_.Save(ConfigPath);
+            Config.Save(ConfigPath);
         }
 
         public static App Instance { get => Bootstrapper.AppInstance; }
 
         public const string ConfigPath = Mod.ModInfo.ID + ".xml";
-        private Mod.Config cfg_ = null;
-        public static Mod.Config Config { get => Instance.cfg_; }
+        public static Mod.Config Config { get => Bootstrapper.Instance.Config; }
 
         private Tool.SupportTool supportTool_ = null;
         public Tool.ConfigTool cfgTool_ = null;

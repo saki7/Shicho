@@ -12,11 +12,12 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Threading;
-
+using System.Collections.Generic;
 
 namespace Shicho
 {
     using LogCh = CODebugBase<Cities::LogChannel>;
+    using PatchPair = KeyValuePair<MethodBase, MethodInfo>;
 
     internal class Bootstrapper
     {
@@ -28,7 +29,10 @@ namespace Shicho
 
         public void Bootstrap()
         {
-            if (!bootstrapped_) {
+            if (IsInitialized) return;
+
+            #region Log setup
+            {
                 LogCh.verbose = true;
                 LogCh.EnableChannels(Cities::LogChannel.All);
 
@@ -57,24 +61,47 @@ namespace Shicho
                 #if !DEBUG
                     Log.Debug = (_) => {};
                 #endif
+            }
+            #endregion Log setup
 
-                harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
+            cfg_ = Mod.Config.LoadFile(App.ConfigPath);
 
-                foreach (var target in harmony_.GetPatchedMethods()) {
-                    Log.Debug($"found patched method: {target} [{target.Attributes}]");
+            #region Harmony initialization
+            harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
+            var hostiles = new List<KeyValuePair<MethodBase, MethodInfo>>();
 
-                    foreach (var method in target.GetHarmonyMethods()) {
-                        Log.Debug($"harmony method: {method}");
-                    }
+            // TODO: unpatch based on config options
+
+            foreach (var target in harmony_.GetPatchedMethods()) {
+                //Log.Debug($"found patched method: {target} [{target.Attributes}]");
+                var info = harmony_.GetPatchInfo(target);
+
+                foreach (var p in info.Prefixes) {
+                    // TODO: if we have prefix patches, remove others
+                    Log.Warn($"found patch: {p} (ignoring)");
                 }
-                harmony_.PatchAll(Assembly.GetExecutingAssembly());
 
-                bootstrapped_ = true;
+                foreach (var p in info.Postfixes) {
+                    Log.Warn($"found patch: {p.GetMethod(target)} [by {p.owner}]");
+
+                    if (p.owner != Mod.ModInfo.COMIdentifier) {
+                        Log.Warn($"Unknown Harmony patcher `{p.owner}` found! This will lead to undesired behavior; please report.");
+                    }
+
+                    hostiles.Add(new KeyValuePair<MethodBase, MethodInfo>(target, p.GetMethod(target)));
+                }
             }
 
-            if (IsInitialized()) return;
+            foreach (var kv in hostiles) {
+                Log.Warn($"unpatching: {kv.Value} for {kv.Key}");
+                harmony_.RemovePatch(kv.Key, kv.Value);
+            }
 
-            Log.Info("bootstrapping...");
+            Log.Debug($"applying Harmony...");
+            harmony_.PatchAll(Assembly.GetExecutingAssembly());
+            #endregion Harmony initialization
+
+            Log.Info("loading mod instance...");
             try {
                 DestroyOldInstance();
 
@@ -110,11 +137,40 @@ namespace Shicho
             GameObject.DestroyImmediate(gobj_);
         }
 
+        private List<PatchPair> QueryAllPatchesByOwner(
+            MethodBase target, IEnumerable<Harmony.Patch> patches, string owner
+        ) {
+            return patches
+                .Where(p => p.owner == owner)
+                .Select(p => new PatchPair(target, p.GetMethod(target)))
+                .ToList()
+            ;
+        }
+
+        private void RemoveAllPatchesByOwner(string owner)
+        {
+            var patches = new List<PatchPair>();
+
+            foreach (var target in harmony_.GetPatchedMethods()) {
+                var info = harmony_.GetPatchInfo(target);
+
+                patches.AddRange(QueryAllPatchesByOwner(target, info.Prefixes, owner));
+                patches.AddRange(QueryAllPatchesByOwner(target, info.Transpilers, owner));
+                patches.AddRange(QueryAllPatchesByOwner(target, info.Postfixes, owner));
+            }
+
+            foreach (var pp in patches) {
+                Log.Debug($"removing patch: {pp.Value} for {pp.Key}");
+                harmony_.RemovePatch(pp.Key, pp.Value);
+            }
+        }
+
         internal void Cleanup()
         {
-            if (!IsInitialized()) return;
+            if (!IsInitialized) return;
 
             try {
+                RemoveAllPatchesByOwner(Mod.ModInfo.COMIdentifier);
                 DestroyOldInstance();
 
             } finally {
@@ -122,10 +178,11 @@ namespace Shicho
             }
         }
 
-        private bool IsInitialized() => gobj_ != null;
-
-        private bool bootstrapped_ = false;
         private GameObject gobj_ = null;
+        private bool IsInitialized { get => gobj_ != null; }
+
+        private Mod.Config cfg_;
+        internal Mod.Config Config { get => cfg_; }
 
         private App app_ = null;
         public static App AppInstance { get => Instance.app_; }
