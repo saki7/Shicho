@@ -67,5 +67,21 @@ namespace Shicho.GUI
             c.relativePosition = relPos ?? Vector2.zero;
             return c;
         }
+
+        public static void DeepDestroy(UIComponent component)
+        {
+            if (component == null) return;
+            var children = component.GetComponentsInChildren<UIComponent>();
+
+            if (children != null && children.Length > 0) {
+                for (int i = 0; i < children.Length; ++i) {
+                    if (children[i].parent == component) {
+                        DeepDestroy(children[i]);
+                    }
+                }
+            }
+            UnityEngine.Object.Destroy(component);
+            component = null;
+        }
     }
 }

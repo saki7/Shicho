@@ -27,9 +27,17 @@ namespace Shicho
         }
         private Bootstrapper() {}
 
+        public void BootstrapConfig()
+        {
+            if (cfg_ == null) {
+                cfg_ = Mod.Config.LoadFile(App.ConfigPath);
+            }
+        }
+
         public void Bootstrap()
         {
             if (IsInitialized) return;
+            BootstrapConfig();
 
             #region Log setup
             {
@@ -63,8 +71,6 @@ namespace Shicho
                 #endif
             }
             #endregion Log setup
-
-            cfg_ = Mod.Config.LoadFile(App.ConfigPath);
 
             #region Harmony initialization
             harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);

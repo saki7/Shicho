@@ -120,6 +120,7 @@ namespace Shicho
                     Destroy(c.gameObject);
                 }
 
+
             } catch (Exception e) {
                 Log.Error($"could not dispose object: {e}");
 

@@ -56,7 +56,7 @@ namespace Shicho.Mod
 
         public void OnSettingsUI(UIHelperBase helper)
         {
-            Bootstrapper.Instance.Bootstrap();
+            Bootstrapper.Instance.BootstrapConfig();
             App.Instance.OnSettingsUI(helper);
         }
     }

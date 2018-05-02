@@ -192,6 +192,7 @@ namespace Shicho.Tool
         {
             // very important
             // contains root gameObjct for all Colossal UI components
+            Helper.DeepDestroy(win_);
             Destroy(win_);
         }
 
