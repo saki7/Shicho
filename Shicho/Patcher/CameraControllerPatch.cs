@@ -11,6 +11,9 @@ namespace Shicho.Patcher.CameraControllerPatch
     {
         static void Postfix()
         {
+            if (Cities::InfoManager.instance.CurrentMode != Cities::InfoManager.InfoMode.None) {
+                return;
+            }
             var light = App.Instance.MainLight;
 
             lock (App.Config.GraphicsLock) {

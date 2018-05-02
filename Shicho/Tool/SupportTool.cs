@@ -205,8 +205,8 @@ namespace Shicho.Tool
                 );
 
                 AddConfig(
-                    out var lightIntensitySlider_,
-                    out var lightIntensity_,
+                    out lightIntensitySlider_,
+                    out lightIntensity_,
                     ref page,
                     "Light intensity",
                     "default: ≈4.2",
@@ -288,6 +288,30 @@ namespace Shicho.Tool
             //Log.Info($"ffff: {Config.SelectedTabIndex}");
             SelectTab(Config.SelectedTabIndex);
             Window.Icon = Resources.shicho_logo_outline_white_24;
+
+            {
+                var disabledCover = Window.AddUIComponent<UISprite>();
+                disabledCover.isVisible = true;
+                //disabledCover.spriteName = "ToolbarIconGroup1Disabled";
+                //disabledCover.FitTo(disabledCover.parent);
+                disabledCover.relativePosition = new Vector2(0, 0);
+                disabledCover.size = disabledCover.parent.size;
+                disabledCover.disabledColor = new Color32(0, 255, 128, 255);
+                disabledCover.zOrder = 10;
+                disabledCover.forceZOrder = 10;
+                //disabledCover.BringToFront();
+
+                //Log.Debug($"{disabledCover.position}, {disabledCover.size}");
+
+                //Window.eventSizeChanged += (c, size) => {
+                //    disabledCover.size = size;
+                //};
+
+                //Window.Content.eventIsEnabledChanged += (c, flag) => {
+                //    disabledCover.isVisible = !flag;
+                //};
+            }
+
             Window.Show();
         }
 
@@ -312,8 +336,16 @@ namespace Shicho.Tool
             }
         }
 
-        private UISlider shadowBiasSlider_;
-        private UITextField shadowBias_;
+        public void LateUpdate()
+        {
+            var isToolActive = Cities::InfoManager.instance.CurrentMode != Cities::InfoManager.InfoMode.None;
+
+            lightIntensitySlider_.isEnabled = !isToolActive;
+            Window.Content.isEnabled = !isToolActive;
+        }
+
+        private UISlider shadowBiasSlider_, lightIntensitySlider_;
+        private UITextField shadowBias_, lightIntensity_;
 
         private void LockedApply(ref object lockObj, ref float target, float value)
         {
@@ -324,7 +356,7 @@ namespace Shicho.Tool
         }
 
         public static readonly Rect DefaultRect = new Rect(
-            0f, 0f, 280f, 800f
+            0f, 0f, 280f, 256f
         );
 
         public override TabbedWindowConfig ConfigProxy {

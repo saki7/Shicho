@@ -98,17 +98,23 @@ namespace Shicho.Mod
         public object GraphicsLock = new object();
 
         [Serializable]
-        public class GraphicsData
+        public class GraphicsData : ICloneable
         {
             public float shadowBias, shadowStrength, lightIntensity;
+
+            public object Clone() => MemberwiseClone();
         }
 
-        [SerializeField]
-        [XmlElement(ElementName = "Graphics")]
-        public GraphicsData Graphics = new GraphicsData() {
+        [NonSerialized]
+        [XmlIgnore]
+        public static readonly GraphicsData GraphicsDefault = new GraphicsData() {
             shadowBias = 0.20f,
             shadowStrength = 0.8f,
             lightIntensity = 4.2f,
         };
+
+        [SerializeField]
+        [XmlElement(ElementName = "Graphics")]
+        public GraphicsData Graphics = GraphicsDefault.Clone() as GraphicsData;
     }
 }

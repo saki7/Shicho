@@ -29,7 +29,7 @@ namespace Shicho.Tool
 
         public static void UnpatchHostiles()
         {
-            Log.Debug($"UnpatchHostiles()");
+            //Log.Debug($"UnpatchHostiles()");
 
             // TODO: unpatch based on config options
 
