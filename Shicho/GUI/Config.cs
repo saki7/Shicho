@@ -38,9 +38,9 @@ namespace Shicho.GUI
         [SerializeField]
         public UIRect Rect;
 
-        [SerializeField]
-        [XmlArray]
-        IConfig[] Children;
+        //[SerializeField]
+        //[XmlArray]
+        //IConfig[] Children;
 
         public object Clone() => MemberwiseClone();
     }
