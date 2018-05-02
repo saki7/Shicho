@@ -127,6 +127,7 @@
     <Compile Include="Mod\ModInfo.cs" />
     <Compile Include="Patcher\VehicleManagerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ILMerge.props">

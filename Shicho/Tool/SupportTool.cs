@@ -1,4 +1,5 @@
-﻿using Shicho.Core;
+﻿extern alias Cities;
+using Shicho.Core;
 
 using ColossalFramework.UI;
 
@@ -11,6 +12,7 @@ using System.Linq;
 
 namespace Shicho.Tool
 {
+    using ColossalFramework.IO;
     using Shicho.GUI;
     using System.IO;
     using UInput = UnityEngine.Input;
@@ -185,7 +187,34 @@ namespace Shicho.Tool
                 page.padding = Helper.Padding(8, 12);
 
                 var version = page.AddUIComponent<UILabel>();
-                version.text = $"Version: {Mod.ModInfo.Version}";
+                var font = Instantiate(version.font);
+                font.size = 12;
+
+                version.font = font;
+                version.text = $"Mod version: {Mod.ModInfo.Version}";
+
+                void AddBar()
+                {
+                    var bar = page.AddUIComponent<UISprite>();
+                    bar.width = bar.parent.width;
+                    bar.height = 3;
+                    bar.spriteName = "RocketProgressBarFill";
+                    bar.color = new Color32(80, 80, 80, 255);
+                }
+
+                void AddInfo(string name, string value)
+                {
+                    var label = page.AddUIComponent<UILabel>();
+                    label.font = version.font;
+                    label.text = $"{name}: {value}";
+                }
+
+                AddBar();
+                AddInfo("Game version", Cities::BuildConfig.applicationVersion);
+
+                AddBar();
+                AddInfo("RAM", Util.ToByteUnits((Int64)SystemInfo.systemMemorySize * 1024 * 1024));
+                AddInfo("VRAM", Util.ToByteUnits((Int64)SystemInfo.graphicsMemorySize * 1024 * 1024));
             }
 
             //Log.Info($"ffff: {Config.SelectedTabIndex}");
