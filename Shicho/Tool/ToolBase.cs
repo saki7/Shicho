@@ -123,6 +123,18 @@ namespace Shicho.Tool
                     page.width = tabs_.width;
                     page.height = win_.Content.height - tabs_.height;
 
+                    // auto defocus
+                    {
+                        page.canFocus = true;
+                        page.eventClicked += (c, p) => {
+                            //Log.Debug($"source: {c}, {p.source}");
+
+                            if (p.source == c) {
+                                page.Focus();
+                            }
+                        };
+                    }
+
                     //Log.Debug($"{page.position}, {page.size}");
 
                     Window.Content.eventSizeChanged += (c, size) => {

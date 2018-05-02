@@ -29,41 +29,50 @@ namespace Shicho
         public void Bootstrap()
         {
             if (!bootstrapped_) {
-                harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
-                harmony_.PatchAll(Assembly.GetExecutingAssembly());
-
                 LogCh.verbose = true;
                 LogCh.EnableChannels(Cities::LogChannel.All);
+
+                // Switch logger based on (mostly) `ModTools` presence
+                var useUnityLogger = true; // or IsModToolsActive()
+
+                if (useUnityLogger) {
+                    Log.Debug = Debug.LogWarning;
+                    Log.Info  = Debug.Log;
+                    Log.Warn  = Debug.LogWarning;
+                    Log.Error = Debug.LogError;
+
+                    // Log.Info("using Unity logger");
+
+                } else {
+                    void emit(PluginManager.MessageType type, object msg) =>
+                        Cities::DebugOutputPanel.AddMessage(type, Log.Format(msg))
+                    ;
+                    Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
+                    Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);
+                    Log.Error = (msg) => emit(PluginManager.MessageType.Error, msg);
+
+                    // Log.Warn("using Colossal logger");
+                }
+
+                #if !DEBUG
+                    Log.Debug = (_) => {};
+                #endif
+
+                harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
+
+                foreach (var target in harmony_.GetPatchedMethods()) {
+                    Log.Debug($"found patched method: {target} [{target.Attributes}]");
+
+                    foreach (var method in target.GetHarmonyMethods()) {
+                        Log.Debug($"harmony method: {method}");
+                    }
+                }
+                harmony_.PatchAll(Assembly.GetExecutingAssembly());
+
                 bootstrapped_ = true;
             }
 
             if (IsInitialized()) return;
-
-            // Switch logger based on (mostly) `ModTools` presence
-            var useUnityLogger = true; // or IsModToolsActive()
-
-            if (useUnityLogger) {
-                Log.Debug = Debug.LogWarning;
-                Log.Info  = Debug.Log;
-                Log.Warn  = Debug.LogWarning;
-                Log.Error = Debug.LogError;
-
-                // Log.Info("using Unity logger");
-
-            } else {
-                void emit(PluginManager.MessageType type, object msg) =>
-                    Cities::DebugOutputPanel.AddMessage(type, Log.Format(msg))
-                ;
-                Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
-                Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);
-                Log.Error = (msg) => emit(PluginManager.MessageType.Error, msg);
-
-                // Log.Warn("using Colossal logger");
-            }
-
-            #if !DEBUG
-                Log.Debug = (_) => {};
-            #endif
 
             Log.Info("bootstrapping...");
             try {

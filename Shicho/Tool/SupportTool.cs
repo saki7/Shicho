@@ -73,83 +73,107 @@ namespace Shicho.Tool
                 var page = TabPage("Rendering");
                 page.padding = Helper.Padding(8, 12);
                 page.clipChildren = false;
+                page.autoLayout = true;
+                page.autoLayoutDirection = LayoutDirection.Vertical;
+                page.autoFitChildrenHorizontally = true;
 
                 var label = page.AddUIComponent<UILabel>();
                 label.text = "Surface shadow smoothness";
                 label.tooltip = "a.k.a. \"Shadow acne\" fix";
                 label.font.size = 12;
-                label.padding.bottom = 8;
+                label.padding.bottom = 2;
 
                 {
                     var panel = page.AddUIComponent<UIPanel>();
-                    panel.autoLayout = true;
+                    panel.width = panel.parent.width - page.padding.horizontal;
+                    panel.autoSize = false;
+                    panel.autoLayout = false;
                     panel.autoLayoutDirection = LayoutDirection.Horizontal;
+                    //panel.backgroundSprite = "Menubar";
+                    panel.pivot = UIPivotPoint.MiddleLeft;
 
                     var slider = panel.AddUIComponent<UISlider>();
                     shadowBiasSlider_ = slider;
+                    slider.autoSize = true;
+                    slider.relativePosition = Vector2.zero;
+                    slider.pivot = UIPivotPoint.MiddleLeft;
+                    slider.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
+
                     slider.minValue = 0.01f;
                     slider.maxValue = 1.00f;
-                    slider.stepSize = 0.10f;
+                    slider.stepSize = 0.01f;
+                    slider.scrollWheelAmount = slider.stepSize * 2 + float.Epsilon;
                     slider.backgroundSprite = "BudgetSlider";
-                    //slider.fillPadding.right = 14;
-
-                    Log.Debug($"{slider.fillIndicatorObject == null}");
 
                     {
                         var thumb = shadowBiasSlider_.AddUIComponent<UISprite>();
                         shadowBiasSlider_.thumbObject = thumb;
                         thumb.spriteName = "SliderBudget";
-                        slider.height = thumb.height - 4;
+                        slider.height = thumb.height + 8;
                         slider.thumbOffset = new Vector2(1, 1);
                     }
                     slider.width = page.width - 88;
-                    slider.height = 8;
 
-                    var box = panel.AddUIComponent<UITextField>();
-                    shadowBias_ = box;
-                    box.submitOnFocusLost = true;
-                    box.isInteractive = true;
-                    box.readOnly = false;
-                    box.enabled = true;
-                    box.builtinKeyNavigation = true;
-                    box.canFocus = true;
-                    box.selectOnFocus = true;
-                    box.numericalOnly = true;
-                    box.allowFloats = true;
+                    var field = panel.AddUIComponent<UITextField>();
+                    shadowBias_ = field;
+                    field.autoSize = false;
+                    field.width = page.width - slider.width - page.padding.horizontal - 20;
+                    field.relativePosition = new Vector2(field.parent.width - field.width, 0);
+                    field.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
+                    field.height -= 4;
 
-                    box.cursorBlinkTime = 0.5f;
-                    box.cursorWidth = 1;
-                    box.selectionSprite = "EmptySprite";
-                    box.normalBgSprite = "TextFieldPanel";
-                    box.hoveredBgSprite = "TextFieldPanelHovered";
-                    box.focusedBgSprite = "TextFieldPanel";
+                    field.readOnly = false;
+                    field.builtinKeyNavigation = true;
 
-                    Log.Debug($"{box.maxLength}");
+                    field.numericalOnly = true;
+                    field.allowFloats = true;
 
-                    box.padding.top -= 5;
+                    field.canFocus = true;
+                    field.selectOnFocus = true;
+                    field.submitOnFocusLost = true;
 
-                    //box.relativePosition = new Vector2(
-                    //    slider.position.x + slider.width,
-                    //    slider.position.y
-                    //);
+                    field.cursorBlinkTime = 0.5f;
+                    field.cursorWidth = 1;
+                    field.selectionSprite = "EmptySprite";
+                    field.normalBgSprite = "TextFieldPanel";
+                    //field.hoveredBgSprite = "TextFieldPanelHovered";
+                    field.focusedBgSprite = "TextFieldPanel";
+
+                    field.clipChildren = true;
+
+                    field.colorizeSprites = true;
+                    field.color = new Color32(30, 30, 30, 255);
+                    field.textColor = new Color32(250, 250, 250, 255);
+                    field.font = Instantiate(field.font);
+                    field.font.size = 11;
+                    field.horizontalAlignment = UIHorizontalAlignment.Left;
+                    field.padding = Helper.Padding(0, 6);
+
+                    //field.padding.top -= 5;
+                    panel.height = field.height;
+
+                    //Log.Debug($"Page: {page.position}, {page.size}");
+                    //Log.Debug($"Panel: {panel.position}, {panel.size}");
+                    //Log.Debug($"Slider: {slider.position}, {slider.size}");
+                    //Log.Debug($"Field: {field.position}, {field.size}");
                 }
 
                 shadowBiasSlider_.eventValueChanged += (c, value) => {
                     shadowBias_.text = value.ToString();
                     SetShadowBias(value);
                 };
-                shadowBiasSlider_.value = 0.2f; // default
+                shadowBiasSlider_.value = App.Config.Graphics.shadowBias;
 
-                shadowBias_.eventLostFocus += (c, param) => {
-                    SyncShadowBiasInput(shadowBias_.text);
+                shadowBias_.eventTextSubmitted += (c, text) => {
+                    SyncShadowBiasInput(text);
                     SetShadowBias(shadowBiasSlider_.value);
                 };
-                shadowBias_.eventKeyDown += (c, param) => {
-                    if (param.keycode == KeyCode.Return) {
-                        SyncShadowBiasInput(shadowBias_.text);
-                        SetShadowBias(shadowBiasSlider_.value);
-                    }
-                };
+                //shadowBias_.eventKeyDown += (c, param) => {
+                //    if (param.keycode == KeyCode.Return) {
+                //        SyncShadowBiasInput(shadowBias_.text);
+                //        SetShadowBias(shadowBiasSlider_.value);
+                //    }
+                //};
             }
 
             Window.Icon = Resources.shicho_logo_outline_white_24;
@@ -193,6 +217,7 @@ namespace Shicho.Tool
         private void SetShadowBias(float value)
         {
             Log.Debug($"SetShadowBias: {value}");
+            App.Config.Graphics.shadowBias = value;
         }
 
         class ShadowBiasMethod

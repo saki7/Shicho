@@ -3,6 +3,8 @@ using Harmony;
 
 namespace Shicho.Patcher.VehicleManagerPatch
 {
+    #if false
+
     //[HarmonyPatch(typeof(WindowStack))]
     //[HarmonyPatch("Add")]
     //[HarmonyPatch(new Type[] { typeof(Window) })]
@@ -43,4 +45,6 @@ namespace Shicho.Patcher.VehicleManagerPatch
         //    Log.Warn("patching!");
         //}
     }
+
+    #endif
 }

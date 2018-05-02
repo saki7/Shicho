@@ -93,10 +93,16 @@ namespace Shicho.Mod
             },
         };
 
-        public class GraphicData
+        [Serializable]
+        public class GraphicsData
         {
-            float shadowBias = 0.01f, shadowNormalBias = 0.3f;
+            public float shadowBias;
         }
-        public GraphicData Graphic { get; } = new GraphicData();
+
+        [SerializeField]
+        [XmlElement(ElementName = "Graphics")]
+        public GraphicsData Graphics = new GraphicsData() {
+            shadowBias = 0.20f,
+        };
     }
 }

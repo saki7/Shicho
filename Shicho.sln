@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shicho", "Shicho\Shicho.csproj", "{3075872D-7032-407A-9E18-E5636A90DA25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Harmony", "Harmony\Harmony\Harmony.csproj", "{1859537E-CA54-4DB4-BD4D-9CE571DFF02D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3075872D-7032-407A-9E18-E5636A90DA25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3075872D-7032-407A-9E18-E5636A90DA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3075872D-7032-407A-9E18-E5636A90DA25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1859537E-CA54-4DB4-BD4D-9CE571DFF02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1859537E-CA54-4DB4-BD4D-9CE571DFF02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1859537E-CA54-4DB4-BD4D-9CE571DFF02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1859537E-CA54-4DB4-BD4D-9CE571DFF02D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
