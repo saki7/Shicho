@@ -160,11 +160,11 @@ namespace Shicho.Tool
 
                 //Log.Debug($"si: {Config.SelectedTabIndex}");
                 tabs_.startSelectedIndex = Config.SelectedTabIndex;
-
+                tabs_.selectedIndex = Config.SelectedTabIndex;
                 //tabs_.tabIndex = Config.SelectedTabIndex;
-                // tabs_.selectedIndex = Config.SelectedTabIndex;
+
                 tabs_.eventSelectedIndexChanged += (c, i) => {
-                    //Log.Debug($"tab: {i}");
+                    //Log.Info($"tab: {c.tabIndex}, {i}");
                     Config.SelectedTabIndex = i;
                 };
             }
@@ -180,6 +180,12 @@ namespace Shicho.Tool
             //win_.autoSize = true;
             //win_.autoFitChildrenVertically = true;
             //win_.FitChildrenVertically();
+        }
+
+        protected void SelectTab(int i)
+        {
+            tabs_.selectedIndex = i;
+            tabs_.tabPages.components[i].Show();
         }
 
         public virtual void OnDestroy()

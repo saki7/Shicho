@@ -67,7 +67,7 @@ namespace Shicho.Tool
         public override void Start()
         {
             base.Start();
-            Title = $"Shicho (v{Mod.ModInfo.Version})";
+            Title = Mod.ModInfo.ID;
 
             {
                 var page = TabPage("Rendering");
@@ -180,6 +180,16 @@ namespace Shicho.Tool
                 //};
             }
 
+            {
+                var page = TabPage("About");
+                page.padding = Helper.Padding(8, 12);
+
+                var version = page.AddUIComponent<UILabel>();
+                version.text = $"Version: {Mod.ModInfo.Version}";
+            }
+
+            //Log.Info($"ffff: {Config.SelectedTabIndex}");
+            SelectTab(Config.SelectedTabIndex);
             Window.Icon = Resources.shicho_logo_outline_white_24;
             Window.Show();
         }
@@ -225,21 +235,6 @@ namespace Shicho.Tool
             lock (App.Config.GraphicsLock) {
                 App.Config.Graphics.shadowBias = value;
             }
-        }
-
-        class ShadowBiasMethod
-        {
-        }
-
-        static class Defaults
-        {
-            public const int FontSize = 16;
-
-            public const int TitleFontSize = 16;
-            public const int TabFontSize = 16;
-
-            public const float TabHeight = TabFontSize * 2.2f;
-            public const float Top = TitleFontSize * 1.1f + TabHeight;
         }
 
         public static readonly Rect DefaultRect = new Rect(

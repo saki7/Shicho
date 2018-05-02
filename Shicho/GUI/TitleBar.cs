@@ -66,6 +66,7 @@ namespace Shicho.GUI
             autoLayout = false;
 
             title_ = AddUIComponent<UILabel>();
+            title_.autoSize = true;
             title_.text = "(Unnamed panel)";
             title_.padding = Helper.Padding(10, 8, 0, 8);
             title_.font = Instantiate(title_.font);
@@ -102,7 +103,8 @@ namespace Shicho.GUI
                 icon_.width = icon_.height = 24;
                 icon_.SendToBack();
 
-                title_.padding.left += (int)icon_.width + 1;
+                //title_.padding.left += (int)icon_.width + 1;
+                title_.relativePosition = new Vector2(icon_.width + 1, 0);
             }
 
             if (control_.Close) {
