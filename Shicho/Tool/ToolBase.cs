@@ -194,6 +194,8 @@ namespace Shicho.Tool
             // contains root gameObjct for all Colossal UI components
             Helper.DeepDestroy(win_);
             Destroy(win_);
+            win_ = null;
+            UnityEngine.Resources.UnloadUnusedAssets();
         }
 
         public void SetVisible(bool flag)

@@ -119,6 +119,7 @@ namespace Shicho
                     //Log.Debug($"\"{c.name}\": [{c.gameObject}] {c.tag}, {c}");
                     Destroy(c.gameObject);
                 }
+                UnityEngine.Resources.UnloadUnusedAssets();
 
 
             } catch (Exception e) {
