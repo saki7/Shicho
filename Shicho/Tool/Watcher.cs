@@ -78,11 +78,9 @@ namespace Shicho.Tool
             lock (App.Config.AILock) {
                 if (App.Config.AI.doAutoHeal) {
                     var mgr = Cities.CitizenManager.instance;
-                    uint sickCount = 0;
 
                     DataQuery.Citizens((ref Cities::Citizen c, uint id) => {
                         if (!c.Sick) return true;
-                        ++sickCount;
 
                         var sampleChance = r_.NextDouble();
                         if (sampleChance > ChanceToHeal) return true;

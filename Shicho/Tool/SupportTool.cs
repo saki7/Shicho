@@ -16,9 +16,175 @@ namespace Shicho.Tool
     using Shicho.GUI;
     using System.IO;
     using UInput = UnityEngine.Input;
+    using Citizen = Cities::Citizen;
 
     class SupportTool : ToolBase
     {
+        private class CitizenInfo : UIPanel
+        {
+            public override void Awake()
+            {
+                base.Awake();
+                mgr_ = Cities::CitizenManager.instance;
+                ResetCount();
+
+                updateInterval_ = 0.5f;
+                elapsed_ = lastUpdatedAt_ = 0;
+
+                datas_ = new Dictionary<string, DataPrinter>() {
+                    {"Population", () => new [] {$"{counts_.total - counts_.dead}"}},
+                    {"(Dead)",       () => PartialToTotal(counts_.dead)},
+                    {"(Sick)",       () => PartialToTotal(counts_.sick)},
+                    {"(Criminal)",   () => PartialToTotal(counts_.criminal)},
+                    {"(Arrested)",   () => PartialToTotal(counts_.arrested)},
+                };
+            }
+
+            private string[] PartialToTotal(uint count)
+            {
+                return new [] {count.ToString(), $"({(float)count / counts_.total:P1})"};
+            }
+
+            const int RowHeight = 18;
+
+            public override void Start()
+            {
+                base.Start();
+                width = parent.width;
+                autoSize = true;
+
+                autoLayout = true;
+                autoLayoutDirection = LayoutDirection.Horizontal;
+                autoLayoutPadding = Helper.ZeroOffset;
+
+                keyCol_ = AddUIComponent<UIPanel>();
+                keyCol_.autoSize = false;
+                keyCol_.height = RowHeight;
+                UIFont keyFont = null, valueFont = null;
+
+                keyCol_.width = width * 0.32f;
+                keyCol_.autoLayout = true;
+                keyCol_.autoLayoutDirection = LayoutDirection.Vertical;
+
+                valueCol_ = AddUIComponent<UIPanel>();
+                valueCol_.width = width - keyCol_.width;
+                valueCol_.autoLayout = true;
+                valueCol_.autoLayoutDirection = LayoutDirection.Vertical;
+
+                height = keyCol_.height * datas_.Keys.Count;
+
+                foreach (var key in datas_.Keys) {
+                    var keyLabel = keyCol_.AddUIComponent<UILabel>();
+                    if (!keyFont) {
+                        keyFont = Instantiate(keyLabel.font);
+                        keyFont.size = RowHeight - 7;
+                    }
+                    keyLabel.textColor = new Color32(180, 180, 180, 255);
+                    keyLabel.font = keyFont;
+                    keyLabel.text = key;
+
+                    var valuePanel = valueCol_.AddUIComponent<UIPanel>();
+                    valuePanel.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+                    valuePanel.height = keyLabel.height;
+                    valuePanel.autoLayout = true;
+                    valuePanel.autoLayoutDirection = LayoutDirection.Horizontal;
+
+                    for (int i = 0; i < 2; ++i) {
+                        var valueLabel = valuePanel.AddUIComponent<UILabel>();
+                        valueLabel.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+
+                        valueLabel.textAlignment = UIHorizontalAlignment.Right;
+                        valueLabel.width = valueLabel.parent.width / 2;
+                        valueLabel.height = keyLabel.height;
+
+                        if (i >= 1) {
+                            valueLabel.padding.left = 4;
+                            valueLabel.textColor = new Color32(230, 230, 230, 255);
+                        }
+
+                        // Log.Debug($"label '{key}': {valueLabel.position}, {valueLabel.size}");
+
+                        if (!valueFont) {
+                            valueFont = Instantiate(valueLabel.font);
+                            valueFont.size = 12;
+                        }
+                        valueLabel.font = valueFont;
+                    }
+                }
+            }
+
+            public override void Update()
+            {
+                base.Update();
+
+                elapsed_ += Time.deltaTime;
+                if (elapsed_ - lastUpdatedAt_ > updateInterval_) {
+                    ResetCount();
+
+                    DataQuery.Citizens((ref Citizen c, uint id) => {
+                        ++counts_.total;
+
+                        if (c.Dead) {
+                            ++counts_.dead;
+                            return true;
+                        } // no else-if here
+
+                        if (c.Arrested) {
+                            ++counts_.arrested;
+                        }
+                        if (c.Criminal) {
+                            ++counts_.criminal;
+                        }
+
+                        var healthLevel = Citizen.GetHealthLevel(c.m_health);
+                        if (healthLevel == Citizen.Health.Sick) {
+                            ++counts_.sick;
+                        }
+                        return true;
+                    });
+
+                    float maxWidth = 0;
+                    foreach (var e in valueCol_.components.Select((c, id) => new {c, id})) {
+                        var panel = e.c as UIPanel;
+                        var values = datas_[(keyCol_.components[e.id] as UILabel).text].Invoke();
+
+                        for (int i = 0; i < values.Length; ++i) {
+                            var label = panel.components[i] as UILabel;
+                            label.text = values[i];
+                            maxWidth = Math.Max(maxWidth, label.width);
+                        }
+                    }
+
+                    foreach (var e in valueCol_.components) {
+                        var label = e.components[0] as UILabel;
+                        label.autoSize = false;
+                        label.width = maxWidth;
+                    }
+
+                    lastUpdatedAt_ = elapsed_;
+                }
+            }
+
+            private void ResetCount()
+            {
+                counts_ = new CountData();
+            }
+
+            private delegate string[] DataPrinter();
+            Dictionary<string, DataPrinter> datas_;
+            private UIPanel keyCol_, valueCol_;
+
+            float updateInterval_, elapsed_, lastUpdatedAt_;
+
+            public static Cities::CitizenManager mgr_;
+
+            struct CountData
+            {
+                public uint total, sick, dead, arrested, criminal;
+            };
+            private CountData counts_;
+        }
+
         public override void Awake()
         {
             base.Awake();
@@ -261,6 +427,10 @@ namespace Shicho.Tool
                 page.padding = Helper.Padding(8, 12);
                 page.autoLayout = true;
                 page.autoLayoutDirection = LayoutDirection.Vertical;
+                page.autoLayoutPadding = Helper.Padding(0, 0, 8, 0);
+
+                // info panel
+                page.AddUIComponent<CitizenInfo>();
 
                 {
                     var box = page.AddUIComponent<UICheckBox>();
@@ -294,7 +464,11 @@ namespace Shicho.Tool
                     box.eventCheckChanged += (c, isChecked) => {
                         SetAutoHeal(isChecked);
                     };
-                    box.isChecked = true;
+
+                    lock (App.Config.AILock) {
+                        box.isChecked = App.Config.AI.doAutoHeal;
+                    }
+                    // Debug.Log($"{box.position}, {box.size}");
                 }
             }
 
