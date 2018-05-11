@@ -46,6 +46,7 @@ namespace Shicho.Mod
 
         public void OnLevelLoaded(LoadMode mode)
         {
+            Bootstrapper.Instance.Bootstrap();
             App.Instance.InitGameMode();
         }
 
