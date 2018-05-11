@@ -12,6 +12,7 @@ namespace Shicho.Patcher.DayNightPropertiesPatch
         static void Postfix()
         {
             var light = App.Instance.MainLight;
+            if (!light) return;
 
             lock (App.Config.GraphicsLock) {
                 light.shadowBias = App.Config.Graphics.shadowBias;

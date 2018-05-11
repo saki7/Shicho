@@ -153,7 +153,7 @@ namespace Shicho
 
         // TODO: cache this (GetComponent should be slow)
         public Light MainLight {
-            get => GameObject.FindWithTag("MainLight").GetComponent<Light>();
+            get => GameObject.FindWithTag("MainLight")?.GetComponent<Light>();
         }
 
         public const string ConfigPath = Mod.ModInfo.ID + ".xml";

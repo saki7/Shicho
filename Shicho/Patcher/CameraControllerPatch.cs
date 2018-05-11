@@ -11,10 +11,11 @@ namespace Shicho.Patcher.CameraControllerPatch
     {
         static void Postfix()
         {
-            if (Cities::InfoManager.instance.CurrentMode != Cities::InfoManager.InfoMode.None) {
+            if (!Cities::InfoManager.instance || Cities::InfoManager.instance.CurrentMode != Cities::InfoManager.InfoMode.None) {
                 return;
             }
             var light = App.Instance.MainLight;
+            if (!light) return;
 
             lock (App.Config.GraphicsLock) {
                 light.shadows = LightShadows.Soft;
