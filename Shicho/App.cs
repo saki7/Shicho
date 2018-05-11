@@ -20,7 +20,7 @@ namespace Shicho
         {
             try {
                 // Log.Info("initializing...");
-                R = new ColossalFramework.Math.Randomizer(GetDeviceSeed());
+                R = new ColossalFramework.Math.Randomizer(GetDeviceSeedUL());
 
                 // stir up
                 for (var i = 0; i < 123; ++i) {
@@ -100,7 +100,12 @@ namespace Shicho
             }
         }
 
-        private static ulong GetDeviceSeed()
+        internal static int GetDeviceSeedI()
+        {
+            return 1145144545;
+        }
+
+        internal static ulong GetDeviceSeedUL()
         {
             return 1145144545191912345;
         }

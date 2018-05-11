@@ -1,17 +1,20 @@
 ﻿extern alias Cities;
 using ColossalFramework;
+
 using System;
 
 namespace Shicho.Game
 {
-    class CitizenID
+    public class CitizenID
     {
         public uint value;
         public override string ToString() => value.ToString();
     }
 
-    class Citizen : IEquatable<Citizen>
+    public class Citizen : IEquatable<Citizen>
     {
+        public const byte MaxHealth = 50; // CitizenManager::CreateCitizen
+
         public Citizen(uint age, uint family, Cities::Citizen.Gender? gender = null)
         {
             var success = false;

@@ -1,14 +1,21 @@
-﻿using Shicho.Core;
+﻿extern alias Cities;
+
+using Shicho.Core;
 
 using UnityEngine;
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
+
 
 namespace Shicho.Tool
 {
     using PatchPair = KeyValuePair<MethodBase, MethodInfo>;
+    using UpdateSpec = SortedList<float, UpdateHandler>;
+
+    delegate void UpdateHandler();
 
     public class Watcher : MonoBehaviour
     {
@@ -16,14 +23,89 @@ namespace Shicho.Tool
         {
             elapsed_ = 0;
             lastFiredAt_ = 0;
+            lastFiredAtMax_ = 0;
+
+            r_ = new System.Random(App.GetDeviceSeedI());
+
+            updaters_ = new UpdateSpec() {
+                {3, UnpatchHostiles},
+                {5, UpdateCitizen},
+            };
+            maxInterval_ = updaters_.Keys.Max();
         }
 
         public void Update()
         {
             elapsed_ += Time.deltaTime;
+            var firedDelta = elapsed_ - lastFiredAt_;
 
-            if (elapsed_ - lastFiredAt_ > 3f) {
-                UnpatchHostiles();
+            try {
+                foreach (var us in updaters_) {
+                    // skip all remaining timers w/ greater interval
+                    if (us.Key > firedDelta) break;
+
+                    // skip current timer if it's been fired in current window
+                    if (us.Key <= lastFiredAtMax_) continue;
+
+                    // engage the handler IFF certain period has given
+                    if (firedDelta > us.Key) {
+                        // cache current interval as *max*
+                        lastFiredAtMax_ = us.Key;
+                        // Log.Debug($"invoking timer for interval [{lastFiredAtMax_} sec]");
+
+                        try {
+                            us.Value.Invoke();
+                        } catch (Exception e) {
+                            Log.Error($"timer failed: {e}");
+                        }
+                    }
+                }
+
+            } finally {
+                if (firedDelta > maxInterval_) {
+                    lastFiredAtMax_ = 0;
+                    lastFiredAt_ = elapsed_;
+                }
+            }
+        }
+
+        private void UpdateCitizen()
+        {
+            const byte MinHealAmount = (byte)(Game.Citizen.MaxHealth * 0.05f);
+            const byte MaxHealAmount = (byte)(Game.Citizen.MaxHealth * 0.2f);
+            const double ChanceToHeal = 0.2, ChanceToMiracleHeal = 0.01;
+
+            lock (App.Config.AILock) {
+                if (App.Config.AI.doAutoHeal) {
+                    var mgr = Cities.CitizenManager.instance;
+                    uint sickCount = 0;
+
+                    DataQuery.Citizens((ref Cities::Citizen c, uint id) => {
+                        if (!c.Sick) return true;
+                        ++sickCount;
+
+                        var sampleChance = r_.NextDouble();
+                        if (sampleChance > ChanceToHeal) return true;
+
+                        // Log.Debug($"healing sick: {c}");
+                        var info = c.GetCitizenInfo(id);
+                        var healAmount = Math.Max(MinHealAmount, (byte)(r_.NextDouble() * MaxHealAmount));
+
+                        if (sampleChance < ChanceToMiracleHeal) { // 2%
+                            // Log.Debug($"healing sick Citizen({info.name}): 100% HP (miracle)");
+                            c.m_health = Game.Citizen.MaxHealth;
+
+                        } else {
+                            // Log.Debug($"healing sick Citizen({info.name}): {healAmount} HP ({(float)healAmount / Game.Citizen.MaxHealth:P})");
+                            c.m_health += healAmount;
+                        }
+
+                        c.Sick = Cities::Citizen.GetHealthLevel(c.m_health) <= Cities::Citizen.Health.Sick;
+                        return true;
+                    });
+
+                    // Log.Debug($"sick: {sickCount}");
+                }
             }
         }
 
@@ -62,7 +144,12 @@ namespace Shicho.Tool
 
         }
 
+        private System.Random r_;
+
         private float elapsed_;
-        private float lastFiredAt_;
+        private float lastFiredAt_, lastFiredAtMax_;
+
+        private UpdateSpec updaters_;
+        private float maxInterval_;
     }
 }

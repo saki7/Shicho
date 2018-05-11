@@ -95,15 +95,26 @@ namespace Shicho.Mod
 
         [NonSerialized]
         [XmlIgnore]
-        public object GraphicsLock = new object();
+        public object GraphicsLock = new object(), AILock = new object();
 
         [Serializable]
-        public class GraphicsData : ICloneable
+        public abstract class ClonableData : ICloneable
         {
-            public float shadowBias, shadowStrength, lightIntensity;
-
             public object Clone() => MemberwiseClone();
         }
+
+        [Serializable]
+        public class GraphicsData : ClonableData
+        {
+            public float shadowBias, shadowStrength, lightIntensity;
+        }
+
+        [Serializable]
+        public class AIData : ClonableData
+        {
+            public bool doAutoHeal;
+        }
+
 
         [NonSerialized]
         [XmlIgnore]
@@ -113,8 +124,18 @@ namespace Shicho.Mod
             lightIntensity = 4.2f,
         };
 
+        [NonSerialized]
+        [XmlIgnore]
+        public static readonly AIData AIDefault = new AIData() {
+            doAutoHeal = true,
+        };
+
         [SerializeField]
         [XmlElement(ElementName = "Graphics")]
         public GraphicsData Graphics = GraphicsDefault.Clone() as GraphicsData;
+
+        [SerializeField]
+        [XmlElement(ElementName = "AI")]
+        public AIData AI = AIDefault.Clone() as AIData;
     }
 }

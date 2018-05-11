@@ -30,6 +30,12 @@ namespace Shicho.Tool
                         Normal  = "IconPolicyProHippie",
                     },
                 },
+                new TabTemplate() {
+                    name = "Citizen",
+                    icons = new IconSet() {
+                        Normal  = "InfoIconHappiness", // NotificationIconHappy
+                    },
+                },
                 //new TabTemplate() {
                 //    name = "District",
                 //    icons = new IconSet() {
@@ -251,6 +257,48 @@ namespace Shicho.Tool
             }
 
             {
+                var page = TabPage("Citizen");
+                page.padding = Helper.Padding(8, 12);
+                page.autoLayout = true;
+                page.autoLayoutDirection = LayoutDirection.Vertical;
+
+                {
+                    var box = page.AddUIComponent<UICheckBox>();
+                    box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+
+                    box.label = box.AddUIComponent<UILabel>();
+                    box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+
+                    box.label.text = "Auto-heal";
+                    box.label.tooltip = "Randomly heal citizens by certain interval. Reduces ambulance usage";
+
+                    box.label.font = Instantiate(box.label.font);
+                    box.label.font.size = 12;
+                    box.label.padding.left = box.label.font.size + 4;
+
+                    var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
+                    uncheckedSprite.spriteName = "AchievementCheckedFalse";
+                    uncheckedSprite.relativePosition = new Vector2(0, 2);
+                    uncheckedSprite.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
+                    uncheckedSprite.width = uncheckedSprite.height = box.label.font.size;
+
+                    var checkedSprite = uncheckedSprite.AddUIComponent<UISprite>() as UISprite;
+                    checkedSprite.spriteName = "AchievementCheckedTrue";
+                    checkedSprite.relativePosition = Vector2.zero;
+                    checkedSprite.anchor = uncheckedSprite.anchor;
+                    checkedSprite.size = uncheckedSprite.size;
+
+                    box.checkedBoxObject = checkedSprite;
+
+                    // at last
+                    box.eventCheckChanged += (c, isChecked) => {
+                        SetAutoHeal(isChecked);
+                    };
+                    box.isChecked = true;
+                }
+            }
+
+            {
                 var page = TabPage("About");
                 page.padding = Helper.Padding(8, 12);
 
@@ -346,10 +394,17 @@ namespace Shicho.Tool
             }
         }
 
+        private void SetAutoHeal(bool doAutoHeal)
+        {
+            // Log.Debug($"SetAutoHeal: {doAutoHeal}");
+            LockedApply(ref App.Config.AILock, ref App.Config.AI.doAutoHeal, doAutoHeal);
+        }
+
+
         private UISlider shadowBiasSlider_, lightIntensitySlider_;
         private UITextField shadowBias_, lightIntensity_;
 
-        private void LockedApply(ref object lockObj, ref float target, float value)
+        private void LockedApply<T>(ref object lockObj, ref T target, T value)
         {
             //Log.Debug($"LockedApply: {value}");
             lock (lockObj) {

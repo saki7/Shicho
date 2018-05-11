@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Shicho.Core
 {
+    using Citizen = Cities::Citizen;
     using NetLane = Cities::NetLane;
     using Building = Cities::Building;
     using NetSegment = Cities::NetSegment;
@@ -15,6 +16,21 @@ namespace Shicho.Core
 
     static class DataQuery
     {
+        public delegate bool QueryHandler<T, IdT>(ref T obj, IdT id);
+
+        public static void Citizens(
+            QueryHandler<Citizen, uint> h,
+            Citizen.Flags flags = Citizen.Flags.Created
+        ) {
+            var mgr = Singleton<Cities::CitizenManager>.instance;
+
+            for (int i = 0; i < mgr.m_citizens.m_size; ++i) {
+                if ((mgr.m_citizens.m_buffer[i].m_flags & flags) == Citizen.Flags.None) continue;
+
+                if (!h.Invoke(ref mgr.m_citizens.m_buffer[i], (uint)i)) return;
+            }
+        }
+
         public static IEnumerable<NetLane>
         NetLanes(NetLane.Flags flags = NetLane.Flags.Created)
         {
