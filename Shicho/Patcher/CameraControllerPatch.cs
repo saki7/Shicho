@@ -19,8 +19,13 @@ namespace Shicho.Patcher.CameraControllerPatch
 
             lock (App.Config.GraphicsLock) {
                 light.shadows = LightShadows.Soft;
-                light.shadowStrength = App.Config.Graphics.shadowStrength;
-                light.intensity = App.Config.Graphics.lightIntensity;
+
+                if (App.Config.Graphics.shadowStrength) {
+                    light.shadowStrength = App.Config.Graphics.shadowStrength.Value;
+                }
+                if (App.Config.Graphics.lightIntensity) {
+                    light.intensity = App.Config.Graphics.lightIntensity.Value;
+                }
             }
         }
     }

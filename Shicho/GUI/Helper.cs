@@ -69,7 +69,7 @@ namespace Shicho.GUI
             return c;
         }
 
-        public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null)
+        public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null, bool bullet = false)
         {
             var obj = parent.AddUIComponent<UILabel>();
             obj.text = label;
@@ -80,6 +80,17 @@ namespace Shicho.GUI
             if (padding != null) {
                 obj.padding = padding;
             }
+
+            if (bullet) {
+                var bulletSize = obj.font.size + 4;
+                obj.padding.left += bulletSize + 2;
+
+                var sp = obj.AddUIComponent<UISprite>();
+                sp.width = sp.height = bulletSize;
+                sp.spriteName = "ToolbarIconBaseDisabled";
+                sp.relativePosition = new Vector2(-1, 0);
+            }
+
             return obj;
         }
 
@@ -87,6 +98,7 @@ namespace Shicho.GUI
         {
             var box = parent.AddUIComponent<UICheckBox>();
             box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+            box.isChecked = false;
 
             box.label = box.AddUIComponent<UILabel>();
             box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
@@ -99,10 +111,13 @@ namespace Shicho.GUI
             }
             box.label.padding.left = box.label.font.size + 6;
             box.label.relativePosition = new Vector2(0, -(box.label.font.size - 10));
+            box.label.FitTo(parent);
+            box.height = box.label.height;
+
 
             var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
             uncheckedSprite.spriteName = "AchievementCheckedFalse";
-            uncheckedSprite.relativePosition = new Vector2(0, 2);
+            uncheckedSprite.relativePosition = new Vector2(0, 2.5f);
             uncheckedSprite.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
             uncheckedSprite.width = uncheckedSprite.height = box.label.font.size;
 

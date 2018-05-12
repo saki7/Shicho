@@ -15,7 +15,9 @@ namespace Shicho.Patcher.DayNightPropertiesPatch
             if (!light) return;
 
             lock (App.Config.GraphicsLock) {
-                light.shadowBias = App.Config.Graphics.shadowBias;
+                if (App.Config.Graphics.shadowBias) {
+                    light.shadowBias = App.Config.Graphics.shadowBias.Value;
+                }
             }
         }
     }

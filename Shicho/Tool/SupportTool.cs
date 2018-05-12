@@ -238,20 +238,28 @@ namespace Shicho.Tool
             };
         }
 
-        class SliderOption
+        class SliderOption<T>
         {
-            public bool hasSwitch = false;
-            public float minValue, maxValue, stepSize;
-            public PropertyChangedEventHandler<float> eventValueChanged;
+            public bool isEnabled;
+
+            public float /* fixed type */ minValue, maxValue, stepSize;
+            public Mod.Config.Switchable<T>.SlideHandler eventValueChanged;
+            public Mod.Config.Switchable<T>.SwitchHandler eventSwitched;
         }
 
-        private void AddConfig(out UISlider slider, out UITextField field, ref UIPanel page, string label, string tooltip, SliderOption opts)
+        private void AddConfig<T>(out UISlider slider, out UITextField field, ref UIPanel page, string label, string tooltip, SliderOption<T> opts)
         {
-            if (opts.hasSwitch) {
-                Helper.AddCheckBox(ref page, label, tooltip, FontStore.Get(12));
+            var font = FontStore.Get(11);
+
+            if (opts.eventSwitched != null) { // has switch
+                var cb = Helper.AddCheckBox(ref page, label, tooltip, font);
+                cb.eventCheckChanged += (c, isEnabled) => {
+                    opts.eventSwitched.Invoke(c, isEnabled);
+                };
+                cb.isChecked = opts.isEnabled;
 
             } else {
-                Helper.AddLabel(ref page, label, tooltip, FontStore.Get(12), Helper.Padding(0, 0, 2, 0));
+                Helper.AddLabel(ref page, label, tooltip, font, Helper.Padding(0, 0, 2, 0), bullet: true);
             }
 
             {
@@ -266,31 +274,31 @@ namespace Shicho.Tool
                 var sliderObj = panel.AddUIComponent<UISlider>();
                 slider = sliderObj;
 
-                sliderObj.autoSize = true;
-                sliderObj.relativePosition = Vector2.zero;
-                sliderObj.pivot = UIPivotPoint.MiddleLeft;
-                sliderObj.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
+                slider.autoSize = true;
+                slider.relativePosition = new Vector2(font.size * 1.5f, 0);
+                slider.pivot = UIPivotPoint.MiddleLeft;
+                slider.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
 
-                sliderObj.minValue = opts.minValue;
-                sliderObj.maxValue = opts.maxValue;
-                sliderObj.stepSize = opts.stepSize;
-                sliderObj.scrollWheelAmount = sliderObj.stepSize * 2 + float.Epsilon;
-                sliderObj.backgroundSprite = "BudgetSlider";
+                slider.minValue = opts.minValue;
+                slider.maxValue = opts.maxValue;
+                slider.stepSize = opts.stepSize;
+                slider.scrollWheelAmount = slider.stepSize * 2 + float.Epsilon;
+                slider.backgroundSprite = "BudgetSlider";
 
                 {
                     var thumb = slider.AddUIComponent<UISprite>();
                     slider.thumbObject = thumb;
                     thumb.spriteName = "SliderBudget";
-                    sliderObj.height = thumb.height + 8;
-                    sliderObj.thumbOffset = new Vector2(1, 1);
+                    slider.height = thumb.height + 8;
+                    slider.thumbOffset = new Vector2(1, 1);
                 }
-                sliderObj.width = page.width - 88;
+                slider.width = page.width - 88;
 
                 var fieldObj = panel.AddUIComponent<UITextField>();
                 field = fieldObj;
 
                 fieldObj.autoSize = false;
-                fieldObj.width = page.width - sliderObj.width - page.padding.horizontal - 20;
+                fieldObj.width = page.width - slider.width - page.padding.horizontal - 20;
                 fieldObj.relativePosition = new Vector2(fieldObj.parent.width - fieldObj.width, 0);
                 fieldObj.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
                 fieldObj.height -= 4;
@@ -330,7 +338,7 @@ namespace Shicho.Tool
                 //Log.Debug($"Slider: {slider.position}, {slider.size}");
                 //Log.Debug($"Field: {field.position}, {field.size}");
 
-                sliderObj.eventValueChanged += (c, value) => {
+                slider.eventValueChanged += (c, value) => {
                     fieldObj.text = value.ToString();
                     opts.eventValueChanged?.Invoke(c, value);
                 };
@@ -365,13 +373,13 @@ namespace Shicho.Tool
                     ref page,
                     "Shadow strength",
                     "default: 0.8",
-                    opts: new SliderOption() {
+                    opts: new SliderOption<float>() {
                         minValue = 0.1f,
                         maxValue = 1.0f,
                         stepSize = 0.05f,
-                        eventValueChanged = (c, value) => {
-                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.shadowStrength, value);
-                        },
+                        isEnabled = App.Config.Graphics.shadowStrength.Enabled,
+                        eventSwitched = App.Config.Graphics.shadowStrength.LockedSwitch(App.Config.GraphicsLock),
+                        eventValueChanged = App.Config.Graphics.shadowStrength.LockedSlide(App.Config.GraphicsLock),
                     }
                 );
 
@@ -381,12 +389,14 @@ namespace Shicho.Tool
                     ref page,
                     "Light intensity",
                     "default: ≈4.2",
-                    opts: new SliderOption() {
+                    opts: new SliderOption<float>() {
                         minValue = 0.05f,
                         maxValue = 8.0f,
                         stepSize = 0.05f,
+                        isEnabled = App.Config.Graphics.lightIntensity.Enabled,
+                        eventSwitched = App.Config.Graphics.lightIntensity.LockedSwitch(App.Config.GraphicsLock),
                         eventValueChanged = (c, value) => {
-                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.lightIntensity, value);
+                            LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.lightIntensity, value);
                         },
                     }
                 );
@@ -397,20 +407,23 @@ namespace Shicho.Tool
                     ref page,
                     "Self-shadow mitigation",
                     "a.k.a. \"Shadow acne\" fix (default: minimal, recommended: 0.1-0.3)",
-                    opts: new SliderOption() {
+                    opts: new SliderOption<float>() {
                         minValue = 0.01f,
                         maxValue = 1.00f,
                         stepSize = 0.01f,
+
+                        isEnabled = App.Config.Graphics.shadowBias.Enabled,
+                        eventSwitched = App.Config.Graphics.shadowBias.LockedSwitch(App.Config.GraphicsLock),
                         eventValueChanged = (c, value) => {
-                            LockedApply(ref App.Config.GraphicsLock, ref App.Config.Graphics.shadowBias, value);
+                            LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.shadowBias, value);
                         },
                     }
                 );
 
                 lock (App.Config.GraphicsLock) {
-                    shadowStrengthSlider_.value = App.Config.Graphics.shadowStrength;
-                    lightIntensitySlider_.value = App.Config.Graphics.lightIntensity;
-                    shadowBiasSlider_.value = App.Config.Graphics.shadowBias;
+                    shadowStrengthSlider_.value = App.Config.Graphics.shadowStrength.Value;
+                    lightIntensitySlider_.value = App.Config.Graphics.lightIntensity.Value;
+                    shadowBiasSlider_.value = App.Config.Graphics.shadowBias.Value;
                 }
 
                 //shadowBias_.eventKeyDown += (c, param) => {
@@ -550,14 +563,22 @@ namespace Shicho.Tool
         private void SetAutoHeal(bool doAutoHeal)
         {
             // Log.Debug($"SetAutoHeal: {doAutoHeal}");
-            LockedApply(ref App.Config.AILock, ref App.Config.AI.doAutoHeal, doAutoHeal);
+            LockedApply(App.Config.AILock, ref App.Config.AI.doAutoHeal, doAutoHeal);
         }
 
 
         private UISlider shadowBiasSlider_, lightIntensitySlider_;
         private UITextField shadowBias_, lightIntensity_;
 
-        private void LockedApply<T>(ref object lockObj, ref T target, T value)
+        private void LockedApply<T>(object lockObj, ref Mod.Config.Switchable<T> target, T value)
+        {
+            // don't change the switch...
+            lock (lockObj) {
+                target.Value = value;
+            }
+        }
+
+        private void LockedApply<T>(object lockObj, ref T target, T value)
         {
             //Log.Debug($"LockedApply: {value}");
             lock (lockObj) {
