@@ -69,8 +69,7 @@ namespace Shicho.GUI
             title_.autoSize = true;
             title_.text = "(Unnamed panel)";
             title_.padding = Helper.Padding(10, 8, 0, 8);
-            title_.font = Instantiate(title_.font);
-            title_.font.size = 15;
+            title_.font = FontStore.Get(15);
             zOrder = 0;
 
             title_.eventTextChanged += (c, text) => {

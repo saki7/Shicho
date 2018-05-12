@@ -69,7 +69,21 @@ namespace Shicho.GUI
             return c;
         }
 
-        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "")
+        public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null)
+        {
+            var obj = parent.AddUIComponent<UILabel>();
+            obj.text = label;
+            obj.tooltip = tooltip;
+            if (font != null) {
+                obj.font = font;
+            }
+            if (padding != null) {
+                obj.padding = padding;
+            }
+            return obj;
+        }
+
+        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "", UIFont font = null)
         {
             var box = parent.AddUIComponent<UICheckBox>();
             box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
@@ -80,9 +94,11 @@ namespace Shicho.GUI
             box.label.text = label;
             box.label.tooltip = tooltip;
 
-            box.label.font = UIComponent.Instantiate(box.label.font);
-            box.label.font.size = 12;
-            box.label.padding.left = box.label.font.size + 4;
+            if (font != null) {
+                box.label.font = font;
+            }
+            box.label.padding.left = box.label.font.size + 6;
+            box.label.relativePosition = new Vector2(0, -(box.label.font.size - 10));
 
             var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
             uncheckedSprite.spriteName = "AchievementCheckedFalse";

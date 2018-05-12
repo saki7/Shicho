@@ -93,10 +93,12 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="Core\DataQuery.cs" />
+    <Compile Include="Core\EnumerableExtension.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GUI\Extension.cs" />
+    <Compile Include="GUI\FontStore.cs" />
     <Compile Include="GUI\Helper.cs" />
     <Compile Include="GUI\Icon.cs" />
     <Compile Include="GUI\IConfigurableComponent.cs" />

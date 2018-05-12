@@ -238,21 +238,20 @@ namespace Shicho.Tool
             };
         }
 
-        struct SliderOption
+        class SliderOption
         {
+            public bool hasSwitch = false;
             public float minValue, maxValue, stepSize;
             public PropertyChangedEventHandler<float> eventValueChanged;
         }
 
-        private void AddConfig(out UISlider slider, out UITextField field, ref UIPanel page, string label, string tooltip, SliderOption sliderOption)
+        private void AddConfig(out UISlider slider, out UITextField field, ref UIPanel page, string label, string tooltip, SliderOption opts)
         {
-            {
-                var labelObj = page.AddUIComponent<UILabel>();
-                labelObj.text = label;
-                labelObj.tooltip = tooltip;
-                labelObj.font = Instantiate(labelObj.font);
-                labelObj.font.size = 12;
-                labelObj.padding.bottom = 2;
+            if (opts.hasSwitch) {
+                Helper.AddCheckBox(ref page, label, tooltip, FontStore.Get(12));
+
+            } else {
+                Helper.AddLabel(ref page, label, tooltip, FontStore.Get(12), Helper.Padding(0, 0, 2, 0));
             }
 
             {
@@ -272,9 +271,9 @@ namespace Shicho.Tool
                 sliderObj.pivot = UIPivotPoint.MiddleLeft;
                 sliderObj.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
 
-                sliderObj.minValue = sliderOption.minValue;
-                sliderObj.maxValue = sliderOption.maxValue;
-                sliderObj.stepSize = sliderOption.stepSize;
+                sliderObj.minValue = opts.minValue;
+                sliderObj.maxValue = opts.maxValue;
+                sliderObj.stepSize = opts.stepSize;
                 sliderObj.scrollWheelAmount = sliderObj.stepSize * 2 + float.Epsilon;
                 sliderObj.backgroundSprite = "BudgetSlider";
 
@@ -333,7 +332,7 @@ namespace Shicho.Tool
 
                 sliderObj.eventValueChanged += (c, value) => {
                     fieldObj.text = value.ToString();
-                    sliderOption.eventValueChanged?.Invoke(c, value);
+                    opts.eventValueChanged?.Invoke(c, value);
                 };
 
                 fieldObj.eventTextSubmitted += (c, text) => {
@@ -366,7 +365,7 @@ namespace Shicho.Tool
                     ref page,
                     "Shadow strength",
                     "default: 0.8",
-                    sliderOption: new SliderOption() {
+                    opts: new SliderOption() {
                         minValue = 0.1f,
                         maxValue = 1.0f,
                         stepSize = 0.05f,
@@ -382,7 +381,7 @@ namespace Shicho.Tool
                     ref page,
                     "Light intensity",
                     "default: ≈4.2",
-                    sliderOption: new SliderOption() {
+                    opts: new SliderOption() {
                         minValue = 0.05f,
                         maxValue = 8.0f,
                         stepSize = 0.05f,
@@ -398,7 +397,7 @@ namespace Shicho.Tool
                     ref page,
                     "Self-shadow mitigation",
                     "a.k.a. \"Shadow acne\" fix (default: minimal, recommended: 0.1-0.3)",
-                    sliderOption: new SliderOption() {
+                    opts: new SliderOption() {
                         minValue = 0.01f,
                         maxValue = 1.00f,
                         stepSize = 0.01f,
@@ -436,7 +435,8 @@ namespace Shicho.Tool
                     var box = Helper.AddCheckBox(
                         ref page,
                         label: "Auto-heal",
-                        tooltip: "Randomly heal citizens by certain interval. Reduces ambulance usage"
+                        tooltip: "Randomly heal citizens by certain interval. Reduces ambulance usage",
+                        font: FontStore.Get(11)
                     );
 
                     // at last
