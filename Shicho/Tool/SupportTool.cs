@@ -433,32 +433,11 @@ namespace Shicho.Tool
                 page.AddUIComponent<CitizenInfo>();
 
                 {
-                    var box = page.AddUIComponent<UICheckBox>();
-                    box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
-
-                    box.label = box.AddUIComponent<UILabel>();
-                    box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
-
-                    box.label.text = "Auto-heal";
-                    box.label.tooltip = "Randomly heal citizens by certain interval. Reduces ambulance usage";
-
-                    box.label.font = Instantiate(box.label.font);
-                    box.label.font.size = 12;
-                    box.label.padding.left = box.label.font.size + 4;
-
-                    var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
-                    uncheckedSprite.spriteName = "AchievementCheckedFalse";
-                    uncheckedSprite.relativePosition = new Vector2(0, 2);
-                    uncheckedSprite.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
-                    uncheckedSprite.width = uncheckedSprite.height = box.label.font.size;
-
-                    var checkedSprite = uncheckedSprite.AddUIComponent<UISprite>() as UISprite;
-                    checkedSprite.spriteName = "AchievementCheckedTrue";
-                    checkedSprite.relativePosition = Vector2.zero;
-                    checkedSprite.anchor = uncheckedSprite.anchor;
-                    checkedSprite.size = uncheckedSprite.size;
-
-                    box.checkedBoxObject = checkedSprite;
+                    var box = Helper.AddCheckBox(
+                        ref page,
+                        label: "Auto-heal",
+                        tooltip: "Randomly heal citizens by certain interval. Reduces ambulance usage"
+                    );
 
                     // at last
                     box.eventCheckChanged += (c, isChecked) => {

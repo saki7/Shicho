@@ -41,6 +41,7 @@ namespace Shicho.GUI
             );
         }
 
+        // CSS-like padding specifiers
         public static RectOffset Padding(int top, int? right = null, int? bottom = null, int? left = null)
         {
             if (!right.HasValue) {
@@ -67,6 +68,38 @@ namespace Shicho.GUI
             c.relativePosition = relPos ?? Vector2.zero;
             return c;
         }
+
+        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "")
+        {
+            var box = parent.AddUIComponent<UICheckBox>();
+            box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+
+            box.label = box.AddUIComponent<UILabel>();
+            box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+
+            box.label.text = label;
+            box.label.tooltip = tooltip;
+
+            box.label.font = UIComponent.Instantiate(box.label.font);
+            box.label.font.size = 12;
+            box.label.padding.left = box.label.font.size + 4;
+
+            var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
+            uncheckedSprite.spriteName = "AchievementCheckedFalse";
+            uncheckedSprite.relativePosition = new Vector2(0, 2);
+            uncheckedSprite.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
+            uncheckedSprite.width = uncheckedSprite.height = box.label.font.size;
+
+            var checkedSprite = uncheckedSprite.AddUIComponent<UISprite>() as UISprite;
+            checkedSprite.spriteName = "AchievementCheckedTrue";
+            checkedSprite.relativePosition = Vector2.zero;
+            checkedSprite.anchor = uncheckedSprite.anchor;
+            checkedSprite.size = uncheckedSprite.size;
+
+            box.checkedBoxObject = checkedSprite;
+            return box;
+        }
+
 
         public static void DeepDestroy(UIComponent component)
         {
