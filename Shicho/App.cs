@@ -38,15 +38,15 @@ namespace Shicho
 
         public void InitGameMode()
         {
+            Log.Debug($"loading fonts...");
+            GUI.FontStore.Load();
+
             LoadLevelData();
             supportTool_ = gameObject.AddComponent<Tool.SupportTool>();
         }
 
         private void InitGUI()
         {
-            Log.Debug($"loading fonts...");
-            GUI.FontStore.Load();
-
             cfgTool_ = gameObject.AddComponent<Tool.ConfigTool>();
         }
 
