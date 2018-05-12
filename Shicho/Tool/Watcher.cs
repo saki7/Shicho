@@ -118,7 +118,15 @@ namespace Shicho.Tool
             var hostiles = new List<KeyValuePair<MethodBase, MethodInfo>>();
             foreach (var target in harmony.GetPatchedMethods()) {
                 //Log.Debug($"found patched method: {target} [{target.Attributes}]");
-                var info = harmony.GetPatchInfo(target);
+                Harmony.Patches info = null;
+
+                try {
+                    info = harmony.GetPatchInfo(target);
+
+                } catch (InvalidCastException e) {
+                    Log.Error($"incompatible Harmony patch detected; this might cause serious conflicts (or visual glitch) in-game\nError: {e}");
+                    continue;
+                }
 
                 foreach (var p in info.Prefixes) {
                     // TODO: if we have prefix patches, remove others
