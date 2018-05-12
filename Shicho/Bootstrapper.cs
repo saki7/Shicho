@@ -30,6 +30,39 @@ namespace Shicho
         public void BootstrapConfig()
         {
             if (cfg_ == null) {
+                #region Log setup
+                {
+                    LogCh.verbose = true;
+                    LogCh.EnableChannels(Cities::LogChannel.All);
+
+                    // Switch logger based on (mostly) `ModTools` presence
+                    var useUnityLogger = true; // or IsModToolsActive()
+
+                    if (useUnityLogger) {
+                        Log.Debug = Debug.LogWarning;
+                        Log.Info  = Debug.Log;
+                        Log.Warn  = Debug.LogWarning;
+                        Log.Error = Debug.LogError;
+
+                        // Log.Info("using Unity logger");
+
+                    } else {
+                        void emit(PluginManager.MessageType type, object msg) =>
+                            Cities::DebugOutputPanel.AddMessage(type, Log.Format(msg))
+                        ;
+                        Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
+                        Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);
+                        Log.Error = (msg) => emit(PluginManager.MessageType.Error, msg);
+
+                        // Log.Warn("using Colossal logger");
+                    }
+
+                    #if !DEBUG
+                        Log.Debug = (_) => {};
+                    #endif
+                }
+                #endregion Log setup
+
                 cfg_ = Mod.Config.LoadFile(App.ConfigPath);
             }
         }
@@ -38,39 +71,6 @@ namespace Shicho
         {
             if (IsInitialized) return;
             BootstrapConfig();
-
-            #region Log setup
-            {
-                LogCh.verbose = true;
-                LogCh.EnableChannels(Cities::LogChannel.All);
-
-                // Switch logger based on (mostly) `ModTools` presence
-                var useUnityLogger = true; // or IsModToolsActive()
-
-                if (useUnityLogger) {
-                    Log.Debug = Debug.LogWarning;
-                    Log.Info  = Debug.Log;
-                    Log.Warn  = Debug.LogWarning;
-                    Log.Error = Debug.LogError;
-
-                    // Log.Info("using Unity logger");
-
-                } else {
-                    void emit(PluginManager.MessageType type, object msg) =>
-                        Cities::DebugOutputPanel.AddMessage(type, Log.Format(msg))
-                    ;
-                    Log.Info  = (msg) => emit(PluginManager.MessageType.Message, msg);
-                    Log.Warn  = (msg) => emit(PluginManager.MessageType.Warning, msg);
-                    Log.Error = (msg) => emit(PluginManager.MessageType.Error, msg);
-
-                    // Log.Warn("using Colossal logger");
-                }
-
-                #if !DEBUG
-                    Log.Debug = (_) => {};
-                #endif
-            }
-            #endregion Log setup
 
             #region Harmony initialization
             harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
