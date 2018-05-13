@@ -124,6 +124,10 @@ namespace Shicho.Tool
                     DataQuery.Citizens((ref Citizen c, uint id) => {
                         ++counts_.total;
 
+                        if ((c.m_flags & Citizen.Flags.DummyTraffic) != Citizen.Flags.None) {
+                            --counts_.total;
+                        }
+
                         if (c.Dead) {
                             ++counts_.dead;
                             return true;
