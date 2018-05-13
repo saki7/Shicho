@@ -164,7 +164,11 @@ namespace Shicho.Mod
         [Serializable]
         public class GraphicsData : ClonableData
         {
-            public Switchable<float> shadowBias, shadowStrength, lightIntensity;
+            public Switchable<float>
+                shadowBias, shadowStrength, lightIntensity
+            ;
+
+            public float treeMoveFactor;
         }
 
         [Serializable]
@@ -180,6 +184,8 @@ namespace Shicho.Mod
             shadowBias     = new Switchable<float>{Enabled = true,  Value = 0.20f},
             shadowStrength = new Switchable<float>{Enabled = false, Value = 0.8f},
             lightIntensity = new Switchable<float>{Enabled = false, Value = 4.2f},
+
+            treeMoveFactor = 0.0f,
         };
 
         [NonSerialized]

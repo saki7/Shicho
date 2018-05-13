@@ -69,7 +69,7 @@ namespace Shicho.Tool
 
             lock (App.Config.AILock) {
                 if (App.Config.AI.regenChance.Enabled) {
-                    var mgr = Cities.CitizenManager.instance;
+                    var mgr = Cities::CitizenManager.instance;
 
                     DataQuery.Citizens((ref Cities::Citizen c, uint id) => {
                         if (!c.Sick) return true;

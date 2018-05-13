@@ -203,6 +203,12 @@ namespace Shicho.Tool
                         Normal  = "InfoIconHappiness", // NotificationIconHappy
                     },
                 },
+                new TabTemplate() {
+                    name = "Nature",
+                    icons = new IconSet() {
+                        Normal = "IconPolicyParksandRecreation",
+                    },
+                },
                 //new TabTemplate() {
                 //    name = "District",
                 //    icons = new IconSet() {
@@ -400,6 +406,30 @@ namespace Shicho.Tool
                         isInverted: true
                     );
                 }
+            }
+
+            {
+                var page = TabPage("Nature");
+                page.padding = Helper.Padding(8, 12);
+
+                var pane = AddConfig(
+                    ref page,
+                    "Tree movement",
+                    "[BETA] Sets the amount of tree branch movement.\nVanilla: maximum; Recommended: minimum",
+                    opts: new SliderOption<float>() {
+                        hasField = false,
+
+                        minValue = 0.0f,
+                        maxValue = 1.0f,
+                        stepSize = 0.1f,
+
+                        eventValueChanged = (c, value) => {
+                            LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.treeMoveFactor, value);
+                        },
+                    },
+                    labelPadding: 4
+                );
+                pane.slider.value = App.Config.Graphics.treeMoveFactor;
             }
 
             {

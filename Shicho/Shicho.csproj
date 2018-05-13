@@ -59,7 +59,7 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Aliases>Cities</Aliases>
+      <Aliases>global,Cities</Aliases>
       <Private>False</Private>
     </Reference>
     <Reference Include="ColossalManaged">
@@ -110,6 +110,7 @@
     <Compile Include="Input.cs" />
     <Compile Include="Patcher\CameraControllerPatch.cs" />
     <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
+    <Compile Include="Patcher\TreeInstancePatch.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Tool\SupportTool.cs" />

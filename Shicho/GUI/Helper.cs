@@ -86,7 +86,7 @@ namespace Shicho.GUI
 
                 var sp = obj.AddUIComponent<UISprite>();
                 sp.width = sp.height = bulletSize;
-                sp.spriteName = "ToolbarIconBaseDisabled";
+                sp.spriteName = "InfoIconMaintenance";
                 sp.relativePosition = new Vector2(-1, 0);
             }
 

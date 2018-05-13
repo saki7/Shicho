@@ -18,8 +18,8 @@ namespace Shicho.Mod
         {
             Bootstrapper.Instance.Bootstrap();
 
-            if (Cities.ToolsModifierControl.toolController != null)  {
-                if (Cities.ToolsModifierControl.toolController.m_mode == Cities.ItemClass.Availability.Game) {
+            if (Cities::ToolsModifierControl.toolController != null)  {
+                if (Cities::ToolsModifierControl.toolController.m_mode == Cities::ItemClass.Availability.Game) {
                     App.Instance.InitGameMode();
                 }
             }
