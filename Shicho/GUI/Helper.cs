@@ -4,6 +4,9 @@ using System;
 
 namespace Shicho.GUI
 {
+    using Core;
+    using Extension;
+
     public static class Helper
     {
         public static RectOffset ZeroOffset {
@@ -41,6 +44,15 @@ namespace Shicho.GUI
             );
         }
 
+        public static Color32 RGB(byte r, byte g, byte b)
+        {
+            return new Color32(r, g, b, 255);
+        }
+        public static Color32 RGBA(byte r, byte g, byte b, byte a)
+        {
+            return new Color32(r, g, b, a);
+        }
+
         // CSS-like padding specifiers
         public static RectOffset Padding(int top, int? right = null, int? bottom = null, int? left = null)
         {
@@ -54,19 +66,6 @@ namespace Shicho.GUI
                 return new RectOffset(top: top, right: right.Value, bottom: bottom.Value, left: 0);
             }
             return new RectOffset(top: top, right: right.Value, bottom: bottom.Value, left: left.Value);
-        }
-
-        public static T AddDefaultComponent<T>(object parentObj, Vector2? relPos = null)
-            where T: UIComponent
-        {
-            if (!(parentObj is UIComponent)) {
-                throw new ArgumentException($"parentObj ({parentObj.GetType()}) must be UIComponent");
-            }
-
-            var parent = parentObj as UIComponent;
-            var c = parent.AddUIComponent<T>();
-            c.relativePosition = relPos ?? Vector2.zero;
-            return c;
         }
 
         public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null, bool bullet = false)
@@ -92,6 +91,41 @@ namespace Shicho.GUI
             }
 
             return obj;
+        }
+
+        public static UIPanel AddIconLabel(ref UIPanel parent, string icon, string label, string tooltip = "", UIFont font = null, Color32? color = null, float? wrapperWidth = null, bool isInverted = false)
+        {
+            var wrapper = parent.AddUIComponent<UIPanel>();
+            wrapper.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
+            wrapper.autoSize = true;
+            //wrapper.SetAutoLayout(LayoutDirection.Horizontal);
+            if (wrapperWidth.HasValue) {
+                wrapper.width = wrapperWidth.Value;
+            }
+
+            var iconObj = Helper.AddIcon(ref wrapper, icon, 16);
+
+            var labelObj = wrapper.AddUIComponent<UILabel>();
+            labelObj.font = font;
+            labelObj.text = label;
+            labelObj.tooltip = tooltip;
+            if (color.HasValue) labelObj.textColor = color.Value;
+
+            if (isInverted) {
+                //wrapper.autoLayoutStart = LayoutStart.TopRight;
+                //iconObj.relativePosition = new Vector2(wrapper.width, 0);
+                //labelObj.relativePosition = new Vector2(wrapper.width - iconObj.width, 0);
+                //labelObj.textAlignment = UIHorizontalAlignment.Right;
+                iconObj.relativePosition = new Vector2(wrapper.width - iconObj.width, 0);
+                labelObj.relativePosition = new Vector2(iconObj.relativePosition.x - labelObj.width - 4, 0);
+
+            } else {
+                iconObj.relativePosition = Vector2.zero;
+                labelObj.relativePosition = new Vector2(iconObj.width, 0);
+                labelObj.padding.left = 4;
+            }
+
+            return wrapper;
         }
 
         public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "", UIFont font = null)
@@ -131,6 +165,114 @@ namespace Shicho.GUI
             return box;
         }
 
+        public static UITextureSprite AddIcon(ref UIPanel parent, string name, uint size)
+        {
+            var icon = parent.AddUIComponent<UITextureSprite>();
+            icon.texture = Shicho.Resources.icons[name];
+            icon.width = icon.height = size;
+            return icon;
+        }
+
+        public static SliderPane AddSliderPane<T>(ref UIPanel parent, SliderOption<T> opts, UIFont font = null)
+        {
+            var pane = new SliderPane() {
+                wrapper = parent.AddUIComponent<UIPanel>(),
+            };
+
+            pane.wrapper.padding.top = 4;
+
+            pane.wrapper.width = pane.wrapper.parent.width - parent.padding.horizontal;
+            pane.wrapper.autoSize = false;
+            //panel.SetAutoLayout(LayoutDirection.Horizontal);
+            //panel.backgroundSprite = "Menubar";
+            pane.wrapper.pivot = UIPivotPoint.MiddleLeft;
+
+            pane.slider = pane.wrapper.AddUIComponent<UISlider>();
+            pane.slider.autoSize = true;
+            pane.slider.relativePosition = new Vector2(font.size * 1.5f, 0);
+            pane.slider.pivot = UIPivotPoint.MiddleLeft;
+            pane.slider.anchor = UIAnchorStyle.Left | UIAnchorStyle.CenterVertical;
+
+            pane.slider.minValue = opts.minValue;
+            pane.slider.maxValue = opts.maxValue;
+            pane.slider.stepSize = opts.stepSize;
+            pane.slider.scrollWheelAmount = pane.slider.stepSize * 2 + float.Epsilon;
+            pane.slider.backgroundSprite = "BudgetSlider";
+
+            {
+                var thumb = pane.slider.AddUIComponent<UISprite>();
+                pane.slider.thumbObject = thumb;
+                thumb.spriteName = "SliderBudget";
+                pane.slider.height = thumb.height + 8;
+                pane.slider.thumbOffset = new Vector2(1, 1);
+            }
+            pane.slider.width = pane.wrapper.width - 24;
+            pane.wrapper.height = pane.slider.height + 10;
+
+            pane.slider.eventValueChanged += (c, value) => {
+                opts.eventValueChanged?.Invoke(c, value);
+            };
+
+            if (opts.hasField) {
+                pane.slider.width -= 46;
+
+                pane.field = pane.wrapper.AddUIComponent<UITextField>();
+
+                pane.field.autoSize = false;
+                pane.field.width = parent.width - pane.slider.width - parent.padding.horizontal - 20 - 12;
+                pane.field.relativePosition = new Vector2(pane.field.parent.width - pane.field.width, 0);
+                pane.field.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
+                pane.field.height -= 4;
+
+                pane.field.readOnly = false;
+                pane.field.builtinKeyNavigation = true;
+
+                pane.field.numericalOnly = true;
+                pane.field.allowFloats = true;
+
+                pane.field.canFocus = true;
+                pane.field.selectOnFocus = true;
+                pane.field.submitOnFocusLost = true;
+
+                pane.field.cursorBlinkTime = 0.5f;
+                pane.field.cursorWidth = 1;
+                pane.field.selectionSprite = "EmptySprite";
+                pane.field.normalBgSprite = "TextFieldPanel";
+                //field.hoveredBgSprite = "TextFieldPanelHovered";
+                pane.field.focusedBgSprite = "TextFieldPanel";
+
+                pane.field.clipChildren = true;
+
+                pane.field.colorizeSprites = true;
+                pane.field.color = Helper.RGB(30, 30, 30);
+                pane.field.textColor = Helper.RGB(250, 250, 250);
+                pane.field.font = FontStore.Get(11);
+                pane.field.horizontalAlignment = UIHorizontalAlignment.Left;
+                pane.field.padding = Helper.Padding(0, 6);
+
+                //field.padding.top -= 5;
+
+                //Log.Debug($"Page: {page.position}, {page.size}");
+                //Log.Debug($"Panel: {panel.position}, {panel.size}");
+                //Log.Debug($"Slider: {slider.position}, {slider.size}");
+                //Log.Debug($"Field: {field.position}, {field.size}");
+
+                pane.slider.eventValueChanged += (c, value) => {
+                    pane.field.text = value.ToString();
+                };
+
+                pane.field.eventTextSubmitted += (c, text) => {
+                    try {
+                        pane.slider.value = float.Parse(text);
+
+                    } catch (Exception e) {
+                        Log.Error($"failed to set new value \"{text}\": {e}");
+                    }
+                };
+            } // hasField
+
+            return pane;
+        }
 
         public static void DeepDestroy(UIComponent component)
         {

@@ -63,64 +63,66 @@ namespace Shicho.GUI
         public override void Awake()
         {
             base.Awake();
-            autoLayout = false;
+
+            icon_ = AddUIComponent<UISprite>();
+            icon_.name = "InfoPanelIconInfo";
 
             title_ = AddUIComponent<UILabel>();
-            title_.autoSize = true;
             title_.text = "(Unnamed panel)";
-            title_.padding = Helper.Padding(10, 8, 0, 8);
-            title_.font = FontStore.Get(15);
-            zOrder = 0;
-
-            title_.eventTextChanged += (c, text) => {
-                height = c.size.y; // include padding
-                eventTitleChanged?.Invoke(c, text);
-            };
 
             control_ = AddUIComponent<WindowControl>();
+
+            drag_ = AddUIComponent<UIDragHandle>();
             control_.eventTypeChanged += (c) => {
                 c.relativePosition = new Vector2(width - c.width, 0);
                 drag_.width = width - c.width;
             };
 
-            drag_ = AddUIComponent<UIDragHandle>();
-            eventSizeChanged += OnSizeChanged;
+            title_.eventTextChanged += (c, text) => {
+                eventTitleChanged?.Invoke(c, text);
+            };
+
+            eventSizeChanged += (c, size) => {
+                // Log.Debug($"TitleBar.eventSizeChanged: {size}");
+
+                control_.relativePosition = new Vector2(width - control_.width, 0);
+
+                drag_.width = size.x - control_.width;
+                drag_.height = size.y;
+            };
         }
 
         public override void Start()
         {
             base.Start();
 
-            color = new Color32(20, 20, 40, 255);
+            //autoSize = false;
+
+            icon_.relativePosition = new Vector2(4, 3);
+            icon_.width = icon_.height = 24;
+            icon_.SendToBack();
+
+            //title_.padding.left += (int)icon_.width + 1;
+            title_.relativePosition = new Vector2(icon_.width + 1, 0);
+            title_.padding = Helper.Padding(10, 8, 0, 8);
+            title_.font = FontStore.Get(15);
+
+            color = Helper.RGB(20, 20, 40);
             backgroundSprite = "MenuPanel";
+            size = new Vector2(
+                parent.width,
+                icon_.height
+            );
+            padding = Helper.Padding(4, 2);
+            zOrder = 0;
 
-            width = parent.width;
-            height = title_.height; // include padding
-
-            if (icon_) {
-                icon_.relativePosition = new Vector2(4, 3);
-                icon_.width = icon_.height = 24;
-                icon_.SendToBack();
-
-                //title_.padding.left += (int)icon_.width + 1;
-                title_.relativePosition = new Vector2(icon_.width + 1, 0);
-            }
+            drag_.target = parent;
 
             if (control_.Close) {
                 control_.Close.eventClicked += (c, param) => {
                     eventClosed?.Invoke(c, param);
                 };
             }
-
-            drag_.target = parent;
-        }
-
-        private void OnSizeChanged(UIComponent c, Vector2 size)
-        {
-            control_.relativePosition = new Vector2(width - control_.width, 0);
-
-            drag_.width = size.x - control_.width;
-            drag_.height = title_.height;
         }
 
         private UIDragHandle drag_;
@@ -135,7 +137,7 @@ namespace Shicho.GUI
         public event PropertyChangedEventHandler<string> eventTitleChanged;
         public event MouseEventHandler eventClosed;
 
-        private UITextureSprite icon_;
+        private UIComponent icon_;
         private Texture2D iconData_;
 
         public Texture2D Icon {
@@ -143,11 +145,14 @@ namespace Shicho.GUI
 
             set {
                 iconData_ = value;
-                if (icon_ == null) {
-                    icon_ = AddUIComponent<UITextureSprite>();
+                if (icon_ != null) {
+                    RemoveUIComponent(icon_);
+                    Destroy(icon_);
                 }
 
-                icon_.texture = iconData_;
+                var sprite = AddUIComponent<UITextureSprite>();
+                sprite.texture = iconData_;
+                icon_ = sprite;
             }
         }
 

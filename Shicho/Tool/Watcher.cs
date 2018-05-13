@@ -29,7 +29,7 @@ namespace Shicho.Tool
 
             updaters_ = new UpdateSpec() {
                 {3, UnpatchHostiles},
-                {5, UpdateCitizen},
+                {1, UpdateCitizen},
             };
             maxInterval_ = updaters_.Keys.Max();
         }
@@ -71,31 +71,37 @@ namespace Shicho.Tool
 
         private void UpdateCitizen()
         {
-            const byte MinHealAmount = (byte)(Game.Citizen.MaxHealth * 0.05f);
-            const byte MaxHealAmount = (byte)(Game.Citizen.MaxHealth * 0.2f);
-            const double ChanceToHeal = 0.2, ChanceToMiracleHeal = 0.01;
+            const byte MinHealAmount = (byte)(Game.Citizen.MaxHealth * 0.15f);
+            const byte MaxHealAmount = (byte)(Game.Citizen.MaxHealth * 0.75f);
+            const float ChanceToMiracleHeal = 0.01f;
 
             lock (App.Config.AILock) {
-                if (App.Config.AI.doAutoHeal) {
+                if (App.Config.AI.regenChance.Enabled) {
                     var mgr = Cities.CitizenManager.instance;
 
                     DataQuery.Citizens((ref Cities::Citizen c, uint id) => {
                         if (!c.Sick) return true;
 
                         var sampleChance = r_.NextDouble();
-                        if (sampleChance > ChanceToHeal) return true;
+                        if (sampleChance > App.Config.AI.regenChance.Value) return true;
 
                         // Log.Debug($"healing sick: {c}");
                         var info = c.GetCitizenInfo(id);
                         var healAmount = Math.Max(MinHealAmount, (byte)(r_.NextDouble() * MaxHealAmount));
 
-                        if (sampleChance < ChanceToMiracleHeal) { // 2%
-                            // Log.Debug($"healing sick Citizen({info.name}): 100% HP (miracle)");
+                        // extra heal for healthy citizen
+                        if (c.m_health >= Game.Citizen.MaxHealth * 0.5) {
+                            healAmount += (byte)(Game.Citizen.MaxHealth * 0.1); // 10% boost
+                            healAmount *= 2;
+                        }
+
+                        if (sampleChance < ChanceToMiracleHeal) {
+                            //Log.Debug($"healing: \"{info.name}\": 100% HP (miracle)");
                             c.m_health = Game.Citizen.MaxHealth;
 
                         } else {
-                            // Log.Debug($"healing sick Citizen({info.name}): {healAmount} HP ({(float)healAmount / Game.Citizen.MaxHealth:P})");
-                            c.m_health += healAmount;
+                            //Log.Debug($"healing: \"{info.name}\": {healAmount} HP ({(float)healAmount / Game.Citizen.MaxHealth:P})");
+                            c.m_health = (byte)Math.Min(Game.Citizen.MaxHealth, c.m_health + healAmount);
                         }
 
                         c.Sick = Cities::Citizen.GetHealthLevel(c.m_health) <= Cities::Citizen.Health.Sick;

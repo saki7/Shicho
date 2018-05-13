@@ -15,7 +15,6 @@ namespace Shicho.Tool
 
     interface ITool : GUI.IConfigurableComponent<GUI.TabbedWindowConfig>
     {
-        GUI.ConfigID ID { get; }
         GUI.TabbedWindowConfig ConfigProxy { get; }
         GUI.TabTemplate[] Tabs { get; }
 
@@ -29,17 +28,13 @@ namespace Shicho.Tool
         public virtual void Awake()
         {
             win_ = UIView.GetAView().AddUIComponent(typeof(GUI.Window)) as GUI.Window;
-            win_.Config = ConfigProxy;
-
-            Config.ID = new GUI.ConfigID() {
-                Value = GetInstanceID(),
-            };
-
-            Config.Rect.RelocateIn(Helper.ScreenRectAsUI);
         }
 
         public virtual void Start()
         {
+            win_.Config = ConfigProxy;
+            Config.Rect.RelocateIn(Helper.ScreenRectAsUI);
+
             win_.position = Config.Rect.position;
             win_.size = Config.Rect.size;
 
@@ -67,7 +62,7 @@ namespace Shicho.Tool
                 tabs_.autoSize = true;
                 tabs_.width = win_.Content.width;
                 tabs_.backgroundSprite = "Menubar";
-                tabs_.color = new Color32(20, 20, 40, 255);
+                tabs_.color = Helper.RGB(20, 20, 40);
                 tabs_.zOrder = 2;
                 //tabs_.clipChildren = true;
                 //Log.Debug($"Tab: {tabs_.position}, {tabs_.size}");
@@ -168,18 +163,6 @@ namespace Shicho.Tool
                     Config.SelectedTabIndex = i;
                 };
             }
-
-            //win_.eventSizeChanged += (c, size) => {
-            //    Log.Debug($"sizeChanged: {size}");
-            //};
-
-            //win_.Content.autoSize = true;
-            //win_.Content.autoFitChildrenVertically = true;
-            //win_.Content.FitChildrenVertically();
-
-            //win_.autoSize = true;
-            //win_.autoFitChildrenVertically = true;
-            //win_.FitChildrenVertically();
         }
 
         protected void SelectTab(int i)
@@ -210,7 +193,6 @@ namespace Shicho.Tool
             }
         }
 
-        public GUI.ConfigID ID { get => Config.ID; }
         public string Title {
             get => win_.Title;
             protected set => win_.Title = value;

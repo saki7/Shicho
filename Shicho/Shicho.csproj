@@ -103,7 +103,7 @@
     <Compile Include="GUI\Icon.cs" />
     <Compile Include="GUI\IConfigurableComponent.cs" />
     <Compile Include="GUI\Config.cs" />
-    <Compile Include="GUI\Panel.cs" />
+    <Compile Include="GUI\SliderPane.cs" />
     <Compile Include="GUI\TitleBar.cs" />
     <Compile Include="GUI\UIRect.cs" />
     <Compile Include="GUI\Window.cs" />
@@ -155,12 +155,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
+    <EmbeddedResource Include="Resources\icons\1f3e0.png" />
+    <EmbeddedResource Include="Resources\icons\1f912.png" />
+    <EmbeddedResource Include="Resources\icons\1f691.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>del "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\$(TargetFileName)"
 mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"
 xcopy /y "$(TargetPath)" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"
+
+mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\icons"
+xcopy /y "$(ProjectDir)\Resources\icons" "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)\icons"
 </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

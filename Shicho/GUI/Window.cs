@@ -22,48 +22,50 @@ namespace Shicho.GUI
         public override void Awake()
         {
             base.Awake();
-            this.SetAutoLayout(LayoutDirection.Vertical);
-
-            Config.ID = new ConfigID() {
-                Value = GetInstanceID(),
-            };
-
             titleBar_ = AddUIComponent<TitleBar>();
-            //titleBar_.eventTitleChanged += (c, text) => {
-            //    content_.relativePosition = new Vector2(0, c.height);
-            //};
 
-            content_ = AddUIComponent<Panel>();
+            clipChildren = true; // IMPORTANT
+
+            // NB: initialization order dependency fix
+            // VERY IMPORTANT!
+            titleBar_.eventSizeChanged += (c, size) => OnSizeChanged();
+
+            content_ = AddUIComponent<UIPanel>();
+
+            eventSizeChanged += (c, size) => {
+                //titleBar_.width = width;
+
+                content_.size = new Vector2(
+                    width,
+                    height - titleBar_.height
+                );
+
+                //Log.Debug($"Window: {position}, {size}");
+                //Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
+                //Log.Debug($"content: {content_.position}, {content_.size}");
+            };
         }
 
         public override void Start()
         {
             base.Start();
 
+            this.SetAutoLayout(LayoutDirection.Vertical);
             isInteractive = true;
-            //minimumSize = new Vector2(220, 120);
-            //maximumSize = new Vector2(Screen.width, Screen.height) / 4;
+            anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
             backgroundSprite = "MenuPanel2";
 
-            titleBar_.width = width;
+            //titleBar_.width = width;
+            //titleBar_.height = 48;
+            titleBar_.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
             titleBar_.ControlType |= WindowControlType.Closable;
             titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
-
-            content_.padding.top = 6;
-            content_.width = width;
-            content_.height = height - titleBar_.height;
-
-            //content_.minimumSize = new Vector2(400, 200);
-
-            //Log.Debug($"Window: {position}, {size}");
+            titleBar_.autoFitChildrenVertically = true;
+            titleBar_.FitChildrenVertically();
             //Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
-            //Log.Debug($"content: {content_.position}, {content_.size}");
-        }
 
-        public new T AddUIComponent<T>()
-            where T: UIComponent
-        {
-            return Helper.AddDefaultComponent<T>(this);
+            content_.height = height - titleBar_.height;
+            content_.padding.top = 6;
         }
 
         public event MouseEventHandler eventClosed {
@@ -71,21 +73,11 @@ namespace Shicho.GUI
             remove => titleBar_.eventClosed -= value;
         }
 
-        protected override void OnSizeChanged()
-        {
-            base.OnSizeChanged();
-            titleBar_.width = width;
-            //titleBar_.Control.width = width;
-
-            content_.width = width;
-            content_.height = height - titleBar_.height;
-        }
-
         public TabbedWindowConfig Config { get; set; } = new TabbedWindowConfig();
 
         private TitleBar titleBar_;
-        private Panel content_;
-        public Panel Content { get => content_; }
+        private UIPanel content_;
+        public UIPanel Content { get => content_; }
 
         public string Title {
             get => titleBar_.Title;

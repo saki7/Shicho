@@ -40,7 +40,16 @@ namespace Shicho.Mod
 
             var xmlSerialiser = new XmlSerializer(typeof(Config));
             using (var reader = new StreamReader(path)) {
-                return xmlSerialiser.Deserialize(reader) as Config;
+                var cfg = xmlSerialiser.Deserialize(reader) as Config;
+
+                if (cfg.Graphics.shadowBias == null) {
+                    cfg.Graphics = GraphicsDefault.Clone() as GraphicsData;
+                }
+
+                if (cfg.AI.regenChance == null) {
+                    cfg.AI = AIDefault.Clone() as AIData;
+                }
+                return cfg;
             }
             // Log.Debug("loaded.");
         }
@@ -51,10 +60,6 @@ namespace Shicho.Mod
             [NonSerialized]
             [XmlIgnore]
             public Type type = typeof(T);
-
-            [NonSerialized]
-            [XmlIgnore]
-            public object lockTarget;
 
             public bool Enabled { get; set; } = false;
             public T Value { get; set; }
@@ -165,7 +170,7 @@ namespace Shicho.Mod
         [Serializable]
         public class AIData : ClonableData
         {
-            public bool doAutoHeal;
+            public Switchable<float> regenChance;
         }
 
 
@@ -180,7 +185,7 @@ namespace Shicho.Mod
         [NonSerialized]
         [XmlIgnore]
         public static readonly AIData AIDefault = new AIData() {
-            doAutoHeal = true,
+            regenChance = new Switchable<float>{Enabled = true, Value = 0.20f},
         };
 
         [SerializeField]

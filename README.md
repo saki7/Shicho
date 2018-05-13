@@ -11,6 +11,7 @@
 
 - License: [MIT License](LICENSE)
 - Author: Nana Sakisaka ([@saki7](https://github.com/saki7))
-- Icon design: Ryuichi Kaminogi ([@kaminogi](https://github.com/kaminogi))
+- Application icon design: Ryuichi Kaminogi ([@kaminogi](https://github.com/kaminogi))
+- Emoji icons: [EmojiOne](https://www.emojione.com)
 - Original repo: <https://github.com/SETNAHQ/Shicho>
 

@@ -95,7 +95,6 @@ namespace Shicho.GUI
                 //Core.Log.Debug($"disposing font: {font.name} ({font.size})");
                 UnityEngine.Object.DestroyImmediate(font);
             }
-
             store_.Clear();
             store_ = null;
 
