@@ -355,7 +355,7 @@ namespace Shicho.Tool
                 var pane = AddConfig(
                     ref panel,
                     "Health literacy",
-                    "Let citizens stay at their home in hope of recovery, instead of calling 911",
+                    "Let citizens stay at their home in hope of recovery, instead of calling 911.\n Requires decent healthcare system in city.",
                     opts: new SliderOption<float>() {
                         hasField = false,
 

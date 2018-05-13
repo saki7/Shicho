@@ -13,58 +13,50 @@ using System.Linq;
 namespace Shicho.Tool
 {
     using PatchPair = KeyValuePair<MethodBase, MethodInfo>;
-    using UpdateSpec = SortedList<float, UpdateHandler>;
+    using UpdateSpec = SortedList<float, UpdateLogic>;
 
     delegate void UpdateHandler();
+
+    class UpdateLogic
+    {
+        public UpdateLogic(UpdateHandler handler)
+        {
+            this.handler = handler;
+        }
+
+        public float lastFiredAt = 0;
+        public UpdateHandler handler;
+    }
 
     public class Watcher : MonoBehaviour
     {
         public void Awake()
         {
             elapsed_ = 0;
-            lastFiredAt_ = 0;
-            lastFiredAtMax_ = 0;
 
             r_ = new System.Random(App.GetDeviceSeedI());
 
             updaters_ = new UpdateSpec() {
-                {3, UnpatchHostiles},
-                {1, UpdateCitizen},
+                {3, new UpdateLogic(UnpatchHostiles)},
+                {1, new UpdateLogic(UpdateCitizen)},
             };
-            maxInterval_ = updaters_.Keys.Max();
         }
 
         public void Update()
         {
             elapsed_ += Time.deltaTime;
-            var firedDelta = elapsed_ - lastFiredAt_;
 
-            try {
-                foreach (var us in updaters_) {
-                    // skip all remaining timers w/ greater interval
-                    if (us.Key > firedDelta) break;
+            foreach (var us in updaters_) {
+                if (elapsed_ - us.Value.lastFiredAt > us.Key) {
+                    us.Value.lastFiredAt = elapsed_;
+                    // Log.Debug($"invoking timer for interval [{us.Key} sec]");
 
-                    // skip current timer if it's been fired in current window
-                    if (us.Key <= lastFiredAtMax_) continue;
+                    try {
+                        us.Value.handler.Invoke();
 
-                    // engage the handler IFF certain period has given
-                    if (firedDelta > us.Key) {
-                        // cache current interval as *max*
-                        lastFiredAtMax_ = us.Key;
-                        // Log.Debug($"invoking timer for interval [{lastFiredAtMax_} sec]");
-
-                        try {
-                            us.Value.Invoke();
-                        } catch (Exception e) {
-                            Log.Error($"timer failed: {e}");
-                        }
+                    } catch (Exception e) {
+                        Log.Error($"timer failed: {e}");
                     }
-                }
-
-            } finally {
-                if (firedDelta > maxInterval_) {
-                    lastFiredAtMax_ = 0;
-                    lastFiredAt_ = elapsed_;
                 }
             }
         }
@@ -159,9 +151,6 @@ namespace Shicho.Tool
         private System.Random r_;
 
         private float elapsed_;
-        private float lastFiredAt_, lastFiredAtMax_;
-
         private UpdateSpec updaters_;
-        private float maxInterval_;
     }
 }

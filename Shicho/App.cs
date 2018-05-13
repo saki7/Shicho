@@ -39,7 +39,7 @@ namespace Shicho
         public void InitGameMode()
         {
             Log.Debug($"loading fonts...");
-            GUI.FontStore.Load();
+            GUI.FontStore.Instance.Load();
 
             LoadLevelData();
             supportTool_ = gameObject.AddComponent<Tool.SupportTool>();
@@ -85,7 +85,8 @@ namespace Shicho
         {
             UnloadLevelData();
             citizens_.Clear();
-            GUI.FontStore.Unload();
+            GUI.FontStore.Instance.Unload();
+            GUI.FontStore.Deinit();
         }
 
         public void SetFlow(

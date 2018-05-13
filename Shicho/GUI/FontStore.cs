@@ -54,11 +54,8 @@ namespace Shicho.GUI
     {
         const uint DefaultFontSize = 10;
 
-        public static void Load()
+        public void Load()
         {
-            if (instance_ != null) return;
-            instance_ = new FontStore();
-
             {
                 Instance.defaultFont_ = UnityEngine.Object.Instantiate(UIView.GetAView().defaultFont);
             }
@@ -81,9 +78,13 @@ namespace Shicho.GUI
             return Instance.store_[new FontSpec{type = type, size = size}];
         }
 
-        public static void Unload()
+        public void Unload()
         {
-            instance_.Dispose();
+            Dispose();
+        }
+
+        internal static void Deinit()
+        {
             instance_ = null;
         }
 
@@ -92,7 +93,7 @@ namespace Shicho.GUI
             if (store_ == null) return;
 
             foreach (var font in store_.Values) {
-                //Core.Log.Debug($"disposing font: {font.name} ({font.size})");
+                // Debug.Log($"disposing font: {font.name} ({font.size})");
                 UnityEngine.Object.DestroyImmediate(font);
             }
             store_.Clear();
@@ -102,8 +103,15 @@ namespace Shicho.GUI
             defaultFont_ = null;
         }
 
-        private static FontStore instance_;
-        public static FontStore Instance { get => instance_; }
+        private static FontStore instance_ = null;
+        public static FontStore Instance {
+            get {
+                if (instance_ == null) {
+                    instance_ = new FontStore();
+                }
+                return instance_;
+            }
+        }
 
         private FontStore() {}
 
