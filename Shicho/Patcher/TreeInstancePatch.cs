@@ -119,6 +119,8 @@ namespace Shicho.Patcher.TreeInstancePatch
             lock (App.Config.GraphicsLock) {
                 if (App.Config.Graphics.stopDistantTrees) {
                     color.a = 0;
+                } else {
+                    color.a = (byte)Mathf.Clamp(Mathf.RoundToInt(Singleton<WeatherManager>.instance.GetWindSpeed(position) * 128f), 0, 255);
                 }
             }
 
