@@ -169,6 +169,7 @@ namespace Shicho.Mod
             ;
 
             public float treeMoveFactor;
+            public bool stopDistantTrees;
         }
 
         [Serializable]
@@ -186,6 +187,7 @@ namespace Shicho.Mod
             lightIntensity = new Switchable<float>{Enabled = false, Value = 4.2f},
 
             treeMoveFactor = 0.0f,
+            stopDistantTrees = true,
         };
 
         [NonSerialized]

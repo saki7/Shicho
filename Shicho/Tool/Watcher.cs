@@ -13,17 +13,19 @@ using System.Linq;
 namespace Shicho.Tool
 {
     using PatchPair = KeyValuePair<MethodBase, MethodInfo>;
-    using UpdateSpec = SortedList<float, UpdateLogic>;
+    using UpdateSpec = List<UpdateLogic>;
 
     delegate void UpdateHandler();
 
     class UpdateLogic
     {
-        public UpdateLogic(UpdateHandler handler)
+        public UpdateLogic(float interval, UpdateHandler handler)
         {
+            this.interval = interval;
             this.handler = handler;
         }
 
+        public float interval;
         public float lastFiredAt = 0;
         public UpdateHandler handler;
     }
@@ -37,8 +39,8 @@ namespace Shicho.Tool
             r_ = new System.Random(App.GetDeviceSeedI());
 
             updaters_ = new UpdateSpec() {
-                {3, new UpdateLogic(UnpatchHostiles)},
-                {1, new UpdateLogic(UpdateCitizen)},
+                new UpdateLogic(1, UpdateCitizen),
+                new UpdateLogic(3, UnpatchHostiles),
             };
         }
 
@@ -47,12 +49,12 @@ namespace Shicho.Tool
             elapsed_ += Time.deltaTime;
 
             foreach (var us in updaters_) {
-                if (elapsed_ - us.Value.lastFiredAt > us.Key) {
-                    us.Value.lastFiredAt = elapsed_;
+                if (elapsed_ - us.lastFiredAt > us.interval) {
+                    us.lastFiredAt = elapsed_;
                     // Log.Debug($"invoking timer for interval [{us.Key} sec]");
 
                     try {
-                        us.Value.handler.Invoke();
+                        us.handler.Invoke();
 
                     } catch (Exception e) {
                         Log.Error($"timer failed: {e}");

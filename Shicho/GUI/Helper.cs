@@ -75,6 +75,8 @@ namespace Shicho.GUI
             obj.tooltip = tooltip;
             if (font != null) {
                 obj.font = font;
+            } else {
+                obj.font = FontStore.Get(11);
             }
             if (padding != null) {
                 obj.padding = padding;

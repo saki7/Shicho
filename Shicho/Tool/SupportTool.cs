@@ -415,7 +415,7 @@ namespace Shicho.Tool
                 var pane = AddConfig(
                     ref page,
                     "Tree movement",
-                    "[BETA] Sets the amount of tree branch movement.\nVanilla: maximum; Recommended: minimum",
+                    "Sets the amount of tree branch movement.\nVanilla: maximum; Recommended: minimum",
                     opts: new SliderOption<float>() {
                         hasField = false,
 
@@ -430,6 +430,17 @@ namespace Shicho.Tool
                     labelPadding: 4
                 );
                 pane.slider.value = App.Config.Graphics.treeMoveFactor;
+
+                var cb = Helper.AddCheckBox(ref page, "Force stop far trees (*)", "(* restart required)", font: FontStore.Get(11));
+                lock (App.Config.GraphicsLock) {
+                    cb.isChecked = App.Config.Graphics.stopDistantTrees;
+                }
+
+                cb.eventCheckChanged += (c, isChecked) => {
+                    lock (App.Config.GraphicsLock) {
+                        App.Config.Graphics.stopDistantTrees = isChecked;
+                    }
+                };
             }
 
             {
