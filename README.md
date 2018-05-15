@@ -12,7 +12,7 @@ This mod aims to provide some missing core features for hardcore builders. Unlik
 ## Screenshot
 
 ![Depth of field sample 1](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage5.png)
-![Depth of field sample 2](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage5.png)
+![Depth of field sample 2](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage6.png)
 
 ## Donation
 
