@@ -431,16 +431,29 @@ namespace Shicho.Tool
                 );
                 pane.slider.value = App.Config.Graphics.treeMoveFactor;
 
-                var cb = Helper.AddCheckBox(ref page, "Force stop far trees (*)", "(* restart required)", font: FontStore.Get(11));
-                lock (App.Config.GraphicsLock) {
-                    cb.isChecked = App.Config.Graphics.stopDistantTrees;
+                {
+                    var cb = Helper.AddCheckBox(ref page, "Random trees", font: FontStore.Get(11));
+                    lock (App.Config.GraphicsLock) {
+                        cb.isChecked = App.Config.Graphics.randomTrees;
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.GraphicsLock) {
+                            App.Config.Graphics.randomTrees = isChecked;
+                        }
+                    };
                 }
 
-                cb.eventCheckChanged += (c, isChecked) => {
+                {
+                    var cb = Helper.AddCheckBox(ref page, "Force stop distant trees (*)", "* restart required", font: FontStore.Get(11));
                     lock (App.Config.GraphicsLock) {
-                        App.Config.Graphics.stopDistantTrees = isChecked;
+                        cb.isChecked = App.Config.Graphics.stopDistantTrees;
                     }
-                };
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.GraphicsLock) {
+                            App.Config.Graphics.stopDistantTrees = isChecked;
+                        }
+                    };
+                }
             }
 
             {

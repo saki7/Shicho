@@ -40,7 +40,31 @@ namespace Shicho.Patcher.TreeInstancePatch
                     if (instance == null) return false;
                     var materialBlock = instance.m_materialBlock;
                     var matrix = default(Matrix4x4);
-                    matrix.SetTRS(position, Quaternion.identity, new Vector3(scale, scale, scale));
+
+                    Quaternion rotation;
+                    lock (App.Config.GraphicsLock) {
+                        if (App.Config.Graphics.randomTrees) {
+#if false
+                            UInt32 randIdent =
+                                ((UInt32)info.GetInstanceID() << 16) |
+                                (((UInt32)(BitConverter.DoubleToInt64Bits(position.magnitude) >> 32)) & 0xFFFF)
+                            ;
+                            var r = new System.Random((int)randIdent);
+                            //Log.Debug($"tree rand: {Convert.ToString(randIdent, 2)}, {r.NextDouble() * 360}");
+
+                            rotation = Quaternion.Euler(0, (float)r.NextDouble() * 360, 0);
+#endif
+
+                            // same angle as in "Random Tree Rotation" mod
+                            long setofBits = BitConverter.DoubleToInt64Bits(position.magnitude);
+                            rotation = Quaternion.Euler(0, setofBits % 360, 0);
+
+                        } else {
+                            rotation = Quaternion.identity;
+                        }
+                    }
+
+                    matrix.SetTRS(position, rotation, new Vector3(scale, scale, scale));
 
                     var color = info.m_defaultColor * brightness;
                     color.a = Singleton<WeatherManager>.instance.GetWindSpeed(position);
