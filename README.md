@@ -2,6 +2,8 @@
 
 ![Shicho](https://github.com/SETNAHQ/Shicho/raw/master/img/shicho_thm.png)
 
+(Cities: Skylines mod)
+
 Fundamental support mod for hardcore sandbox builders & streamers.
 
 This mod aims to provide some missing core features for hardcore builders. Unlike the aggressive unlimiter in classic mods, Shicho does critical modifications with better way of overriding & patching to avoid technical disadvantages such as broken AI. Even if a feature is a game changer, Shicho aims to keep side-effects for the game simulation to be minimal.
