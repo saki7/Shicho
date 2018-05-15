@@ -59,7 +59,8 @@ namespace Shicho.Tool
 
             {
                 tabs_ = win_.Content.AddUIComponent<UITabstrip>();
-                tabs_.autoSize = true;
+                //tabs_.autoSize = false;
+                tabs_.clipChildren = true;
                 tabs_.width = win_.Content.width;
                 tabs_.backgroundSprite = "Menubar";
                 tabs_.color = Helper.RGB(20, 20, 40);
@@ -73,7 +74,8 @@ namespace Shicho.Tool
 
                 container.relativePosition = Vector2.zero;
                 container.width = tabs_.width;
-                //container.clipChildren = true;
+                container.clipChildren = true;
+                container.height = win_.Content.parent.height - tabs_.height;
 
                 foreach (var v in Tabs.Select((tab, i) => new {tab, i})) {
                     {
@@ -149,6 +151,8 @@ namespace Shicho.Tool
                     //var desc = page.AddUIComponent<UILabel>();
                     //desc.text = $"'{v.tab.name}' here!!!";
                     //desc.zOrder = 1;
+
+                    // Log.Debug($"tc: {tabs_.size} {win_.Content.size} | {page.position} {page.size}");
                 }
 
                 //Log.Debug($"tab.size: {tabs_.size}");

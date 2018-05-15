@@ -33,7 +33,7 @@ namespace Shicho.GUI
             content_ = AddUIComponent<UIPanel>();
 
             eventSizeChanged += (c, size) => {
-                //titleBar_.width = width;
+                titleBar_.width = width;
 
                 content_.size = new Vector2(
                     width,
@@ -50,22 +50,30 @@ namespace Shicho.GUI
         {
             base.Start();
 
-            this.SetAutoLayout(LayoutDirection.Vertical);
+            // DON'T DO THIS
+            //this.SetAutoLayout(LayoutDirection.Vertical);
+            autoLayout = false;
+
             isInteractive = true;
             anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
             backgroundSprite = "MenuPanel2";
 
             //titleBar_.width = width;
             //titleBar_.height = 48;
+            titleBar_.relativePosition = Vector2.zero;
             titleBar_.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
             titleBar_.ControlType |= WindowControlType.Closable;
             titleBar_.Control.Close.tooltip = App.Config.mainKey.ToString();
-            titleBar_.autoFitChildrenVertically = true;
+            //titleBar_.autoFitChildrenVertically = true;
             titleBar_.FitChildrenVertically();
+            titleBar_.zOrder = 1;
             //Log.Debug($"titleBar: {titleBar_.position}, {titleBar_.size}");
 
+            content_.relativePosition = new Vector2(0, titleBar_.height);
             content_.height = height - titleBar_.height;
-            content_.padding.top = 6;
+            //content_.padding.top = 6;
+            content_.zOrder = 0;
+            content_.clipChildren = true;
         }
 
         public event MouseEventHandler eventClosed {
@@ -76,6 +84,8 @@ namespace Shicho.GUI
         public TabbedWindowConfig Config { get; set; } = new TabbedWindowConfig();
 
         private TitleBar titleBar_;
+        public float TitleBarHeight { get => titleBar_.height; }
+
         private UIPanel content_;
         public UIPanel Content { get => content_; }
 

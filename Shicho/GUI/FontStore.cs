@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Shicho.GUI
 {
+    using Core;
     using Core.EnumerableExtension;
 
     public enum FontType : int
@@ -61,7 +62,7 @@ namespace Shicho.GUI
             }
 
             Instance.store_ = new Dictionary<FontSpec, UIFont>();
-            foreach (uint size in new [] {10, 11, 12, 15 /* title bar */}) {
+            foreach (uint size in new [] {10, 11, 12, 15 /* title bar */, 18}) {
                 var font = UnityEngine.Object.Instantiate(Instance.defaultFont_);
                 font.size = (int)size;
                 Instance.store_.Add(new FontSpec{type = FontType.SansSerif, size = size}, font);

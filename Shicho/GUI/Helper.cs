@@ -68,11 +68,15 @@ namespace Shicho.GUI
             return new RectOffset(top: top, right: right.Value, bottom: bottom.Value, left: left.Value);
         }
 
-        public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null, bool bullet = false)
+        public static UILabel AddLabel(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, RectOffset padding = null, Color32? color = null, string bullet = null)
         {
             var obj = parent.AddUIComponent<UILabel>();
             obj.text = label;
             obj.tooltip = tooltip;
+            if (color.HasValue) {
+                obj.textColor = color.Value;
+            }
+
             if (font != null) {
                 obj.font = font;
             } else {
@@ -82,16 +86,17 @@ namespace Shicho.GUI
                 obj.padding = padding;
             }
 
-            if (bullet) {
-                var bulletSize = obj.font.size + 4;
-                obj.padding.left += bulletSize + 2;
+            var bulletSize = obj.font.size + 4;
+            obj.padding.left += bulletSize + 3;
+
+            if (bullet != null) {
+                obj.padding.left += 3;
 
                 var sp = obj.AddUIComponent<UISprite>();
+                sp.spriteName = bullet;
                 sp.width = sp.height = bulletSize;
-                sp.spriteName = "InfoIconMaintenance";
-                sp.relativePosition = new Vector2(-1, 0);
+                sp.relativePosition = new Vector2(2, 0);
             }
-
             return obj;
         }
 
@@ -130,7 +135,7 @@ namespace Shicho.GUI
             return wrapper;
         }
 
-        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "", UIFont font = null)
+        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, int? indentPadding = null)
         {
             var box = parent.AddUIComponent<UICheckBox>();
             box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
@@ -146,6 +151,10 @@ namespace Shicho.GUI
                 box.label.font = font;
             }
             box.label.padding.left = box.label.font.size + 6;
+            if (indentPadding.HasValue) {
+                box.label.padding.left += indentPadding.Value;
+            }
+
             box.label.relativePosition = new Vector2(0, -(box.label.font.size - 10));
             box.label.FitTo(parent);
             box.height = box.label.height;
@@ -153,7 +162,7 @@ namespace Shicho.GUI
 
             var uncheckedSprite = box.AddUIComponent<UISprite>() as UISprite;
             uncheckedSprite.spriteName = "AchievementCheckedFalse";
-            uncheckedSprite.relativePosition = new Vector2(0, 2.5f);
+            uncheckedSprite.relativePosition = new Vector2(indentPadding.HasValue ? indentPadding.Value : 0, 2.5f);
             uncheckedSprite.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
             uncheckedSprite.width = uncheckedSprite.height = box.label.font.size;
 
@@ -165,6 +174,59 @@ namespace Shicho.GUI
 
             box.checkedBoxObject = checkedSprite;
             return box;
+        }
+
+        public static UIDropDown AddDropDown(ref UIPanel parent, string name, string[] options, UIFont font = null)
+        {
+            if (font == null) {
+                font = FontStore.Get(11);
+            }
+
+            var panel = parent.AttachUIComponent(UITemplateManager.GetAsGameObject("OptionsDropdownTemplate")) as UIPanel;
+            panel.clipChildren = false;
+            panel.SetAutoLayout(LayoutDirection.Horizontal);
+            panel.autoFitChildrenVertically = true;
+
+            var label = panel.Find<UILabel>("Label");
+            label.text = name;
+            label.textScale = 1;
+            label.font = font;
+            label.textColor = RGB(160, 160, 160);
+            label.padding = Padding(0, 14, 0, 18);
+
+            var dd = panel.Find<UIDropDown>("Dropdown");
+            dd.font = FontStore.Get(11);
+            dd.textScale = 1;
+
+            dd.width = 98;
+            dd.name = name;
+            dd.autoSize = false;
+            dd.height = dd.font.size + dd.spritePadding.vertical + dd.textFieldPadding.vertical + dd.outlineSize * 2;
+            //dd.autoListWidth = false;
+            //dd.itemHeight = font.size;
+            //dd.listHeight = font.size;
+
+            dd.listPosition = UIDropDown.PopupListPosition.Below;
+            dd.textFieldPadding = Padding(2, 0, 2, 8);
+            dd.spritePadding = Padding(5, 8, 3, 8);
+            dd.listPadding = Padding(0, 0);
+            dd.itemPadding = Padding(3, 0, 0, 6);
+
+            //dd.foregroundSpriteMode = UIForegroundSpriteMode.Stretch;
+
+            dd.items = options;
+            dd.selectedIndex = 0;
+
+            //dd.eventDropdownOpen += (UIDropDown self, UIListBox popup, ref bool overridden) => {
+            //    Log.Debug($"popup: {popup.position}, {popup.size}");
+            //    Log.Debug($"popup.p: {popup.parent}");
+            //    overridden = true;
+            //};
+            dd.eventDropdownClose += (UIDropDown self, UIListBox popup, ref bool overridden) => {
+                self.Unfocus();
+            };
+
+            return dd;
         }
 
         public static UITextureSprite AddIcon(ref UIPanel parent, string name, uint size)
@@ -216,12 +278,12 @@ namespace Shicho.GUI
             };
 
             if (opts.hasField) {
-                pane.slider.width -= 46;
+                pane.slider.width -= 48;
 
                 pane.field = pane.wrapper.AddUIComponent<UITextField>();
 
                 pane.field.autoSize = false;
-                pane.field.width = parent.width - pane.slider.width - parent.padding.horizontal - 20 - 12;
+                pane.field.width = parent.width - pane.slider.width - parent.padding.horizontal - 20 - 6;
                 pane.field.relativePosition = new Vector2(pane.field.parent.width - pane.field.width, 0);
                 pane.field.anchor = UIAnchorStyle.CenterVertical | UIAnchorStyle.Right;
                 pane.field.height -= 4;

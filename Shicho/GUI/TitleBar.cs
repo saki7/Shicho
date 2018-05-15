@@ -38,6 +38,7 @@ namespace Shicho.GUI
 
                 if ((type_ & WindowControlType.Closable) != WindowControlType.None) {
                     Close = AddUIComponent<UIButton>();
+
                     IconSet.AssignRaw(
                         ref Close,
                         normal: "buttonclose",
@@ -64,15 +65,21 @@ namespace Shicho.GUI
         {
             base.Awake();
 
+            clipChildren = true;
+
             icon_ = AddUIComponent<UISprite>();
             icon_.name = "InfoPanelIconInfo";
 
             title_ = AddUIComponent<UILabel>();
             title_.text = "(Unnamed panel)";
+            title_.padding = Helper.Padding(10, 8, 2, 8);
+            height = title_.height + title_.padding.bottom; // icon_.height
 
             control_ = AddUIComponent<WindowControl>();
 
             drag_ = AddUIComponent<UIDragHandle>();
+            drag_.relativePosition = Vector2.zero;
+
             control_.eventTypeChanged += (c) => {
                 c.relativePosition = new Vector2(width - c.width, 0);
                 drag_.width = width - c.width;
@@ -83,12 +90,13 @@ namespace Shicho.GUI
             };
 
             eventSizeChanged += (c, size) => {
-                // Log.Debug($"TitleBar.eventSizeChanged: {size}");
-
                 control_.relativePosition = new Vector2(width - control_.width, 0);
+                control_.height = size.y;
 
                 drag_.width = size.x - control_.width;
                 drag_.height = size.y;
+
+                // Log.Debug($"esc: {size}, control_: {control_.size}, drag_: {drag_.size}");
             };
         }
 
@@ -104,16 +112,17 @@ namespace Shicho.GUI
 
             //title_.padding.left += (int)icon_.width + 1;
             title_.relativePosition = new Vector2(icon_.width + 1, 0);
-            title_.padding = Helper.Padding(10, 8, 0, 8);
             title_.font = FontStore.Get(15);
 
             color = Helper.RGB(20, 20, 40);
             backgroundSprite = "MenuPanel";
+
+            //anchor = UIAnchorStyle.All;
             size = new Vector2(
                 parent.width,
-                icon_.height
+                title_.height + title_.padding.bottom // icon_.height
             );
-            padding = Helper.Padding(4, 2);
+
             zOrder = 0;
 
             drag_.target = parent;

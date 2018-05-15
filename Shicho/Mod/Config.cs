@@ -170,6 +170,45 @@ namespace Shicho.Mod
 
             public float treeMoveFactor;
             public bool randomTrees, stopDistantTrees;
+
+
+            public bool dofEnabled;
+
+            [NonSerialized]
+            [XmlIgnore]
+            public bool dofDebug;
+
+            public float
+                dofAperture,
+                dofFocalDistance, dofFocalRange,
+                dofMaxBlurSize
+            ;
+
+            public bool dofNearBlur;
+            public float dofFGOverlap;
+
+            // DX11
+            public float
+                dofBokehScale,
+                dofBokehIntensity,
+                dofBokehMinLuminanceThreshold,
+                dofBokehSpawnHeuristic
+            ;
+
+            public bool tiltShiftEnabled;
+            public TiltShiftEffect.TiltShiftMode tiltShiftMode;
+            public float tiltShiftMaxBlurSize, tiltShiftAreaSize;
+
+            public bool filmGrainEnabled;
+            public float
+                filmGrainScale,
+                filmGrainAmountScalar,
+                filmGrainAmountFactor,
+                filmGrainMiddleRange
+            ;
+
+            public bool smaaEnabled;
+            public int smaaPasses;
         }
 
         [Serializable]
@@ -189,6 +228,37 @@ namespace Shicho.Mod
             treeMoveFactor = 0.0f,
             randomTrees = true,
             stopDistantTrees = true,
+
+
+            dofEnabled = false,
+            dofDebug = false,
+
+            dofAperture = 2.2f,
+            dofFocalDistance = 1.52f,
+            dofFocalRange = 1.4f,
+            dofMaxBlurSize = 0.9f,
+
+            dofNearBlur = false,
+            dofFGOverlap = 5.0f,
+
+            dofBokehScale = 10.78f,
+            dofBokehIntensity = 1.0f,
+            dofBokehMinLuminanceThreshold = 1.0f,
+            dofBokehSpawnHeuristic = 0.1f,
+
+            tiltShiftEnabled = false,
+            tiltShiftMode = TiltShiftEffect.TiltShiftMode.TiltShiftMode,
+            tiltShiftMaxBlurSize = 1.0f,
+            tiltShiftAreaSize = 1.0f,
+
+            filmGrainEnabled = false,
+            filmGrainScale = 0.5f,
+            filmGrainAmountScalar = 0.3f,
+            filmGrainAmountFactor = 0.13f,
+            filmGrainMiddleRange = 0.48f,
+
+            smaaEnabled = true,
+            smaaPasses = 1,
         };
 
         [NonSerialized]
