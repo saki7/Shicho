@@ -153,7 +153,7 @@ namespace Shicho.Mod
 
         [NonSerialized]
         [XmlIgnore]
-        public object GraphicsLock = new object(), AILock = new object();
+        public object GraphicsLock = new object(), UILock = new object(), AILock = new object();
 
         [Serializable]
         public abstract class ClonableData : ICloneable
@@ -212,6 +212,30 @@ namespace Shicho.Mod
         }
 
         [Serializable]
+        public class UIData : ClonableData
+        {
+            // for advanced users. change this in config file if you want
+            public bool alwaysFullRect;
+            public float masterOpacity;
+
+            [NonSerialized]
+            [XmlIgnore]
+            public bool
+                masterToolbarVisibility
+            ;
+
+            public bool
+                areaBordersVisiblity,
+                districtNamesVisibility,
+                propMarkersVisibility,
+
+                notificationsVisibility
+            ;
+
+            public bool tutorialDisabled;
+        }
+
+        [Serializable]
         public class AIData : ClonableData
         {
             public Switchable<float> regenChance;
@@ -263,6 +287,23 @@ namespace Shicho.Mod
 
         [NonSerialized]
         [XmlIgnore]
+        public static readonly UIData UIDefault = new UIData() {
+            alwaysFullRect = true,
+            masterOpacity = 1.0f,
+
+            masterToolbarVisibility  = true,
+            propMarkersVisibility    = true,
+
+            areaBordersVisiblity     = true,
+            districtNamesVisibility  = true,
+
+            notificationsVisibility  = false,
+
+            tutorialDisabled = true,
+        };
+
+        [NonSerialized]
+        [XmlIgnore]
         public static readonly AIData AIDefault = new AIData() {
             regenChance = new Switchable<float>{Enabled = true, Value = 0.20f},
         };
@@ -270,6 +311,10 @@ namespace Shicho.Mod
         [SerializeField]
         [XmlElement(ElementName = "Graphics")]
         public GraphicsData Graphics = GraphicsDefault.Clone() as GraphicsData;
+
+        [SerializeField]
+        [XmlElement(ElementName = "UI")]
+        public UIData UI = UIDefault.Clone() as UIData;
 
         [SerializeField]
         [XmlElement(ElementName = "AI")]

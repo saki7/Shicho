@@ -15,6 +15,62 @@ namespace Shicho.Patcher.CameraControllerPatch
     [HarmonyPatch("LateUpdate")]
     class LateUpdate
     {
+        // Some external mods override this :(
+        private static class Defaults
+        {
+            public const float
+                minDistance = 40f,
+	            maxDistance = 3000f,
+
+	            maxTiltDistance = 5000f, // NB: not same as below
+                MaxTiltShiftDistance = 2000f, // NB: different from above value
+
+                MinTiltShiftArea = 0f, // NB: uninitialized in vanilla
+                MaxTiltShiftArea = 5.55f,
+
+	            minShadowDistance = 400f,
+                maxShadowDistance = 4000f
+            ;
+
+            // TODO: make some values logarithmic
+            public static readonly AnimationCurve
+                FocalLength = AnimationCurve.Linear(0f, 10f, 1f, 10f),
+                FocalSize = AnimationCurve.Linear(0f, 0.05f, 1f, 0.05f),
+                Aperture = AnimationCurve.Linear(0f, 11.5f, 1f, 11.5f),
+                MaxBlurSize = AnimationCurve.Linear(0f, 2f, 1f, 2f)
+            ;
+        }
+
+        private static void ResetCameraDefaults(ref CameraController cc)
+        {
+            cc.m_minDistance = Defaults.minDistance;
+	        cc.m_maxDistance = Defaults.maxDistance;
+
+	        cc.m_maxTiltDistance = Defaults.maxTiltDistance;
+            cc.m_MaxTiltShiftDistance = Defaults.MaxTiltShiftDistance;
+
+            cc.m_MinTiltShiftArea = Defaults.MinTiltShiftArea;
+            cc.m_MaxTiltShiftArea = Defaults.MaxTiltShiftArea;
+
+            cc.m_FocalLength = Defaults.FocalLength;
+            cc.m_FocalSize = Defaults.FocalSize;
+            cc.m_Aperture = Defaults.Aperture;
+            cc.m_MaxBlurSize = Defaults.MaxBlurSize;
+        }
+
+        static void Prefix(
+            ref CameraController __instance//,
+            //Camera ___m_camera
+        ) {
+            var hasToolbar = true;
+            lock (App.Config.UILock) {
+                hasToolbar = App.Config.UI.masterToolbarVisibility;
+            }
+            __instance.m_unlimitedCamera = true; // hasToolbar;
+
+            //Log.Debug($"{ColossalFramework.UI.UIInput.hoveredComponent}");
+        }
+
         static void Postfix(
             ref CameraController __instance,
 
@@ -24,6 +80,7 @@ namespace Shicho.Patcher.CameraControllerPatch
             FilmGrainEffect ___m_FilmGrain,
             SMAA ___m_SMAA,
 
+            Camera ___m_camera,
             float ___m_DefaultMaxBlurSize
         ) {
             if (!Singleton<LoadingManager>.instance.m_loadingComplete) {
@@ -39,15 +96,39 @@ namespace Shicho.Patcher.CameraControllerPatch
             var light = App.Instance.MainLight;
             if (!light) return;
 
+            float cameraTime = Mathf.Clamp((__instance.m_currentSize - __instance.m_minDistance) / __instance.m_MaxTiltShiftDistance, 0f, 1f);
+
+            bool hasToolbar = true, alwaysFullRect = false;
+            lock (App.Config.UILock) {
+                hasToolbar = App.Config.UI.masterToolbarVisibility;
+                alwaysFullRect = App.Config.UI.alwaysFullRect;
+            }
+            if (!alwaysFullRect && hasToolbar) {
+                ___m_camera.rect = new Rect(0f, 0.105f, 1f, 0.895f);
+                //Log.Debug($"has toolbar");
+
+            } else {
+                // Vanilla & some external mod's "free camera" thingy
+                ___m_camera.rect = new Rect(0f, 0f, 1f, 1f);
+                //___m_camera.pixelRect = new Rect(0, 0, 2560, 1440);
+                // Log.Debug($"no toolbar: {__instance.m_currentSize} {___m_camera.orthographic} {___m_camera.orthographicSize}");
+            }
+
             lock (App.Config.GraphicsLock) {
-                light.shadows = LightShadows.Soft;
                 var gr = App.Config.Graphics;
+
+                light.shadows = LightShadows.Soft;
 
                 if (gr.shadowStrength) {
                     light.shadowStrength = gr.shadowStrength.Value;
                 }
                 if (gr.lightIntensity) {
                     light.intensity = gr.lightIntensity.Value;
+                }
+
+                // NB: revert values set from external mods
+                if (gr.dofEnabled || gr.tiltShiftEnabled) {
+                    ResetCameraDefaults(ref __instance);
                 }
 
                 if (___m_DepthOfField != null) {
@@ -58,11 +139,6 @@ namespace Shicho.Patcher.CameraControllerPatch
                     ___m_DepthOfField.highResolution = true;
 
                     ___m_DepthOfField.visualizeFocus = gr.dofDebug;
-                    ___m_DepthOfField.aperture = gr.dofAperture;
-                    ___m_DepthOfField.focalLength = gr.dofFocalDistance;
-                    ___m_DepthOfField.focalSize = gr.dofFocalRange;
-
-                    ___m_DepthOfField.maxBlurSize = gr.dofMaxBlurSize;
 
                     // near
                     ___m_DepthOfField.nearBlur = gr.dofNearBlur;
@@ -71,11 +147,10 @@ namespace Shicho.Patcher.CameraControllerPatch
                     // focus to target object
                     ___m_DepthOfField.focalTransform = null;
 
-                    float time = Mathf.Clamp((__instance.m_currentSize - __instance.m_minDistance) / __instance.m_MaxTiltShiftDistance, 0f, 1f);
-                    ___m_DepthOfField.focalLength = (__instance.m_currentSize + __instance.m_FocalLength.Evaluate(time)) * gr.dofFocalDistance;
-                    ___m_DepthOfField.focalSize = __instance.m_FocalSize.Evaluate(time) * gr.dofFocalRange;
-                    ___m_DepthOfField.aperture = __instance.m_Aperture.Evaluate(time) * gr.dofAperture;
-                    ___m_DepthOfField.maxBlurSize = __instance.m_MaxBlurSize.Evaluate(time) * gr.dofMaxBlurSize;
+                    ___m_DepthOfField.focalLength = (__instance.m_currentSize + __instance.m_FocalLength.Evaluate(cameraTime)) * gr.dofFocalDistance;
+                    ___m_DepthOfField.focalSize = __instance.m_FocalSize.Evaluate(cameraTime) * gr.dofFocalRange;
+                    ___m_DepthOfField.aperture = __instance.m_Aperture.Evaluate(cameraTime) * gr.dofAperture;
+                    ___m_DepthOfField.maxBlurSize = __instance.m_MaxBlurSize.Evaluate(cameraTime) * gr.dofMaxBlurSize;
 
 
                     if (___m_DepthOfField.Dx11Support()) {
@@ -92,11 +167,10 @@ namespace Shicho.Patcher.CameraControllerPatch
 
                 if (___m_TiltShift != null) {
                     //___m_TiltShift.enabled = true;
-                    float time = Mathf.Clamp((__instance.m_currentSize - __instance.m_minDistance) / __instance.m_MaxTiltShiftDistance, 0f, 1f);
 
                     ___m_TiltShift.m_Mode = gr.tiltShiftMode;
                     ___m_TiltShift.m_MaxBlurSize = ___m_DefaultMaxBlurSize /* default 5? */ * gr.tiltShiftMaxBlurSize;
-                    ___m_TiltShift.m_BlurArea = Mathf.Lerp(__instance.m_MaxTiltShiftArea, __instance.m_MinTiltShiftArea, Mathf.Clamp((__instance.m_currentSize - __instance.m_minDistance) / __instance.m_MaxTiltShiftDistance, 0f, 1f)) * gr.tiltShiftAreaSize;
+                    ___m_TiltShift.m_BlurArea = Mathf.Lerp(__instance.m_MaxTiltShiftArea, __instance.m_MinTiltShiftArea, cameraTime) * gr.tiltShiftAreaSize;
                 }
 
                 if (___m_FilmGrain != null) {
