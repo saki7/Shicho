@@ -118,9 +118,16 @@
     <Compile Include="Patcher\TreeInstancePatch.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Resources.cs" />
+    <Compile Include="Tool\AboutPage.cs" />
+    <Compile Include="Tool\CameraPage.cs" />
     <Compile Include="Tool\CitizenInfo.cs" />
+    <Compile Include="Tool\CitizenPage.cs" />
+    <Compile Include="Tool\GraphicsPage.cs" />
+    <Compile Include="Tool\MiscPage.cs" />
+    <Compile Include="Tool\NaturePage.cs" />
     <Compile Include="Tool\SupportTool.cs" />
     <Compile Include="Tool\ToolBase.cs" />
+    <Compile Include="Tool\ToolHelper.cs" />
     <Compile Include="Tool\Watcher.cs" />
     <Compile Include="TrafficController.cs" />
     <Compile Include="PrefabManager.cs" />

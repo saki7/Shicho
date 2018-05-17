@@ -1,0 +1,204 @@
+﻿extern alias Cities;
+
+using Shicho.Core;
+using Shicho.GUI;
+
+using ColossalFramework.UI;
+using UnityEngine;
+
+using System;
+using System.Reflection;
+
+
+namespace Shicho.Tool
+{
+    using Shicho.GUI.Extension;
+
+    public static class MiscPage
+    {
+        public static void Setup(ref UIPanel page)
+        {
+            page.padding = Helper.Padding(6, 2);
+            page.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 8, 0));
+            page.autoFitChildrenVertically = true;
+
+            var thmBar = UIView.Find<UISlicedSprite>("ThumbnailBar");
+            var tsBar = UIView.Find("TSBar");
+            var infoPanel = UIView.Find("InfoPanel");
+
+            {
+                var pane = page.AddUIComponent<UIPanel>();
+                pane.width = page.width - page.padding.horizontal;
+                pane.padding = Helper.Padding(4, 12, 4, 0);
+                pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
+                pane.autoFitChildrenVertically = true;
+
+                Helper.AddLabel(
+                    ref pane,
+                    "Crafting UI",
+                    font: FontStore.Get(12),
+                    color: Helper.RGB(220, 230, 250),
+                    bullet: "IconPolicyBigBusiness"
+                );
+
+                // debug only
+                //UIView.Show(true);
+
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "Master toolbar", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        // always reset to visible at game init
+                        cb.isChecked = true; // App.Config.UI.masterToolbarVisibility;
+                    }
+
+                    cb.eventCheckChanged += (c, isEnabled) => {
+                        lock (App.Config.UILock) {
+                            App.Config.UI.masterToolbarVisibility = isEnabled;
+
+                            //var gamePanels = UIView.library.m_DynamicPanels
+                            //    .Select((p) => p.instance.GetRootCustomControl())
+                            //    .Distinct()
+                            //    .Where(p =>
+                            //        Game.Application.GamePanels.Any(name => name == p.name)
+                            //    )
+                            //;
+
+                            if (isEnabled) {
+                                thmBar.Show();
+                                tsBar.Show();
+                                infoPanel.Show();
+                                //UIView.Show(true);
+
+                            } else {
+                                thmBar.Hide();
+                                tsBar.Hide();
+                                infoPanel.Hide();
+                                //UIView.Show(false);
+                            }
+                        }
+                    };
+                }
+                {
+                    var cfg = ToolHelper.AddConfig(
+                        ref pane,
+                        "Master toolbar opacity",
+                        $"default: {Mod.Config.UIDefault.masterOpacity}",
+                        opts: new SliderOption<float> {
+                            hasField = true,
+                            minValue = 0.05f,
+                            maxValue = 1f,
+                            stepSize = 0.05f,
+
+                            eventValueChanged = (c, value) => {
+                                ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.masterOpacity, value);
+                                thmBar.opacity = value;
+                                tsBar.opacity = value;
+                                infoPanel.opacity = value;
+                            },
+                        },
+                        color: Helper.RGB(160, 160, 160)
+                    );
+                    lock (App.Config.UILock) {
+                        cfg.slider.value = App.Config.UI.masterOpacity;
+                    }
+                }
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "Prop marker", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        cb.isChecked = Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility = isChecked;
+                        }
+                    };
+                }
+            }
+
+            {
+                var pane = page.AddUIComponent<UIPanel>();
+                pane.width = page.width - page.padding.horizontal;
+                pane.padding = Helper.Padding(4, 12, 4, 0);
+                pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
+                pane.autoFitChildrenVertically = true;
+
+                Helper.AddLabel(
+                    ref pane,
+                    "City view",
+                    font: FontStore.Get(12),
+                    color: Helper.RGB(220, 230, 250),
+                    bullet: "ToolbarIconZoomOutGlobe"
+                );
+
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "District name", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        cb.isChecked = DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility = isChecked;
+                        }
+                    };
+                }
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "City border", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        cb.isChecked = GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity = isChecked;
+                        }
+                    };
+                }
+            }
+
+
+            {
+                var pane = page.AddUIComponent<UIPanel>();
+                pane.width = page.width - page.padding.horizontal;
+                pane.padding = Helper.Padding(4, 12, 4, 0);
+                pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
+                pane.autoFitChildrenVertically = true;
+
+                Helper.AddLabel(
+                    ref pane,
+                    "Game system interface",
+                    font: FontStore.Get(12),
+                    color: Helper.RGB(220, 230, 250),
+                    bullet: "InfoIconMaintenance"
+                );
+
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "Notifications", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        cb.isChecked = NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility;
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility = isChecked;
+
+                            // speed up easing animation
+                            if (!NotificationManager.instance.NotificationsVisible) {
+                                var m_notificationAlpha = typeof(NotificationManager).GetField("m_notificationAlpha", BindingFlags.NonPublic | BindingFlags.Instance);
+                                m_notificationAlpha.SetValue(NotificationManager.instance, NotificationManager.instance.NotificationsVisible ? 1f : 0f);
+                            }
+                        }
+                    };
+                }
+                {
+                    var cb = Helper.AddCheckBox(ref pane, "Tutorial", font: FontStore.Get(11), indentPadding: 10);
+                    lock (App.Config.UILock) {
+                        cb.isChecked = !(GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled);
+                    }
+                    cb.eventCheckChanged += (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled = !isChecked;
+                        }
+                    };
+                }
+            }
+        }
+    }
+}
