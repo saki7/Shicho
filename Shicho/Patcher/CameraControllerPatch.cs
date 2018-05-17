@@ -20,15 +20,15 @@ namespace Shicho.Patcher.CameraControllerPatch
         {
             public const float
                 minDistance = 40f,
-	            maxDistance = 3000f,
+                maxDistance = 3000f,
 
-	            maxTiltDistance = 5000f, // NB: not same as below
+                maxTiltDistance = 5000f, // NB: not same as below
                 MaxTiltShiftDistance = 2000f, // NB: different from above value
 
                 MinTiltShiftArea = 0f, // NB: uninitialized in vanilla
                 MaxTiltShiftArea = 5.55f,
 
-	            minShadowDistance = 400f,
+                minShadowDistance = 400f,
                 maxShadowDistance = 4000f
             ;
 
@@ -44,9 +44,9 @@ namespace Shicho.Patcher.CameraControllerPatch
         private static void ResetCameraDefaults(ref CameraController cc)
         {
             cc.m_minDistance = Defaults.minDistance;
-	        cc.m_maxDistance = Defaults.maxDistance;
+            cc.m_maxDistance = Defaults.maxDistance;
 
-	        cc.m_maxTiltDistance = Defaults.maxTiltDistance;
+            cc.m_maxTiltDistance = Defaults.maxTiltDistance;
             cc.m_MaxTiltShiftDistance = Defaults.MaxTiltShiftDistance;
 
             cc.m_MinTiltShiftArea = Defaults.MinTiltShiftArea;
