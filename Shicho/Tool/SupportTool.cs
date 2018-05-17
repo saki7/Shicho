@@ -115,7 +115,7 @@ namespace Shicho.Tool
             }
             {
                 var page = TabPage("Misc");
-                MiscPage.Setup(ref page);
+                MiscPage.Setup(Window, ref page);
             }
             {
                 var page = TabPage("About");

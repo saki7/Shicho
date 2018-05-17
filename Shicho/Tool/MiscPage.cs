@@ -16,15 +16,18 @@ namespace Shicho.Tool
 
     public static class MiscPage
     {
-        public static void Setup(ref UIPanel page)
+        private static UISlicedSprite thmBar_;
+        private static UIComponent tsBar_, infoPanel_;
+
+        public static void Setup(Window win, ref UIPanel page)
         {
             page.padding = Helper.Padding(6, 2);
             page.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 8, 0));
             page.autoFitChildrenVertically = true;
 
-            var thmBar = UIView.Find<UISlicedSprite>("ThumbnailBar");
-            var tsBar = UIView.Find("TSBar");
-            var infoPanel = UIView.Find("InfoPanel");
+            thmBar_ = UIView.Find<UISlicedSprite>("ThumbnailBar");
+            tsBar_ = UIView.Find("TSBar");
+            infoPanel_ = UIView.Find("InfoPanel");
 
             {
                 var pane = page.AddUIComponent<UIPanel>();
@@ -48,7 +51,7 @@ namespace Shicho.Tool
                     var cb = Helper.AddCheckBox(ref pane, "Master toolbar", font: FontStore.Get(11), indentPadding: 10);
                     lock (App.Config.UILock) {
                         // always reset to visible at game init
-                        cb.isChecked = true; // App.Config.UI.masterToolbarVisibility;
+                        cb.isChecked = true && infoPanel_.isVisible; // App.Config.UI.masterToolbarVisibility;
                     }
 
                     cb.eventCheckChanged += (c, isEnabled) => {
@@ -64,15 +67,15 @@ namespace Shicho.Tool
                             //;
 
                             if (isEnabled) {
-                                thmBar.Show();
-                                tsBar.Show();
-                                infoPanel.Show();
+                                thmBar_.Show();
+                                tsBar_.Show();
+                                infoPanel_.Show();
                                 //UIView.Show(true);
 
                             } else {
-                                thmBar.Hide();
-                                tsBar.Hide();
-                                infoPanel.Hide();
+                                thmBar_.Hide();
+                                tsBar_.Hide();
+                                infoPanel_.Hide();
                                 //UIView.Show(false);
                             }
                         }
@@ -84,22 +87,42 @@ namespace Shicho.Tool
                         "Master toolbar opacity",
                         $"default: {Mod.Config.UIDefault.masterOpacity}",
                         opts: new SliderOption<float> {
-                            hasField = true,
+                            hasField = false,
                             minValue = 0.05f,
                             maxValue = 1f,
                             stepSize = 0.05f,
 
                             eventValueChanged = (c, value) => {
                                 ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.masterOpacity, value);
-                                thmBar.opacity = value;
-                                tsBar.opacity = value;
-                                infoPanel.opacity = value;
+                                SetMasterOpacity(value);
                             },
                         },
                         color: Helper.RGB(160, 160, 160)
                     );
                     lock (App.Config.UILock) {
                         cfg.slider.value = App.Config.UI.masterOpacity;
+                    }
+                }
+                {
+                    var cfg = ToolHelper.AddConfig(
+                        ref pane,
+                        $"{Mod.ModInfo.ID} opacity",
+                        $"default: {Mod.Config.UIDefault.supportToolOpacity}",
+                        opts: new SliderOption<float> {
+                            hasField = false,
+                            minValue = 0.05f,
+                            maxValue = 1f,
+                            stepSize = 0.05f,
+
+                            eventValueChanged = (c, value) => {
+                                ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.supportToolOpacity, value);
+                                win.opacity = value;
+                            },
+                        },
+                        color: Helper.RGB(160, 160, 160)
+                    );
+                    lock (App.Config.UILock) {
+                        win.opacity = cfg.slider.value = App.Config.UI.supportToolOpacity;
                     }
                 }
                 {
@@ -199,6 +222,13 @@ namespace Shicho.Tool
                     };
                 }
             }
+        }
+
+        private static void SetMasterOpacity(float value)
+        {
+            thmBar_.opacity = value;
+            tsBar_.opacity = value;
+            infoPanel_.opacity = value;
         }
     }
 }

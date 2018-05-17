@@ -24,7 +24,7 @@ namespace Shicho.Tool
             font.size = 12;
 
             version.font = font;
-            version.text = $"Mod version: {Mod.ModInfo.Version}";
+            version.text = $"Mod version: {Mod.ModInfo.VersionStr}";
 
             AddBar(ref page);
             AddInfo(ref page, "Game version", Cities::BuildConfig.applicationVersion);

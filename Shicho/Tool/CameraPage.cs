@@ -74,7 +74,7 @@ namespace Shicho.Tool
                         opts: new SliderOption<float> {
                             hasField = true,
                             minValue = 0.08f,
-                            maxValue = 20f,
+                            maxValue = 10f,
                             stepSize = 0.01f,
 
                             eventValueChanged = (c, value) => {

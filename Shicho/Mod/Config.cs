@@ -38,17 +38,23 @@ namespace Shicho.Mod
                 return new Config();
             }
 
-            var xmlSerialiser = new XmlSerializer(typeof(Config));
+            var xmlSerializer = new XmlSerializer(typeof(Config));
             using (var reader = new StreamReader(path)) {
-                var cfg = xmlSerialiser.Deserialize(reader) as Config;
+                var cfg = xmlSerializer.Deserialize(reader) as Config;
+                System.Version lastVersion = null;
 
-                if (cfg.Graphics.shadowBias == null) {
-                    cfg.Graphics = GraphicsDefault.Clone() as GraphicsData;
+                try {
+                    lastVersion = new System.Version(cfg.lastVersion);
+                } catch (ArgumentException e) {
+                    Log.Debug($"invalid last verion number \"{cfg.lastVersion}\": {e}");
                 }
 
-                if (cfg.AI.regenChance == null) {
-                    cfg.AI = AIDefault.Clone() as AIData;
+                if (lastVersion == null || lastVersion < ModInfo.Version) {
+                    cfg.lastVersion = ModInfo.Version.ToString();
+                    cfg.UI.masterOpacity = 1.0f;
+                    cfg.UI.supportToolOpacity = 1.0f;
                 }
+
                 return cfg;
             }
             // Log.Debug("loaded.");
@@ -216,7 +222,7 @@ namespace Shicho.Mod
         {
             // for advanced users. change this in config file if you want
             public bool alwaysFullRect;
-            public float masterOpacity;
+            public float masterOpacity = 1.0f, supportToolOpacity = 1.0f;
 
             [NonSerialized]
             [XmlIgnore]
@@ -290,6 +296,7 @@ namespace Shicho.Mod
         public static readonly UIData UIDefault = new UIData() {
             alwaysFullRect = true,
             masterOpacity = 1.0f,
+            supportToolOpacity = 1.0f,
 
             masterToolbarVisibility  = true,
             propMarkersVisibility    = true,
@@ -307,6 +314,9 @@ namespace Shicho.Mod
         public static readonly AIData AIDefault = new AIData() {
             regenChance = new Switchable<float>{Enabled = true, Value = 0.20f},
         };
+
+        [SerializeField]
+        public string lastVersion = null;
 
         [SerializeField]
         [XmlElement(ElementName = "Graphics")]

@@ -62,7 +62,7 @@ namespace Shicho.Tool
                 //tabs_.autoSize = false;
                 tabs_.clipChildren = true;
                 tabs_.width = win_.Content.width;
-                tabs_.backgroundSprite = "Menubar";
+                tabs_.backgroundSprite = "GenericTabDisabled";
                 tabs_.color = Helper.RGB(20, 20, 40);
                 tabs_.zOrder = 2;
                 //tabs_.clipChildren = true;

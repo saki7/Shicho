@@ -274,6 +274,9 @@ namespace Shicho.GUI
             pane.wrapper.height = pane.slider.height + 10;
 
             pane.slider.eventValueChanged += (c, value) => {
+                if (pane.field != null) {
+                    pane.field.text = value.ToString();
+                }
                 opts.eventValueChanged?.Invoke(c, value);
             };
 
@@ -320,10 +323,6 @@ namespace Shicho.GUI
                 //Log.Debug($"Panel: {panel.position}, {panel.size}");
                 //Log.Debug($"Slider: {slider.position}, {slider.size}");
                 //Log.Debug($"Field: {field.position}, {field.size}");
-
-                pane.slider.eventValueChanged += (c, value) => {
-                    pane.field.text = value.ToString();
-                };
 
                 pane.field.eventTextSubmitted += (c, text) => {
                     try {

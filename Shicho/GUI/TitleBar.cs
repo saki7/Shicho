@@ -115,7 +115,7 @@ namespace Shicho.GUI
             title_.font = FontStore.Get(15);
 
             color = Helper.RGB(20, 20, 40);
-            backgroundSprite = "MenuPanel";
+            backgroundSprite = "GenericTabDisabled";
 
             //anchor = UIAnchorStyle.All;
             size = new Vector2(
