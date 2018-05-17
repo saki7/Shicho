@@ -105,6 +105,7 @@
     <Compile Include="Game\Application.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="Game\Plugin.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GUI\Extension.cs" />
     <Compile Include="GUI\FontStore.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
     <Compile Include="Patcher\OptionsGraphicPanelPatch.cs" />
     <Compile Include="Patcher\TreeInstancePatch.cs" />
+    <Compile Include="Patcher\Util.cs" />
     <Compile Include="PropManager.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Tool\AboutPage.cs" />

@@ -8,7 +8,10 @@ using System;
 
 namespace Shicho.Tool
 {
+    using ColossalFramework.Plugins;
+    using ICities;
     using Shicho.GUI.Extension;
+    using System.Linq;
 
     public static class CameraPage
     {

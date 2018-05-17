@@ -2,11 +2,17 @@
 
 using CinematicCameraExtended;
 
+using ICities;
+
 using ColossalFramework;
+using ColossalFramework.Plugins;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 
+using System.Linq;
+
 using Harmony;
+
 
 namespace Shicho.Patcher
 {
@@ -14,7 +20,23 @@ namespace Shicho.Patcher
     [HarmonyPatch("MoveCamera")]
     public class CinematicCameraExtendedPatch
     {
-        public static bool Prefix(ref bool __result, float time, float speed, Camera camera, FastList<object> knots, out float timeOut)
+        public static bool IsModEnabled(string modName)
+        {
+            var plugins = PluginManager.instance.GetPluginsInfo();
+            return (from plugin in plugins.Where(p => p.isEnabled)
+                    select plugin.GetInstances<IUserMod>() into instances
+                    where instances.Any()
+                    select instances[0].Name into name
+                    where name == modName
+                    select name).Any();
+        }
+
+        static bool Prepare()
+        {
+            return Game.Plugin.HasWorkshop(785528371);
+        }
+
+        static bool Prefix(ref bool __result, float time, float speed, Camera camera, FastList<object> knots, out float timeOut)
         {
             bool result = true;
             int index = 0;

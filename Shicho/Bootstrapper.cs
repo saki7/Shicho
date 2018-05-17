@@ -2,6 +2,7 @@
 
 using Shicho.Core;
 
+using ICities;
 using ColossalFramework;
 using ColossalFramework.Plugins;
 using UnityEngine;
@@ -13,11 +14,36 @@ using System.Reflection;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using ColossalFramework.UI;
 
 namespace Shicho
 {
     using LogCh = CODebugBase<Cities::LogChannel>;
     using PatchPair = KeyValuePair<MethodBase, MethodInfo>;
+
+    [Serializable]
+    public class HarmonyError : NotSupportedException
+    {
+        public HarmonyError(Exception inner)
+            : base($"Harmony error ({Bootstrapper.Instance.Harmony.Id})", inner)
+        {}
+    }
+
+    [Serializable]
+    public class IncompatibleDependencyException : NotSupportedException
+    {
+        public IncompatibleDependencyException(PluginManager.PluginInfo[] plugins, Exception inner = null)
+            : base(
+                "Incompatible dependency\n  " + string.Join(
+                    "\n  ",
+                    plugins
+                        .Select(p => $"[{p.publishedFileID.AsUInt64, 10}] {p.GetInstances<IUserMod>().First()?.Name}")
+                        .ToArray()
+                ),
+                inner
+            )
+        {}
+    }
 
     internal class Bootstrapper
     {
@@ -69,35 +95,54 @@ namespace Shicho
 
         public void Bootstrap()
         {
-            if (IsInitialized) return;
-            BootstrapConfig();
-
-            #region Harmony initialization
-            harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
-
-            // unpatch other mods
-            Tool.Watcher.UnpatchHostiles();
-
-            Log.Debug($"applying Harmony...");
-            harmony_.PatchAll(Assembly.GetExecutingAssembly());
-            #endregion Harmony initialization
-
-            Log.Info("loading mod instance...");
             try {
-                DestroyOldInstance();
+                if (IsInitialized) return;
+                BootstrapConfig();
+
+                #region Harmony initialization
+                Game.Plugin.FetchAll();
+
+                try {
+                    harmony_ = HarmonyInstance.Create(Mod.ModInfo.COMIdentifier);
+
+                    // unpatch other mods
+                    Tool.Watcher.UnpatchHostiles();
+
+                    Log.Debug($"applying Harmony...");
+                    harmony_.PatchAll(Assembly.GetExecutingAssembly());
+
+                } catch (Exception e) {
+                    // try to revert self
+                    Patcher.Util.UnpatchTarget(p => p.owner == Mod.ModInfo.COMIdentifier);
+
+                    throw new IncompatibleDependencyException(
+                        Game.Plugin.All,
+                        new HarmonyError(e)
+                    );
+                }
+                #endregion Harmony initialization
+
+                Log.Info("loading mod instance...");
+                try {
+                    DestroyOldInstance();
+
+                } catch (Exception e) {
+                    Log.Error(e);
+                }
+
+                gobj_ = new GameObject(Mod.ModInfo.ID);
+                // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
+
+                app_ = gobj_.AddComponent<App>();
+                watcher_ = gobj_.AddComponent<Tool.Watcher>();
+
+                gobj_.SetActive(true);
+                Log.Info("loaded.");
 
             } catch (Exception e) {
-                Log.Error(e);
+                UIView.ForwardException(e);
+                throw;
             }
-
-            gobj_ = new GameObject(Mod.ModInfo.ID);
-            // Log.Debug($"new instance: 0x{gobj_.GetInstanceID():X}");
-
-            app_ = gobj_.AddComponent<App>();
-            watcher_ = gobj_.AddComponent<Tool.Watcher>();
-
-            gobj_.SetActive(true);
-            Log.Info("loaded.");
         }
 
         private static bool IsModToolsActive()
