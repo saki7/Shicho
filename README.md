@@ -9,8 +9,9 @@ Fundamental support mod for hardcore sandbox builders & streamers.
 This mod aims to provide some missing core features for hardcore builders. Unlike the aggressive unlimiter in classic mods, Shicho does critical modifications with better way of overriding & patching to avoid technical disadvantages such as broken AI. Even if a feature is a game changer, Shicho aims to keep side-effects for the game simulation to be minimal.
 
 
-## Screenshot
+## Screenshots
 
+![Depth of field sample 1](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage7.jpg)
 ![Depth of field sample 1](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage5.png)
 ![Depth of field sample 2](https://github.com/SETNAHQ/Shicho/raw/master/img/PreviewImage6.png)
 
