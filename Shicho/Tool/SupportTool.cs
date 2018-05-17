@@ -92,7 +92,7 @@ namespace Shicho.Tool
             base.Start();
             Title = Mod.ModInfo.ID;
             // Window.height = 420;
-            Window.size = new Vector2(300, 778);
+            Window.size = new Vector2(DefaultRect.width, DefaultRect.height);
 
             //Log.Debug($"window: {Window.size}");
             //Log.Debug($"content: {Window.Content.size}");
@@ -226,7 +226,7 @@ namespace Shicho.Tool
         }
 
         public static readonly Rect DefaultRect = new Rect(
-            0f, 0f, 280f, 734f
+            0f, 0f, 300f, 778f
         );
 
         public override TabbedWindowConfig ConfigProxy {

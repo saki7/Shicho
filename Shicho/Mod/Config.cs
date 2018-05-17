@@ -223,7 +223,7 @@ namespace Shicho.Mod
         {
             // for advanced users. change this in config file if you want
             public bool alwaysFullRect;
-            public float masterOpacity = 1.0f, supportToolOpacity = 1.0f;
+            public float masterOpacity = 0.75f, supportToolOpacity = 0.9f;
 
             [NonSerialized]
             [XmlIgnore]
@@ -266,18 +266,18 @@ namespace Shicho.Mod
 
             fieldOfView = 90f,
 
-            dofAperture = 2.2f,
+            dofAperture = 0.98f,
             dofFocalDistance = 1.52f,
-            dofFocalRange = 1.4f,
-            dofMaxBlurSize = 0.9f,
+            dofFocalRange = 6.04f,
+            dofMaxBlurSize = 2.86f,
 
             dofNearBlur = false,
             dofFGOverlap = 5.0f,
 
             dofBokehScale = 10.78f,
-            dofBokehIntensity = 1.0f,
-            dofBokehMinLuminanceThreshold = 1.0f,
-            dofBokehSpawnHeuristic = 0.1f,
+            dofBokehIntensity = 13.85f,
+            dofBokehMinLuminanceThreshold = 3.75f,
+            dofBokehSpawnHeuristic = 3.0f,
 
             tiltShiftEnabled = false,
             tiltShiftMode = TiltShiftEffect.TiltShiftMode.TiltShiftMode,
@@ -298,14 +298,14 @@ namespace Shicho.Mod
         [XmlIgnore]
         public static readonly UIData UIDefault = new UIData() {
             alwaysFullRect = true,
-            masterOpacity = 1.0f,
-            supportToolOpacity = 1.0f,
+            masterOpacity = 0.75f,
+            supportToolOpacity = 0.9f,
 
             masterToolbarVisibility  = true,
             propMarkersVisibility    = true,
 
-            areaBordersVisiblity     = true,
-            districtNamesVisibility  = true,
+            areaBordersVisiblity     = false,
+            districtNamesVisibility  = false,
 
             notificationsVisibility  = false,
 
