@@ -184,8 +184,9 @@ namespace Shicho.Mod
             [XmlIgnore]
             public bool dofDebug;
 
+            public Switchable<float> fieldOfView;
+
             public float
-                fieldOfView,
                 dofAperture,
                 dofFocalDistance, dofFocalRange,
                 dofMaxBlurSize
@@ -264,7 +265,7 @@ namespace Shicho.Mod
             dofEnabled = false,
             dofDebug = false,
 
-            fieldOfView = 90f,
+            fieldOfView = new Switchable<float>{Enabled = false, Value = 90f},
 
             dofAperture = 0.98f,
             dofFocalDistance = 1.52f,

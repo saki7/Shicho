@@ -70,7 +70,10 @@ namespace Shicho.Patcher.CameraControllerPatch
 
             lock (App.Config.GraphicsLock) {
                 var gr = App.Config.Graphics;
-                ___m_camera.fieldOfView = gr.fieldOfView / 2f;
+
+                if (gr.fieldOfView.Enabled) {
+                    ___m_camera.fieldOfView = gr.fieldOfView.Value / 2f;
+                }
             }
 
             //Log.Debug($"{ColossalFramework.UI.UIInput.hoveredComponent}");

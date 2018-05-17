@@ -47,27 +47,6 @@ namespace Shicho.Tool
                     cb.label.textColor = Helper.RGB(250, 40, 40);
                     cb.color = Helper.RGBA(255, 255, 255, 80);
                 }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Field of view",
-                        $"default: {Mod.Config.GraphicsDefault.fieldOfView}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 20f,
-                            maxValue = 180f,
-                            stepSize = 1f,
-
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.fieldOfView, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.fieldOfView;
-                    }
-                }
             }
 
             {
@@ -85,6 +64,29 @@ namespace Shicho.Tool
                     bullet: "LineDetailButton"
                 );
 
+                {
+                    var cfg = ToolHelper.AddConfig(
+                        ref pane,
+                        "Field of view",
+                        $"default: {Mod.Config.GraphicsDefault.fieldOfView.Value}",
+                        opts: new SliderOption<float> {
+                            hasField = true,
+                            minValue = 20f,
+                            maxValue = 180f,
+                            stepSize = 1f,
+                            isEnabled = App.Config.Graphics.fieldOfView.Enabled,
+                            eventSwitched = App.Config.Graphics.fieldOfView.LockedSwitch(App.Config.GraphicsLock),
+                            eventValueChanged = (c, value) => {
+                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.fieldOfView, value);
+                            },
+                        },
+                        color: Helper.RGB(160, 160, 160),
+                        indentPadding: 10
+                    );
+                    lock (App.Config.GraphicsLock) {
+                        cfg.slider.value = App.Config.Graphics.fieldOfView.Value;
+                    }
+                }
                 {
                     var cfg = ToolHelper.AddConfig(
                         ref pane,
