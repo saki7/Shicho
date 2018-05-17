@@ -72,7 +72,7 @@ namespace Shicho.Tool
                         opts: new SliderOption<float> {
                             hasField = true,
                             minValue = 20f,
-                            maxValue = 180f,
+                            maxValue = 178f,
                             stepSize = 1f,
                             isEnabled = App.Config.Graphics.fieldOfView.Enabled,
                             eventSwitched = App.Config.Graphics.fieldOfView.LockedSwitch(App.Config.GraphicsLock),
