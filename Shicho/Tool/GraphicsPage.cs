@@ -33,68 +33,61 @@ namespace Shicho.Tool
                     bullet: "LineDetailButton"
                 );
 
-                var lightIntensity = ToolHelper.AddConfig(
+                ToolHelper.AddConfig(
                     ref pane,
                     "Light intensity",
                     "default: ≈4.2",
-                    opts: new SliderOption<float>() {
-                        minValue = 0.05f,
-                        maxValue = 8.0f,
-                        stepSize = 0.05f,
-                        isEnabled = App.Config.Graphics.lightIntensity.Enabled,
-                        eventSwitched = App.Config.Graphics.lightIntensity.LockedSwitch(App.Config.GraphicsLock),
-                        eventValueChanged = (c, value) => {
+                    opts: new SliderOption<float>(
+                        minValue: 0.05f,
+                        maxValue: 8.0f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.lightIntensity.Value,
+
+                        (c, value) => {
                             ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.lightIntensity, value);
-                        },
+                        }
+                    ) {
+                        isEnabled = App.Config.Graphics.lightIntensity.Enabled,
+                        onSwitched = App.Config.Graphics.lightIntensity.LockedSwitch(App.Config.GraphicsLock),
                     },
                     indentPadding: 12
                 );
 
-                var shadowStrength = ToolHelper.AddConfig(
+                ToolHelper.AddConfig(
                     ref pane,
                     "Shadow strength",
                     "default: 0.8",
-                    opts: new SliderOption<float>() {
-                        minValue = 0.1f,
-                        maxValue = 1.0f,
-                        stepSize = 0.05f,
+                    opts: new SliderOption<float>(
+                        minValue: 0.1f,
+                        maxValue: 1.0f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.shadowStrength.Value,
+
+                        App.Config.Graphics.shadowStrength.LockedSlide(App.Config.GraphicsLock)
+                    ) {
                         isEnabled = App.Config.Graphics.shadowStrength.Enabled,
-                        eventSwitched = App.Config.Graphics.shadowStrength.LockedSwitch(App.Config.GraphicsLock),
-                        eventValueChanged = App.Config.Graphics.shadowStrength.LockedSlide(App.Config.GraphicsLock),
+                        onSwitched = App.Config.Graphics.shadowStrength.LockedSwitch(App.Config.GraphicsLock),
                     },
                     indentPadding: 12
                 );
 
-                var shadowBias = ToolHelper.AddConfig(
+                ToolHelper.AddConfig(
                     ref pane,
                     "Self-shadow mitigation",
                     "a.k.a. \"Shadow acne\" fix (default: minimal, recommended: 0.1-0.3)",
-                    opts: new SliderOption<float>() {
-                        minValue = 0.01f,
-                        maxValue = 1.00f,
-                        stepSize = 0.01f,
+                    opts: new SliderOption<float>(
+                        minValue: 0.01f,
+                        maxValue: 1.00f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.shadowBias.Value,
 
+                        App.Config.Graphics.shadowBias.LockedSlide(App.Config.GraphicsLock)
+                    ) {
                         isEnabled = App.Config.Graphics.shadowBias.Enabled,
-                        eventSwitched = App.Config.Graphics.shadowBias.LockedSwitch(App.Config.GraphicsLock),
-                        eventValueChanged = (c, value) => {
-                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.shadowBias, value);
-                        },
+                        onSwitched = App.Config.Graphics.shadowBias.LockedSwitch(App.Config.GraphicsLock),
                     },
                     indentPadding: 12
                 );
-
-                lock (App.Config.GraphicsLock) {
-                    shadowStrength.slider.value = App.Config.Graphics.shadowStrength.Value;
-                    lightIntensity.slider.value = App.Config.Graphics.lightIntensity.Value;
-                    shadowBias.slider.value = App.Config.Graphics.shadowBias.Value;
-                }
-
-                //shadowBias_.eventKeyDown += (c, param) => {
-                //    if (param.keycode == KeyCode.Return) {
-                //        SyncShadowBiasInput(shadowBias_.text);
-                //        SetShadowBias(shadowBiasSlider_.value);
-                //    }
-                //};
             }
 
             {
@@ -112,17 +105,19 @@ namespace Shicho.Tool
                     bullet: "LineDetailButton"
                 );
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "SMAA", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.GraphicsLock) {
-                        cb.isChecked = App.Config.Graphics.smaaEnabled;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "SMAA",
+                    tooltip: null,
+                    defaultValue: App.Config.Graphics.smaaEnabled,
+                    (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.smaaEnabled = cb.isChecked;
+                            App.Config.Graphics.smaaEnabled = isChecked;
                         }
-                    };
-                }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
 
                 //var passes = ToolHelper.AddConfig(
                 //    ref pane,
@@ -145,101 +140,95 @@ namespace Shicho.Tool
                 //    passes.slider.value = App.Config.Graphics.smaaPasses;
                 //}
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Film grain", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.GraphicsLock) {
-                        cb.isChecked = App.Config.Graphics.filmGrainEnabled;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Film grain",
+                    tooltip: null,
+                    defaultValue: App.Config.Graphics.filmGrainEnabled,
+                    (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.filmGrainEnabled = cb.isChecked;
+                            App.Config.Graphics.filmGrainEnabled = isChecked;
                         }
-                    };
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Scale",
-                        $"default: {Mod.Config.GraphicsDefault.filmGrainScale}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.05f,
-                            maxValue = 1f,
-                            stepSize = 0.05f,
+                    },
+                    font: FontStore.Get(11), indentPadding: 10
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainScale, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.filmGrainScale;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Amount (scalar)",
-                        $"default: {Mod.Config.GraphicsDefault.filmGrainAmountScalar}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.05f,
-                            maxValue = 1f,
-                            stepSize = 0.05f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Scale",
+                    $"default: {Mod.Config.GraphicsDefault.filmGrainScale}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.05f,
+                        maxValue: 1f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.filmGrainScale,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainAmountScalar, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.filmGrainAmountScalar;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Amount (factor)",
-                        $"default: {Mod.Config.GraphicsDefault.filmGrainAmountFactor}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.01f,
-                            maxValue = 1f,
-                            stepSize = 0.01f,
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainScale, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainAmountFactor, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.filmGrainAmountFactor;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Middle range",
-                        $"default: {Mod.Config.GraphicsDefault.filmGrainMiddleRange}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0f,
-                            maxValue = 1f,
-                            stepSize = 0.02f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Amount (scalar)",
+                    $"default: {Mod.Config.GraphicsDefault.filmGrainAmountScalar}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.05f,
+                        maxValue: 1f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.filmGrainAmountScalar,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainMiddleRange, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.filmGrainMiddleRange;
-                    }
-                }
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainAmountScalar, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Amount (factor)",
+                    $"default: {Mod.Config.GraphicsDefault.filmGrainAmountFactor}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.01f,
+                        maxValue: 1f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.filmGrainAmountFactor,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainAmountFactor, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Middle range",
+                    $"default: {Mod.Config.GraphicsDefault.filmGrainMiddleRange}",
+                    opts: new SliderOption<float>(
+                        minValue: 0f,
+                        maxValue: 1f,
+                        stepSize: 0.02f,
+                        defaultValue: App.Config.Graphics.filmGrainMiddleRange,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.filmGrainMiddleRange, value);
+                        }
+                    ) {
+                        hasField = true,
+
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
             }
         }
     }

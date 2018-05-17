@@ -47,14 +47,15 @@ namespace Shicho.Tool
                 // debug only
                 //UIView.Show(true);
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Master toolbar", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        // always reset to visible at game init
-                        cb.isChecked = true && infoPanel_.isVisible; // App.Config.UI.masterToolbarVisibility;
-                    }
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Master toolbar",
+                    tooltip: null,
 
-                    cb.eventCheckChanged += (c, isEnabled) => {
+                    // always reset to visible at game init
+                    defaultValue: true && infoPanel_.isVisible,
+
+                    (c, isEnabled) => {
                         lock (App.Config.UILock) {
                             App.Config.UI.masterToolbarVisibility = isEnabled;
 
@@ -79,63 +80,65 @@ namespace Shicho.Tool
                                 //UIView.Show(false);
                             }
                         }
-                    };
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Master toolbar opacity",
-                        $"default: {Mod.Config.UIDefault.masterOpacity}",
-                        opts: new SliderOption<float> {
-                            hasField = false,
-                            minValue = 0.05f,
-                            maxValue = 1f,
-                            stepSize = 0.05f,
+                    },
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.masterOpacity, value);
-                                SetMasterOpacity(value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.UILock) {
-                        cfg.slider.value = App.Config.UI.masterOpacity;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        $"{Mod.ModInfo.ID} opacity",
-                        $"default: {Mod.Config.UIDefault.supportToolOpacity}",
-                        opts: new SliderOption<float> {
-                            hasField = false,
-                            minValue = 0.05f,
-                            maxValue = 1f,
-                            stepSize = 0.05f,
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.supportToolOpacity, value);
-                                win.opacity = value;
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.UILock) {
-                        win.opacity = cfg.slider.value = App.Config.UI.supportToolOpacity;
-                    }
-                }
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Prop marker", font: FontStore.Get(11), indentPadding: 10);
-                    cb.eventCheckChanged += (c, isChecked) => {
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Master toolbar opacity",
+                    $"default: {Mod.Config.UIDefault.masterOpacity}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.05f,
+                        maxValue: 1f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.UI.masterOpacity,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.masterOpacity, value);
+                            SetMasterOpacity(value);
+                        }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    $"{Mod.ModInfo.ID} opacity",
+                    $"default: {Mod.Config.UIDefault.supportToolOpacity}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.05f,
+                        maxValue: 1f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.UI.supportToolOpacity,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.UILock, ref App.Config.UI.supportToolOpacity, value);
+                            win.opacity = value;
+                        }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Prop marker",
+                    tooltip: null,
+                    defaultValue: App.Config.UI.propMarkersVisibility,
+                    (c, isChecked) => {
                         lock (App.Config.UILock) {
                             Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility = isChecked;
                         }
-                    };
-                    lock (App.Config.UILock) {
-                        cb.isChecked = Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
-                    }
-                }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
             }
 
             {
@@ -153,30 +156,36 @@ namespace Shicho.Tool
                     bullet: "ToolbarIconZoomOutGlobe"
                 );
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "District name", font: FontStore.Get(11), indentPadding: 10);
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "District name",
+                    tooltip: null,
+                    defaultValue: App.Config.UI.districtNamesVisibility,
+
+                    (c, isChecked) => {
                         lock (App.Config.UILock) {
                             DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility = isChecked;
                         }
-                    };
-                    lock (App.Config.UILock) {
-                        cb.isChecked = DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
-                    }
-                }
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "City border", font: FontStore.Get(11), indentPadding: 10);
-                    cb.eventCheckChanged += (c, isChecked) => {
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "City border",
+                    tooltip: null,
+                    defaultValue: App.Config.UI.areaBordersVisiblity,
+
+                    (c, isChecked) => {
                         lock (App.Config.UILock) {
                             GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity = isChecked;
                         }
-                    };
-                    lock (App.Config.UILock) {
-                        cb.isChecked = GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
-                    }
-                }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
             }
-
 
             {
                 var pane = page.AddUIComponent<UIPanel>();
@@ -193,12 +202,13 @@ namespace Shicho.Tool
                     bullet: "InfoIconMaintenance"
                 );
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Notifications", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        cb.isChecked = NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Notifications",
+                    tooltip: null,
+                    defaultValue: App.Config.UI.notificationsVisibility,
+
+                    (c, isChecked) => {
                         lock (App.Config.UILock) {
                             NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility = isChecked;
 
@@ -208,19 +218,25 @@ namespace Shicho.Tool
                                 m_notificationAlpha.SetValue(NotificationManager.instance, NotificationManager.instance.NotificationsVisible ? 1f : 0f);
                             }
                         }
-                    };
-                }
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Tutorial", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        cb.isChecked = !(GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled);
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Tutorial",
+                    tooltip: null,
+                    defaultValue: App.Config.UI.tutorialDisabled,
+
+                    (c, isChecked) => {
                         lock (App.Config.UILock) {
                             GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled = !isChecked;
                         }
-                    };
-                }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
             }
         }
 

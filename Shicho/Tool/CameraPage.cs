@@ -28,25 +28,33 @@ namespace Shicho.Tool
                 pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
                 pane.autoFitChildrenVertically = true;
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Bokeh Camera", font: FontStore.Get(11));
-                    lock (App.Config.GraphicsLock) {
-                        cb.isChecked = App.Config.Graphics.dofEnabled;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Bokeh Camera",
+                    tooltip: null,
+                    defaultValue: App.Config.Graphics.dofEnabled,
+                    (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.dofEnabled = cb.isChecked;
+                            App.Config.Graphics.dofEnabled = isChecked;
                         }
-                    };
-                }
+                    },
+                    font: FontStore.Get(11)
+                );
+
                 {
-                    var cb = Helper.AddCheckBox(ref pane, "DOF Analyzer", font: FontStore.Get(11));
-                    cb.isChecked = false;
-                    cb.eventCheckChanged += (c, isChecked) => {
-                        lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.dofDebug = cb.isChecked;
-                        }
-                    };
+                    var cb = Helper.AddCheckBox(
+                        ref pane,
+                        "DOF Analyzer",
+                        tooltip: null,
+                        defaultValue: false, // always false for debugging purpose
+                        (c, isChecked) => {
+                            lock (App.Config.GraphicsLock) {
+                                App.Config.Graphics.dofDebug = isChecked;
+                            }
+                        },
+                        font: FontStore.Get(11)
+                    );
+
                     cb.label.textColor = Helper.RGB(250, 40, 40);
                     cb.color = Helper.RGBA(255, 255, 255, 80);
                 }
@@ -59,7 +67,7 @@ namespace Shicho.Tool
                 pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
                 pane.autoFitChildrenVertically = true;
 
-                var l = Helper.AddLabel(
+                Helper.AddLabel(
                     ref pane,
                     "Focus & Perspective",
                     font: FontStore.Get(12),
@@ -67,113 +75,103 @@ namespace Shicho.Tool
                     bullet: "LineDetailButton"
                 );
 
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Field of view",
-                        $"default: {Mod.Config.GraphicsDefault.fieldOfView.Value}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 20f,
-                            maxValue = 178f,
-                            stepSize = 1f,
-                            isEnabled = App.Config.Graphics.fieldOfView.Enabled,
-                            eventSwitched = App.Config.Graphics.fieldOfView.LockedSwitch(App.Config.GraphicsLock),
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.fieldOfView, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160),
-                        indentPadding: 10
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.fieldOfView.Value;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Aperture",
-                        $"default: {Mod.Config.GraphicsDefault.dofAperture}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.08f,
-                            maxValue = 10f,
-                            stepSize = 0.01f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Field of view",
+                    tooltip: null,
+                    opts: new SliderOption<float>(
+                        minValue: 20f,
+                        maxValue: 178f,
+                        stepSize: 1f,
+                        defaultValue: App.Config.Graphics.fieldOfView.Value,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofAperture, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofAperture;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Focal distance",
-                        $"default: {Mod.Config.GraphicsDefault.dofFocalDistance}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.01f,
-                            maxValue = 20f,
-                            stepSize = 0.01f,
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.fieldOfView, value);
+                        }
+                    ) {
+                        hasField = true,
+                        isEnabled = App.Config.Graphics.fieldOfView.Enabled,
+                        onSwitched = App.Config.Graphics.fieldOfView.LockedSwitch(App.Config.GraphicsLock),
+                    },
+                    color: Helper.RGB(160, 160, 160),
+                    indentPadding: 10
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFocalDistance, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofFocalDistance;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Focal range",
-                        $"default: {Mod.Config.GraphicsDefault.dofFocalRange}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.5f,
-                            maxValue = 10f,
-                            stepSize = 0.02f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Aperture",
+                    $"default: {Mod.Config.GraphicsDefault.dofAperture}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.08f,
+                        maxValue: 10f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.dofAperture,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFocalRange, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofFocalRange;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Max blur size",
-                        $"default: {Mod.Config.GraphicsDefault.dofMaxBlurSize}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0f,
-                            maxValue = 6f,
-                            stepSize = 0.02f,
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofAperture, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofMaxBlurSize, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofMaxBlurSize;
-                    }
-                }
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Focal distance",
+                    $"default: {Mod.Config.GraphicsDefault.dofFocalDistance}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.01f,
+                        maxValue: 20f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.dofFocalDistance,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFocalDistance, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Focal range",
+                    $"default: {Mod.Config.GraphicsDefault.dofFocalRange}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.5f,
+                        maxValue: 10f,
+                        stepSize: 0.02f,
+                        defaultValue: App.Config.Graphics.dofFocalRange,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFocalRange, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Max blur size",
+                    $"default: {Mod.Config.GraphicsDefault.dofMaxBlurSize}",
+                    opts: new SliderOption<float>(
+                        minValue: 0f,
+                        maxValue: 6f,
+                        stepSize: 0.02f,
+                        defaultValue: App.Config.Graphics.dofMaxBlurSize,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofMaxBlurSize, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
             }
 
             // DX11 ---------------------------------------
@@ -191,90 +189,82 @@ namespace Shicho.Tool
                     color: Helper.RGB(220, 230, 250),
                     bullet: "PieChartWhiteFg"
                 );
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Scale",
-                        $"default: {Mod.Config.GraphicsDefault.dofBokehScale}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.1f,
-                            maxValue = 50f,
-                            stepSize = 0.02f,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehScale, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofBokehScale;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Intensity",
-                        $"default: {Mod.Config.GraphicsDefault.dofBokehIntensity}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.1f,
-                            maxValue = 50f,
-                            stepSize = 0.05f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Scale",
+                    $"default: {Mod.Config.GraphicsDefault.dofBokehScale}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.1f,
+                        maxValue: 50f,
+                        stepSize: 0.02f,
+                        defaultValue: App.Config.Graphics.dofBokehScale,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehIntensity, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofBokehIntensity;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Min luminance thres.",
-                        $"default: {Mod.Config.GraphicsDefault.dofBokehMinLuminanceThreshold}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.25f,
-                            maxValue = 6f,
-                            stepSize = 0.05f,
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehScale, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehMinLuminanceThreshold, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofBokehMinLuminanceThreshold;
-                    }
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Spawn frequency thres.",
-                        $"default: {Mod.Config.GraphicsDefault.dofBokehSpawnHeuristic}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.5f,
-                            maxValue = 6f,
-                            stepSize = 0.1f,
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Intensity",
+                    $"default: {Mod.Config.GraphicsDefault.dofBokehIntensity}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.1f,
+                        maxValue: 50f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.dofBokehIntensity,
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehSpawnHeuristic, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofBokehSpawnHeuristic;
-                    }
-                }
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehIntensity, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Min luminance thres.",
+                    $"default: {Mod.Config.GraphicsDefault.dofBokehMinLuminanceThreshold}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.25f,
+                        maxValue: 6f,
+                        stepSize: 0.05f,
+                        defaultValue: App.Config.Graphics.dofBokehMinLuminanceThreshold,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehMinLuminanceThreshold, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Spawn frequency thres.",
+                    $"default: {Mod.Config.GraphicsDefault.dofBokehSpawnHeuristic}",
+                    opts: new SliderOption<float>(
+                        minValue: 0.5f,
+                        maxValue: 6f,
+                        stepSize: 0.1f,
+                        defaultValue: App.Config.Graphics.dofBokehSpawnHeuristic,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofBokehSpawnHeuristic, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
             }
 
             {
@@ -292,59 +282,66 @@ namespace Shicho.Tool
                     bullet: "ToolbarIconPropsPressed"
                 );
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Near blur", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.GraphicsLock) {
-                        cb.isChecked = App.Config.Graphics.dofNearBlur;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Near blur",
+                    tooltip: null,
+                    defaultValue: App.Config.Graphics.dofNearBlur,
+                    (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.dofNearBlur = cb.isChecked;
+                            App.Config.Graphics.dofNearBlur = isChecked;
                         }
-                    };
-                }
-                {
-                    var cfg = ToolHelper.AddConfig(
-                        ref pane,
-                        "Overlap amount",
-                        $"default: {Mod.Config.GraphicsDefault.dofFGOverlap}",
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0f,
-                            maxValue = 30f,
-                            stepSize = 0.02f,
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
 
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFGOverlap, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    lock (App.Config.GraphicsLock) {
-                        cfg.slider.value = App.Config.Graphics.dofFGOverlap;
-                    }
-                }
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Overlap amount",
+                    tooltip: null,
+                    opts: new SliderOption<float>(
+                        minValue: 0f,
+                        maxValue: 30f,
+                        stepSize: 0.02f,
+                        defaultValue: App.Config.Graphics.dofFGOverlap,
 
-                {
-                    var cb = Helper.AddCheckBox(ref pane, "Tilt shift", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.GraphicsLock) {
-                        cb.isChecked = App.Config.Graphics.tiltShiftEnabled;
-                    }
-                    cb.eventCheckChanged += (c, isChecked) => {
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.dofFGOverlap, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Tilt shift",
+                    tooltip: null,
+                    defaultValue: App.Config.Graphics.tiltShiftEnabled,
+                    (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
-                            App.Config.Graphics.tiltShiftEnabled = cb.isChecked;
+                            App.Config.Graphics.tiltShiftEnabled = isChecked;
                         }
-                    };
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
 
-                    var dd = Helper.AddDropDown(ref pane, "Type", new[] {
-                            "Vertical",
-                            "Radial",
-                        });
+                Helper.AddDropDown(
+                    ref pane,
+                    "Type",
+                    new[] {
+                        "Vertical",
+                        "Radial",
+                    },
+                    defaultValue: App.Config.Graphics.tiltShiftMode == TiltShiftEffect.TiltShiftMode.TiltShiftMode ? "Vertical" : "Radial",
 
-                    dd.eventSelectedIndexChanged += (c, i) => {
+                    (c, i) => {
                         var mode = TiltShiftEffect.TiltShiftMode.TiltShiftMode;
 
-                        switch (dd.selectedValue) {
+                        switch ((c as UIDropDown).selectedValue) {
                         case "Vertical":
                             mode = TiltShiftEffect.TiltShiftMode.TiltShiftMode;
                             break;
@@ -357,47 +354,46 @@ namespace Shicho.Tool
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.tiltShiftMode = mode;
                         }
-                    };
-
-                    var amount = ToolHelper.AddConfig(
-                        ref pane,
-                        "Max blur size",
-                        null,
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.02f,
-                            maxValue = 12f,
-                            stepSize = 0.01f,
-
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.tiltShiftMaxBlurSize, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-                    var area = ToolHelper.AddConfig(
-                        ref pane,
-                        "Area size",
-                        null,
-                        opts: new SliderOption<float> {
-                            hasField = true,
-                            minValue = 0.12f,
-                            maxValue = 30f,
-                            stepSize = 0.01f,
-
-                            eventValueChanged = (c, value) => {
-                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.tiltShiftAreaSize, value);
-                            },
-                        },
-                        color: Helper.RGB(160, 160, 160)
-                    );
-
-                    lock (App.Config.GraphicsLock) {
-                        dd.selectedValue = App.Config.Graphics.tiltShiftMode == TiltShiftEffect.TiltShiftMode.TiltShiftMode ? "Vertical" : "Radial";
-                        amount.slider.value = App.Config.Graphics.tiltShiftMaxBlurSize;
-                        area.slider.value = App.Config.Graphics.tiltShiftAreaSize;
                     }
-                }
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Max blur size",
+                    null,
+                    opts: new SliderOption<float>(
+                        minValue: 0.02f,
+                        maxValue: 12f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.tiltShiftMaxBlurSize,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.tiltShiftMaxBlurSize, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Area size",
+                    null,
+                    opts: new SliderOption<float>(
+                        minValue: 0.12f,
+                        maxValue: 30f,
+                        stepSize: 0.01f,
+                        defaultValue: App.Config.Graphics.tiltShiftAreaSize,
+
+                        (c, value) => {
+                            ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.tiltShiftAreaSize, value);
+                        }
+                    ) {
+                        hasField = true,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
             }
         }
     }

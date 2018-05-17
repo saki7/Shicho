@@ -30,23 +30,23 @@ namespace Shicho.Tool
                 ref panel,
                 "Health literacy",
                 "Let citizens stay at their home in hope of recovery, instead of calling 911.\n Requires decent healthcare system in city.",
-                opts: new SliderOption<float>() {
-                    hasField = false,
+                opts: new SliderOption<float>(
+                    minValue: 0.2f,
+                    maxValue: 0.95f,
+                    stepSize: 0.05f,
+                    defaultValue: App.Config.AI.regenChance.Value,
 
-                    minValue = 0.2f,
-                    maxValue = 0.95f,
-                    stepSize = 0.05f,
-
-                    isEnabled = App.Config.AI.regenChance.Enabled,
-                    eventSwitched = App.Config.AI.regenChance.LockedSwitch(App.Config.AILock),
-                    eventValueChanged = (c, value) => {
+                    (c, value) => {
                         ToolHelper.LockedApply(App.Config.AILock, ref App.Config.AI.regenChance, value);
-                    },
+                    }
+                ) {
+                    hasField = false,
+                    isEnabled = App.Config.AI.regenChance.Enabled,
+                    onSwitched = App.Config.AI.regenChance.LockedSwitch(App.Config.AILock),
                 },
                 labelPadding: 4,
                 indentPadding: 12
             );
-            pane.slider.value = App.Config.AI.regenChance.Value;
 
             var tipPanel = panel.AddUIComponent<UIPanel>();
             tipPanel.SetAutoLayout(LayoutDirection.Horizontal);
@@ -54,27 +54,23 @@ namespace Shicho.Tool
             tipPanel.padding = Helper.Padding(0, 0, 0, 8);
             tipPanel.width = tipPanel.parent.width - (tipPanel.padding.horizontal + panel.padding.horizontal);
 
-            {
-                var iconLabel = Helper.AddIconLabel(
-                    ref tipPanel,
-                    "ambulance",
-                    "Call 911",
-                    wrapperWidth: tipPanel.width / 2,
-                    font: FontStore.Get(10),
-                    color: Helper.RGB(160, 160, 160)
-                );
-            }
-            {
-                var iconLabel = Helper.AddIconLabel(
-                    ref tipPanel,
-                    "housing",
-                    "Stay in bed",
-                    wrapperWidth: tipPanel.width / 2,
-                    font: FontStore.Get(10),
-                    color: Helper.RGB(160, 160, 160),
-                    isInverted: true
-                );
-            }
+            Helper.AddIconLabel(
+                ref tipPanel,
+                "ambulance",
+                "Call 911",
+                wrapperWidth: tipPanel.width / 2,
+                font: FontStore.Get(10),
+                color: Helper.RGB(160, 160, 160)
+            );
+            Helper.AddIconLabel(
+                ref tipPanel,
+                "housing",
+                "Stay in bed",
+                wrapperWidth: tipPanel.width / 2,
+                font: FontStore.Get(10),
+                color: Helper.RGB(160, 160, 160),
+                isInverted: true
+            );
         }
     }
 }

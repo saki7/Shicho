@@ -135,7 +135,7 @@ namespace Shicho.GUI
             return wrapper;
         }
 
-        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip = "", UIFont font = null, int? indentPadding = null)
+        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip, bool defaultValue, PropertyChangedEventHandler<bool> onCheckChanged, UIFont font = null, int? indentPadding = null)
         {
             var box = parent.AddUIComponent<UICheckBox>();
             box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
@@ -145,7 +145,13 @@ namespace Shicho.GUI
             box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
 
             box.label.text = label;
-            box.label.tooltip = tooltip;
+
+            if (tooltip == null) {
+                box.label.tooltip = $"default: {defaultValue}";
+
+            } else {
+                box.label.tooltip = tooltip;
+            }
 
             if (font != null) {
                 box.label.font = font;
@@ -173,10 +179,13 @@ namespace Shicho.GUI
             checkedSprite.size = uncheckedSprite.size;
 
             box.checkedBoxObject = checkedSprite;
+
+            box.eventCheckChanged += onCheckChanged;
+            box.isChecked = defaultValue;
             return box;
         }
 
-        public static UIDropDown AddDropDown(ref UIPanel parent, string name, string[] options, UIFont font = null)
+        public static UIDropDown AddDropDown(ref UIPanel parent, string name, string[] options, string defaultValue, PropertyChangedEventHandler<int> onSelectedIndexChanged, UIFont font = null)
         {
             if (font == null) {
                 font = FontStore.Get(11);
@@ -226,6 +235,8 @@ namespace Shicho.GUI
                 self.Unfocus();
             };
 
+            dd.eventSelectedIndexChanged += onSelectedIndexChanged;
+            dd.selectedValue = defaultValue;
             return dd;
         }
 
@@ -274,11 +285,13 @@ namespace Shicho.GUI
             pane.wrapper.height = pane.slider.height + 10;
 
             pane.slider.eventValueChanged += (c, value) => {
+                Debug.Log($"pane.slider.eventValueChanged: {value}");
                 if (pane.field != null) {
                     pane.field.text = value.ToString();
                 }
-                opts.eventValueChanged?.Invoke(c, value);
+                opts.onValueChanged?.Invoke(c, value);
             };
+            pane.slider.value = opts.defaultValue;
 
             if (opts.hasField) {
                 pane.slider.width -= 48;
@@ -334,6 +347,7 @@ namespace Shicho.GUI
                 };
             } // hasField
 
+            //pane.wrapper.height = pane.slider.height + (pane.field?.height).GetValueOrDefault(0);
             return pane;
         }
 

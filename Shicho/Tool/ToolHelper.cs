@@ -30,12 +30,18 @@ namespace Shicho.Tool
         {
             var font = FontStore.Get(11);
 
-            if (opts.eventSwitched != null) { // has switch
-                var cb = Helper.AddCheckBox(ref page, label, tooltip, font, indentPadding: indentPadding);
-                cb.eventCheckChanged += (c, isEnabled) => {
-                    opts.eventSwitched.Invoke(c, isEnabled);
-                };
-                cb.isChecked = opts.isEnabled;
+            if (opts.onSwitched != null) { // has switch
+                var cb = Helper.AddCheckBox(
+                    ref page,
+                    label: label,
+                    tooltip: tooltip,
+                    defaultValue: opts.isEnabled,
+                    (c, isEnabled) => {
+                        opts.onSwitched.Invoke(c, isEnabled);
+                    },
+                    font,
+                    indentPadding: indentPadding
+                );
 
                 if (labelPadding.HasValue) {
                     cb.height += labelPadding.Value;
