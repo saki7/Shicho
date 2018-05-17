@@ -33,11 +33,11 @@ namespace Shicho.GUI
             content_ = AddUIComponent<UIPanel>();
 
             eventSizeChanged += (c, size) => {
-                titleBar_.width = width;
+                titleBar_.width = size.x;
 
                 content_.size = new Vector2(
-                    width,
-                    height - titleBar_.height
+                    size.x,
+                    size.y - titleBar_.height
                 );
 
                 //Log.Debug($"Window: {position}, {size}");

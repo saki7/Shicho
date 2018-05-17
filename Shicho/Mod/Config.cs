@@ -185,6 +185,7 @@ namespace Shicho.Mod
             public bool dofDebug;
 
             public float
+                fieldOfView,
                 dofAperture,
                 dofFocalDistance, dofFocalRange,
                 dofMaxBlurSize
@@ -262,6 +263,8 @@ namespace Shicho.Mod
 
             dofEnabled = false,
             dofDebug = false,
+
+            fieldOfView = 90f,
 
             dofAperture = 2.2f,
             dofFocalDistance = 1.52f,

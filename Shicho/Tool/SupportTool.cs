@@ -92,7 +92,7 @@ namespace Shicho.Tool
             base.Start();
             Title = Mod.ModInfo.ID;
             // Window.height = 420;
-            Window.height = 734;
+            Window.size = new Vector2(300, 778);
 
             //Log.Debug($"window: {Window.size}");
             //Log.Debug($"content: {Window.Content.size}");

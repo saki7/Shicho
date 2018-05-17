@@ -47,11 +47,30 @@ namespace Shicho.Tool
                     cb.label.textColor = Helper.RGB(250, 40, 40);
                     cb.color = Helper.RGBA(255, 255, 255, 80);
                 }
+                {
+                    var cfg = ToolHelper.AddConfig(
+                        ref pane,
+                        "Field of view",
+                        $"default: {Mod.Config.GraphicsDefault.fieldOfView}",
+                        opts: new SliderOption<float> {
+                            hasField = true,
+                            minValue = 20f,
+                            maxValue = 180f,
+                            stepSize = 1f,
+
+                            eventValueChanged = (c, value) => {
+                                ToolHelper.LockedApply(App.Config.GraphicsLock, ref App.Config.Graphics.fieldOfView, value);
+                            },
+                        },
+                        color: Helper.RGB(160, 160, 160)
+                    );
+                    lock (App.Config.GraphicsLock) {
+                        cfg.slider.value = App.Config.Graphics.fieldOfView;
+                    }
+                }
             }
 
             {
-                //var aaaaName = "ContentManagerItemBackground";
-
                 var pane = page.AddUIComponent<UIPanel>();
                 pane.width = page.width - page.padding.horizontal;
                 pane.padding = Helper.Padding(4, 12, 4, 0);

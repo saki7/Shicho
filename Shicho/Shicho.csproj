@@ -64,6 +64,11 @@
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="CinematicCameraExtended">
+      <HintPath>..\ext\CinematicCameraExtended.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ColossalManaged">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
@@ -113,6 +118,7 @@
     <Compile Include="GUI\Window.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Patcher\CameraControllerPatch.cs" />
+    <Compile Include="Patcher\CinematicCameraExtendedPatch.cs" />
     <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
     <Compile Include="Patcher\OptionsGraphicPanelPatch.cs" />
     <Compile Include="Patcher\TreeInstancePatch.cs" />

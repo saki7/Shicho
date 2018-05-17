@@ -127,14 +127,14 @@ namespace Shicho.Tool
                 }
                 {
                     var cb = Helper.AddCheckBox(ref pane, "Prop marker", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        cb.isChecked = Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
-                    }
                     cb.eventCheckChanged += (c, isChecked) => {
                         lock (App.Config.UILock) {
                             Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility = isChecked;
                         }
                     };
+                    lock (App.Config.UILock) {
+                        cb.isChecked = Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
+                    }
                 }
             }
 
@@ -155,25 +155,25 @@ namespace Shicho.Tool
 
                 {
                     var cb = Helper.AddCheckBox(ref pane, "District name", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        cb.isChecked = DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
-                    }
                     cb.eventCheckChanged += (c, isChecked) => {
                         lock (App.Config.UILock) {
                             DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility = isChecked;
                         }
                     };
+                    lock (App.Config.UILock) {
+                        cb.isChecked = DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
+                    }
                 }
                 {
                     var cb = Helper.AddCheckBox(ref pane, "City border", font: FontStore.Get(11), indentPadding: 10);
-                    lock (App.Config.UILock) {
-                        cb.isChecked = GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
-                    }
                     cb.eventCheckChanged += (c, isChecked) => {
                         lock (App.Config.UILock) {
                             GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity = isChecked;
                         }
                     };
+                    lock (App.Config.UILock) {
+                        cb.isChecked = GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
+                    }
                 }
             }
 
