@@ -20,17 +20,6 @@ namespace Shicho.Patcher
     [HarmonyPatch("MoveCamera")]
     public class CinematicCameraExtendedPatch
     {
-        public static bool IsModEnabled(string modName)
-        {
-            var plugins = PluginManager.instance.GetPluginsInfo();
-            return (from plugin in plugins.Where(p => p.isEnabled)
-                    select plugin.GetInstances<IUserMod>() into instances
-                    where instances.Any()
-                    select instances[0].Name into name
-                    where name == modName
-                    select name).Any();
-        }
-
         static bool Prepare()
         {
             return Game.Plugin.HasWorkshop(785528371);

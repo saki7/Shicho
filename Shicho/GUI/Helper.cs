@@ -338,6 +338,7 @@ namespace Shicho.GUI
                 //Log.Debug($"Field: {field.position}, {field.size}");
 
                 pane.field.eventTextSubmitted += (c, text) => {
+                    if (text == "") return;
                     try {
                         pane.slider.value = float.Parse(text);
 
