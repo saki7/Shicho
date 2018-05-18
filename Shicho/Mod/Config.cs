@@ -234,7 +234,9 @@ namespace Shicho.Mod
                 districtNamesVisibility,
                 propMarkersVisibility,
 
-                notificationsVisibility
+                notificationsVisibility,
+                disasterVisibility,
+                roadNameVisibility
             ;
 
             public bool tutorialDisabled;
@@ -306,6 +308,8 @@ namespace Shicho.Mod
             districtNamesVisibility  = false,
 
             notificationsVisibility  = false,
+            disasterVisibility       = false,
+            roadNameVisibility       = false,
 
             tutorialDisabled = true,
         };

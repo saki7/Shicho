@@ -1,6 +1,10 @@
 ﻿extern alias Cities;
 
+using Shicho.Core;
+
 using ColossalFramework;
+using ColossalFramework.UI;
+
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 
@@ -9,7 +13,6 @@ using Harmony;
 
 namespace Shicho.Patcher.CameraControllerPatch
 {
-    using Shicho.Core;
 
     [HarmonyPatch(typeof(CameraController))]
     [HarmonyPatch("LateUpdate")]
@@ -199,6 +202,41 @@ namespace Shicho.Patcher.CameraControllerPatch
                     ___m_SMAA.Passes = 1;
                 }
             }
+        }
+    }
+
+
+    [HarmonyPatch(typeof(CameraController))]
+    [HarmonyPatch("UpdateFreeCamera")]
+    class UpdateFreeCameraPatch
+    {
+        static bool Prefix(
+            CameraController __instance,
+            ref bool ___m_cachedFreeCamera
+        ) {
+            if (true || __instance.m_freeCamera != ___m_cachedFreeCamera) {
+                ___m_cachedFreeCamera = __instance.m_freeCamera;
+                UIView.Show(UIView.HasModalInput() || !__instance.m_freeCamera);
+
+                lock (App.Config.UILock) {
+                    Cities::NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility;
+                    Cities::GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
+                    Cities::DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
+                    Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
+                    Cities::GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled;
+                    Cities::DisasterManager.instance.MarkersVisible = App.Config.UI.disasterVisibility;
+                    Cities::NetManager.instance.RoadNamesVisible = App.Config.UI.roadNameVisibility;
+                }
+            }
+            return false;
+
+            #if false
+            if (___m_cachedFreeCamera) {
+                m_camera.rect = new Rect(0f, 0f, 1f, 1f);
+            } else {
+                m_camera.rect = new Rect(0f, 0.105f, 1f, 0.895f);
+            }
+            #endif
         }
     }
 

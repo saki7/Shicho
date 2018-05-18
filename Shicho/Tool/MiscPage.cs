@@ -173,6 +173,21 @@ namespace Shicho.Tool
 
                 Helper.AddCheckBox(
                     ref pane,
+                    "Road name",
+                    tooltip: null,
+                    initialValue: App.Config.UI.roadNameVisibility,
+
+                    (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                            NetManager.instance.RoadNamesVisible = App.Config.UI.roadNameVisibility = isChecked;
+                        }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
                     "City border",
                     tooltip: null,
                     initialValue: App.Config.UI.areaBordersVisiblity,
@@ -227,11 +242,26 @@ namespace Shicho.Tool
                     ref pane,
                     "Tutorial",
                     tooltip: null,
-                    initialValue: App.Config.UI.tutorialDisabled,
+                    initialValue: !App.Config.UI.tutorialDisabled,
 
                     (c, isChecked) => {
                         lock (App.Config.UILock) {
                             GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled = !isChecked;
+                        }
+                    },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Disaster",
+                    tooltip: null,
+                    initialValue: App.Config.UI.disasterVisibility,
+
+                    (c, isChecked) => {
+                        lock (App.Config.UILock) {
+                        DisasterManager.instance.MarkersVisible = App.Config.UI.disasterVisibility = isChecked;
                         }
                     },
                     font: FontStore.Get(11),
