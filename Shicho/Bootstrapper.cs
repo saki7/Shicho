@@ -203,6 +203,7 @@ namespace Shicho
             try {
                 RemoveAllPatchesByOwner(Mod.ModInfo.COMIdentifier);
                 DestroyOldInstance();
+                cfg_ = null;
 
             } finally {
                 gobj_ = null;

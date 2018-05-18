@@ -1,4 +1,5 @@
-﻿using Shicho.GUI;
+﻿using Shicho.Core;
+using Shicho.GUI;
 
 using ColossalFramework.UI;
 using UnityEngine;
@@ -35,7 +36,7 @@ namespace Shicho.Tool
                     ref page,
                     label: label,
                     tooltip: tooltip,
-                    defaultValue: opts.isEnabled,
+                    initialValue: opts.isEnabled,
                     (c, isEnabled) => {
                         opts.onSwitched.Invoke(c, isEnabled);
                     },

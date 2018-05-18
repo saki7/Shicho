@@ -41,7 +41,7 @@ namespace Shicho.Tool
                 ref page,
                 "Force stop distant trees (*)",
                 "* restart required",
-                defaultValue: App.Config.Graphics.stopDistantTrees,
+                initialValue: App.Config.Graphics.stopDistantTrees,
                 (c, isChecked) => {
                     lock (App.Config.GraphicsLock) {
                         App.Config.Graphics.stopDistantTrees = isChecked;
@@ -54,7 +54,7 @@ namespace Shicho.Tool
                 ref page,
                 "Random tree rotation",
                 "Close range only (technical limitation for LOD)",
-                defaultValue: App.Config.Graphics.randomTrees,
+                initialValue: App.Config.Graphics.randomTrees,
                 (c, isChecked) => {
                     lock (App.Config.GraphicsLock) {
                         App.Config.Graphics.randomTrees = isChecked;

@@ -109,7 +109,7 @@ namespace Shicho.Tool
                     ref pane,
                     "SMAA",
                     tooltip: null,
-                    defaultValue: App.Config.Graphics.smaaEnabled,
+                    initialValue: App.Config.Graphics.smaaEnabled,
                     (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.smaaEnabled = isChecked;
@@ -144,7 +144,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Film grain",
                     tooltip: null,
-                    defaultValue: App.Config.Graphics.filmGrainEnabled,
+                    initialValue: App.Config.Graphics.filmGrainEnabled,
                     (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.filmGrainEnabled = isChecked;

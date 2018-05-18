@@ -32,7 +32,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Bokeh Camera",
                     tooltip: null,
-                    defaultValue: App.Config.Graphics.dofEnabled,
+                    initialValue: App.Config.Graphics.dofEnabled,
                     (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.dofEnabled = isChecked;
@@ -46,7 +46,7 @@ namespace Shicho.Tool
                         ref pane,
                         "DOF Analyzer",
                         tooltip: null,
-                        defaultValue: false, // always false for debugging purpose
+                        initialValue: false, // always false for debugging purpose
                         (c, isChecked) => {
                             lock (App.Config.GraphicsLock) {
                                 App.Config.Graphics.dofDebug = isChecked;
@@ -286,7 +286,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Near blur",
                     tooltip: null,
-                    defaultValue: App.Config.Graphics.dofNearBlur,
+                    initialValue: App.Config.Graphics.dofNearBlur,
                     (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.dofNearBlur = isChecked;
@@ -319,7 +319,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Tilt shift",
                     tooltip: null,
-                    defaultValue: App.Config.Graphics.tiltShiftEnabled,
+                    initialValue: App.Config.Graphics.tiltShiftEnabled,
                     (c, isChecked) => {
                         lock (App.Config.GraphicsLock) {
                             App.Config.Graphics.tiltShiftEnabled = isChecked;
@@ -336,7 +336,7 @@ namespace Shicho.Tool
                         "Vertical",
                         "Radial",
                     },
-                    defaultValue: App.Config.Graphics.tiltShiftMode == TiltShiftEffect.TiltShiftMode.TiltShiftMode ? "Vertical" : "Radial",
+                    initialValue: App.Config.Graphics.tiltShiftMode == TiltShiftEffect.TiltShiftMode.TiltShiftMode ? "Vertical" : "Radial",
 
                     (c, i) => {
                         var mode = TiltShiftEffect.TiltShiftMode.TiltShiftMode;

@@ -135,11 +135,11 @@ namespace Shicho.GUI
             return wrapper;
         }
 
-        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip, bool defaultValue, PropertyChangedEventHandler<bool> onCheckChanged, UIFont font = null, int? indentPadding = null)
+        public static UICheckBox AddCheckBox(ref UIPanel parent, string label, string tooltip, bool initialValue, PropertyChangedEventHandler<bool> onCheckChanged, UIFont font = null, int? indentPadding = null)
         {
             var box = parent.AddUIComponent<UICheckBox>();
             box.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
-            box.isChecked = false;
+
 
             box.label = box.AddUIComponent<UILabel>();
             box.label.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left | UIAnchorStyle.Right;
@@ -147,7 +147,7 @@ namespace Shicho.GUI
             box.label.text = label;
 
             if (tooltip == null) {
-                box.label.tooltip = $"default: {defaultValue}";
+                box.label.tooltip = $"default: {initialValue}";
 
             } else {
                 box.label.tooltip = tooltip;
@@ -181,11 +181,11 @@ namespace Shicho.GUI
             box.checkedBoxObject = checkedSprite;
 
             box.eventCheckChanged += onCheckChanged;
-            box.isChecked = defaultValue;
+            box.isChecked = initialValue;
             return box;
         }
 
-        public static UIDropDown AddDropDown(ref UIPanel parent, string name, string[] options, string defaultValue, PropertyChangedEventHandler<int> onSelectedIndexChanged, UIFont font = null)
+        public static UIDropDown AddDropDown(ref UIPanel parent, string name, string[] options, string initialValue, PropertyChangedEventHandler<int> onSelectedIndexChanged, UIFont font = null)
         {
             if (font == null) {
                 font = FontStore.Get(11);
@@ -236,7 +236,7 @@ namespace Shicho.GUI
             };
 
             dd.eventSelectedIndexChanged += onSelectedIndexChanged;
-            dd.selectedValue = defaultValue;
+            dd.selectedValue = initialValue;
             return dd;
         }
 
@@ -285,13 +285,11 @@ namespace Shicho.GUI
             pane.wrapper.height = pane.slider.height + 10;
 
             pane.slider.eventValueChanged += (c, value) => {
-                Debug.Log($"pane.slider.eventValueChanged: {value}");
                 if (pane.field != null) {
                     pane.field.text = value.ToString();
                 }
-                opts.onValueChanged?.Invoke(c, value);
+                opts.onValueChanged.Invoke(c, value);
             };
-            pane.slider.value = opts.defaultValue;
 
             if (opts.hasField) {
                 pane.slider.width -= 48;
@@ -344,10 +342,12 @@ namespace Shicho.GUI
 
                     } catch (Exception e) {
                         Log.Error($"failed to set new value \"{text}\": {e}");
+                        pane.field.text = "";
                     }
                 };
             } // hasField
 
+            pane.slider.value = opts.initialValue;
             //pane.wrapper.height = pane.slider.height + (pane.field?.height).GetValueOrDefault(0);
             return pane;
         }

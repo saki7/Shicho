@@ -53,7 +53,7 @@ namespace Shicho.Tool
                     tooltip: null,
 
                     // always reset to visible at game init
-                    defaultValue: true && infoPanel_.isVisible,
+                    initialValue: true && infoPanel_.isVisible,
 
                     (c, isEnabled) => {
                         lock (App.Config.UILock) {
@@ -130,7 +130,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Prop marker",
                     tooltip: null,
-                    defaultValue: App.Config.UI.propMarkersVisibility,
+                    initialValue: App.Config.UI.propMarkersVisibility,
                     (c, isChecked) => {
                         lock (App.Config.UILock) {
                             Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility = isChecked;
@@ -160,7 +160,7 @@ namespace Shicho.Tool
                     ref pane,
                     "District name",
                     tooltip: null,
-                    defaultValue: App.Config.UI.districtNamesVisibility,
+                    initialValue: App.Config.UI.districtNamesVisibility,
 
                     (c, isChecked) => {
                         lock (App.Config.UILock) {
@@ -175,7 +175,7 @@ namespace Shicho.Tool
                     ref pane,
                     "City border",
                     tooltip: null,
-                    defaultValue: App.Config.UI.areaBordersVisiblity,
+                    initialValue: App.Config.UI.areaBordersVisiblity,
 
                     (c, isChecked) => {
                         lock (App.Config.UILock) {
@@ -206,7 +206,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Notifications",
                     tooltip: null,
-                    defaultValue: App.Config.UI.notificationsVisibility,
+                    initialValue: App.Config.UI.notificationsVisibility,
 
                     (c, isChecked) => {
                         lock (App.Config.UILock) {
@@ -227,7 +227,7 @@ namespace Shicho.Tool
                     ref pane,
                     "Tutorial",
                     tooltip: null,
-                    defaultValue: App.Config.UI.tutorialDisabled,
+                    initialValue: App.Config.UI.tutorialDisabled,
 
                     (c, isChecked) => {
                         lock (App.Config.UILock) {

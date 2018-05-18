@@ -90,6 +90,7 @@ namespace Shicho.Tool
         public override void Start()
         {
             base.Start();
+
             Title = Mod.ModInfo.ID;
             // Window.height = 420;
             Window.size = new Vector2(DefaultRect.width, DefaultRect.height);

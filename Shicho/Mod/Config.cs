@@ -43,13 +43,16 @@ namespace Shicho.Mod
                 var cfg = xmlSerializer.Deserialize(reader) as Config;
                 System.Version lastVersion = null;
 
-                try {
-                    lastVersion = new System.Version(cfg.lastVersion);
-                } catch (ArgumentException e) {
-                    Log.Debug($"invalid last verion number \"{cfg.lastVersion}\": {e}");
+                if (cfg.lastVersion != null) {
+                    try {
+                        lastVersion = new System.Version(cfg.lastVersion);
+                    } catch (ArgumentException e) {
+                        Log.Debug($"invalid last verion number \"{cfg.lastVersion}\": {e}");
+                    }
                 }
 
                 if (lastVersion == null || lastVersion < ModInfo.Version) {
+                    Log.Info($"this version ({ModInfo.Version}) is newer than last version ({cfg.lastVersion})");
                     cfg.lastVersion = ModInfo.Version.ToString();
                     cfg.UI.masterOpacity = 1.0f;
                     cfg.UI.supportToolOpacity = 1.0f;
@@ -162,13 +165,7 @@ namespace Shicho.Mod
         public object GraphicsLock = new object(), UILock = new object(), AILock = new object();
 
         [Serializable]
-        public abstract class ClonableData : ICloneable
-        {
-            public object Clone() => MemberwiseClone();
-        }
-
-        [Serializable]
-        public class GraphicsData : ClonableData
+        public struct GraphicsData
         {
             public Switchable<float>
                 shadowBias, shadowStrength, lightIntensity
@@ -220,11 +217,11 @@ namespace Shicho.Mod
         }
 
         [Serializable]
-        public class UIData : ClonableData
+        public struct UIData
         {
             // for advanced users. change this in config file if you want
             public bool alwaysFullRect;
-            public float masterOpacity = 0.75f, supportToolOpacity = 0.9f;
+            public float masterOpacity, supportToolOpacity;
 
             [NonSerialized]
             [XmlIgnore]
@@ -244,7 +241,7 @@ namespace Shicho.Mod
         }
 
         [Serializable]
-        public class AIData : ClonableData
+        public struct AIData
         {
             public Switchable<float> regenChance;
         }
@@ -324,14 +321,14 @@ namespace Shicho.Mod
 
         [SerializeField]
         [XmlElement(ElementName = "Graphics")]
-        public GraphicsData Graphics = GraphicsDefault.Clone() as GraphicsData;
+        public GraphicsData Graphics = GraphicsDefault;
 
         [SerializeField]
         [XmlElement(ElementName = "UI")]
-        public UIData UI = UIDefault.Clone() as UIData;
+        public UIData UI = UIDefault;
 
         [SerializeField]
         [XmlElement(ElementName = "AI")]
-        public AIData AI = AIDefault.Clone() as AIData;
+        public AIData AI = AIDefault;
     }
 }
