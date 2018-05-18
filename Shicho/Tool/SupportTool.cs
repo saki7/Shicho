@@ -117,6 +117,13 @@ namespace Shicho.Tool
             {
                 var page = TabPage("Misc");
                 MiscPage.Setup(Window, ref page);
+
+                lock (App.Config.UILock) {
+                    if (!App.Config.UI.pauseOutline) {
+                        var obj = UIView.Find<UISlicedSprite>("PauseOutline");
+                        obj.color = Helper.RGBA(0, 0, 0, 0);
+                    }
+                }
             }
             {
                 var page = TabPage("About");

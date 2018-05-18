@@ -236,7 +236,9 @@ namespace Shicho.Mod
 
                 notificationsVisibility,
                 disasterVisibility,
-                roadNameVisibility
+                roadNameVisibility,
+
+                pauseOutline
             ;
 
             public bool tutorialDisabled;
@@ -312,6 +314,8 @@ namespace Shicho.Mod
             roadNameVisibility       = false,
 
             tutorialDisabled = true,
+
+            pauseOutline = false,
         };
 
         [NonSerialized]
