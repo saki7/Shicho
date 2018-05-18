@@ -147,7 +147,7 @@ namespace Shicho.GUI
             box.label.text = label;
 
             if (tooltip == null) {
-                box.label.tooltip = $"default: {initialValue}";
+                // box.label.tooltip = $"default: {initialValue}";
 
             } else {
                 box.label.tooltip = tooltip;
