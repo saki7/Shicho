@@ -53,11 +53,11 @@ namespace Shicho.Mod
 
                 if (lastVersion == null || lastVersion < ModInfo.Version) {
                     Log.Info($"this version ({ModInfo.Version}) is newer than last version ({cfg.lastVersion})");
-                    cfg.lastVersion = ModInfo.Version.ToString();
-                    cfg.UI.masterOpacity = 1.0f;
-                    cfg.UI.supportToolOpacity = 1.0f;
+                } else if (lastVersion > ModInfo.Version) {
+                    Log.Warn($"rewind detected: this version ({ModInfo.Version}) is older than last version ({cfg.lastVersion})");
                 }
 
+                cfg.lastVersion = ModInfo.Version.ToString();
                 return cfg;
             }
             // Log.Debug("loaded.");
