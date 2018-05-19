@@ -215,7 +215,7 @@ namespace Shicho.Patcher.CameraControllerPatch
             CameraController __instance,
             ref bool ___m_cachedFreeCamera
         ) {
-            if (true || __instance.m_freeCamera != ___m_cachedFreeCamera) {
+            if (__instance.m_freeCamera != ___m_cachedFreeCamera) {
                 ___m_cachedFreeCamera = __instance.m_freeCamera;
                 UIView.Show(UIView.HasModalInput() || !__instance.m_freeCamera);
 
