@@ -181,9 +181,9 @@ namespace Shicho.GUI
             box.checkedBoxObject = checkedSprite;
 
             box.eventCheckChanged += onCheckChanged;
-
+            box.isChecked = initialValue;
             // box.isChecked = initialValue;
-            if (initialValue) box.SimulateClick();
+            //if (initialValue) box.SimulateClick();
             return box;
         }
 

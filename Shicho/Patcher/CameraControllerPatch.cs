@@ -62,14 +62,15 @@ namespace Shicho.Patcher.CameraControllerPatch
         }
 
         static void Prefix(
-            ref CameraController __instance,
+            CameraController __instance,
             Camera ___m_camera
         ) {
-            var hasToolbar = true;
-            lock (App.Config.UILock) {
-                hasToolbar = App.Config.UI.masterToolbarVisibility;
-            }
             __instance.m_unlimitedCamera = true; // hasToolbar;
+
+            {
+                // suppress Harmony bug for untouched values
+                var dummy = ___m_camera.fieldOfView;
+            }
 
             lock (App.Config.GraphicsLock) {
                 var gr = App.Config.Graphics;
