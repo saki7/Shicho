@@ -219,15 +219,7 @@ namespace Shicho.Patcher.CameraControllerPatch
                 ___m_cachedFreeCamera = __instance.m_freeCamera;
                 UIView.Show(UIView.HasModalInput() || !__instance.m_freeCamera);
 
-                lock (App.Config.UILock) {
-                    Cities::NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility;
-                    Cities::GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
-                    Cities::DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
-                    Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
-                    Cities::GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled;
-                    Cities::DisasterManager.instance.MarkersVisible = App.Config.UI.disasterVisibility;
-                    Cities::NetManager.instance.RoadNamesVisible = App.Config.UI.roadNameVisibility;
-                }
+                Tool.SupportTool.ApplyVisibility();
             }
             return false;
 

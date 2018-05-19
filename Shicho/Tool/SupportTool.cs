@@ -185,6 +185,8 @@ namespace Shicho.Tool
                 //};
             }
 
+            ApplyVisibility();
+
             //Window.Content.FitChildren();
             //Log.Debug($"fff: {Window.titleBar_.size} {Window.Content.size}");
             Window.Content.clipChildren = true;
@@ -231,6 +233,20 @@ namespace Shicho.Tool
             //if (Window.Content.isEnabled == isToolActive) {
             //    Window.Content.isEnabled = !isToolActive;
             //}
+        }
+
+
+        public static void ApplyVisibility()
+        {
+            lock (App.Config.UILock) {
+                Cities::NotificationManager.instance.NotificationsVisible = App.Config.UI.notificationsVisibility;
+                Cities::GameAreaManager.instance.BordersVisible = App.Config.UI.areaBordersVisiblity;
+                Cities::DistrictManager.instance.NamesVisible = App.Config.UI.districtNamesVisibility;
+                Cities::PropManager.instance.MarkersVisible = App.Config.UI.propMarkersVisibility;
+                Cities::GuideManager.instance.TutorialDisabled = App.Config.UI.tutorialDisabled;
+                Cities::DisasterManager.instance.MarkersVisible = App.Config.UI.disasterVisibility;
+                Cities::NetManager.instance.RoadNamesVisible = App.Config.UI.roadNameVisibility;
+            }
         }
 
         public static readonly Rect DefaultRect = new Rect(
