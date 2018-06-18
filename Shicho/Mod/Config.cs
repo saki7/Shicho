@@ -3,15 +3,13 @@
 using UnityEngine;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
 
 namespace Shicho.Mod
 {
-    using KeyMod = Input.KeyMod;
-    using KeyModMap = Dictionary<Input.KeyMod, string>;
+    using KeyMod = SInput.KeyMod;
 
     [Serializable]
     [XmlRoot(ElementName = "Shicho")]
@@ -123,28 +121,13 @@ namespace Shicho.Mod
             }
         }
 
-        public static readonly KeyModMap ModMap = new KeyModMap() {
-            {KeyMod.Ctrl, "Ctrl"}, {KeyMod.Shift, "Shift"}, {KeyMod.Alt, "Alt"},
-            {KeyMod.Ctrl | KeyMod.Shift, "Ctrl-Shift"},
-            {KeyMod.Ctrl | KeyMod.Alt, "Ctrl-Alt"},
-            {KeyMod.Ctrl | KeyMod.Alt | KeyMod.Shift, "Ctrl-Alt-Shift"},
-            {KeyMod.Alt | KeyMod.Shift, "Alt-Shift"},
-        };
-
-        [Serializable]
-        public struct BoundKeyData
-        {
-            public KeyMod Mod { get; set; }
-            public KeyCode Code { get; set; }
-
-            public override string ToString()
-            {
-                return $"{ModMap[Mod]}-{Code}";
-            }
-        }
-        public BoundKeyData mainKey = new BoundKeyData() {
+        public SInput.BoundKey mainKey = new SInput.BoundKey() {
             Mod = KeyMod.Alt,
             Code = KeyCode.S,
+        };
+        public SInput.BoundKey diveKey = new SInput.BoundKey() {
+            Mod = KeyMod.None,
+            Code = KeyCode.Tab,
         };
 
         [Serializable]

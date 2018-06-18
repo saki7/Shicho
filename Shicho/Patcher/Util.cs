@@ -37,7 +37,14 @@ namespace Shicho.Patcher
 
                 foreach (var p in info.Postfixes) {
                     if (pred.Invoke(p)) {
-                        Log.Warn($"found target patch: {p.GetMethod(target)} [by {p.owner}]");
+                        {
+                            var msg = $"found target patch: {p.GetMethod(target)} [by {p.owner}]";
+                            if (p.owner == Mod.ModInfo.COMIdentifier) {
+                                Log.Debug(msg);
+                            } else {
+                                Log.Warn(msg);
+                            }
+                        }
                         //Log.Warn($"Unknown Harmony patcher from owner \"{p.owner}\" found! This will lead to undesired behavior; please report.");
                         hostiles.Add(new KeyValuePair<MethodBase, MethodInfo>(target, p.GetMethod(target)));
                     }

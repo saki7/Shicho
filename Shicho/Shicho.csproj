@@ -104,6 +104,12 @@
     <Compile Include="App.cs" />
     <Compile Include="Core\DataQuery.cs" />
     <Compile Include="Core\EnumerableExtension.cs" />
+    <Compile Include="Core\UnityExtension.cs" />
+    <Compile Include="Dive\Person.cs" />
+    <Compile Include="Dive\Drone.cs" />
+    <Compile Include="Dive\DiveController.cs" />
+    <Compile Include="Dive\Raycaster.cs" />
+    <Compile Include="Dive\Spec.cs" />
     <Compile Include="Game\Application.cs" />
     <Compile Include="Game\District.cs" />
     <Compile Include="Game\IGameObject.cs" />
@@ -119,7 +125,7 @@
     <Compile Include="GUI\TitleBar.cs" />
     <Compile Include="GUI\UIRect.cs" />
     <Compile Include="GUI\Window.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="SInput.cs" />
     <Compile Include="Patcher\CameraControllerPatch.cs" />
     <Compile Include="Patcher\CinematicCameraExtendedPatch.cs" />
     <Compile Include="Patcher\DayNightPropertiesPatch.cs" />
@@ -161,7 +167,6 @@
     <None Include="ILMerge.props">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
     <None Include="Shicho.ruleset" />
   </ItemGroup>
   <ItemGroup>

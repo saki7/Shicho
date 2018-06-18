@@ -198,31 +198,20 @@ namespace Shicho.Tool
 
         public void Update()
         {
-            var keyMod = Input.KeyMod.None;
+            var keyMod = SInput.GetMod();
 
-            if (UInput.GetKey(KeyCode.LeftControl) || UInput.GetKey(KeyCode.RightControl)) {
-                keyMod |= Input.KeyMod.Ctrl;
-            }
-            if (UInput.GetKey(KeyCode.LeftAlt) || UInput.GetKey(KeyCode.RightAlt)) {
-                keyMod |= Input.KeyMod.Alt;
-            }
-            if (UInput.GetKey(KeyCode.LeftShift) || UInput.GetKey(KeyCode.RightShift)) {
-                keyMod |= Input.KeyMod.Shift;
-            }
-
-            if (UInput.GetKeyDown(App.Config.mainKey.Code)) {
-                if ((App.Config.mainKey.Mod & keyMod) == App.Config.mainKey.Mod) {
-                    lock (App.Config.UILock) {
-                        // should be visible this time?
-                        if (!Config.IsVisible) {
-                            if (!App.Config.UI.masterToolbarVisibility) {
-                                App.Config.UI.masterToolbarVisibility = true;
-                                UIView.Show(true);
-                            }
-                            SetVisible(true);
-                        } else {
-                            SetVisible(false);
+            if (SInput.HasOnlyKeyDown(keyMod, App.Config.mainKey)) {
+                lock (App.Config.UILock) {
+                    // should be visible this time?
+                    if (!Config.IsVisible) {
+                        if (!App.Config.UI.masterToolbarVisibility) {
+                            App.Config.UI.masterToolbarVisibility = true;
+                            UIView.Show(true);
                         }
+                        SetVisible(true);
+
+                    } else {
+                        SetVisible(false);
                     }
                 }
             }

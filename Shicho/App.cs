@@ -18,6 +18,18 @@ namespace Shicho
     {
         public void Awake()
         {
+            isDive_ = false;
+            cfgToolObj_ = new GameObject($"{gameObject.name}.ConfigTool");
+            cfgToolObj_.transform.parent = gameObject.transform;
+            cfgToolObj_.SetActive(true);
+
+            supportToolObj_ = new GameObject($"{gameObject.name}.SupportTool");
+            supportToolObj_.transform.parent = gameObject.transform;
+
+            diveObj_ = new GameObject($"{gameObject.name}.Dive");
+            diveObj_.transform.parent = gameObject.transform;
+            diveObj_.SetActive(false);
+
             try {
                 // Log.Info("initializing...");
                 R = new ColossalFramework.Math.Randomizer(GetDeviceSeedUL());
@@ -36,18 +48,52 @@ namespace Shicho
             }
         }
 
+        private bool isDive_;
+        public bool IsDive { get => isDive_; }
+
+        public void Update()
+        {
+            var keyMod = SInput.GetMod();
+            if (SInput.HasOnlyKeyDown(keyMod, App.Config.diveKey)) {
+                if (dive_ != null) {
+                    isDive_ = !isDive_;
+
+                    var cc = ToolsModifierControl.cameraController;
+                    if (isDive_) {
+                        cc.m_freeCameraInertia = 0;
+                        cc.m_freeCamera = true;
+
+                        Cursor.visible = false;
+                        Cursor.lockState = CursorLockMode.None;
+
+                        dive_.gameObject.SetActive(true);
+
+                    } else {
+                        // must come first
+                        dive_.gameObject.SetActive(false);
+                        // supportTool_.gameObject.SetActive(!isDive_);
+
+                        Cursor.visible = true;
+                        cc.m_freeCamera = false;
+                    }
+                }
+            }
+        }
+
         public void InitGameMode()
         {
             Log.Debug($"loading fonts...");
             GUI.FontStore.Instance.Load();
 
             LoadLevelData();
-            supportTool_ = gameObject.AddComponent<Tool.SupportTool>();
+
+            supportTool_ = supportToolObj_.AddComponent<Tool.SupportTool>();
+            dive_ = diveObj_.AddComponent<Dive.DiveController>();
         }
 
         private void InitGUI()
         {
-            cfgTool_ = gameObject.AddComponent<Tool.ConfigTool>();
+            cfgTool_ = cfgToolObj_.AddComponent<Tool.ConfigTool>();
         }
 
         private void InitPhysics()
@@ -125,6 +171,15 @@ namespace Shicho
             //Log.Debug("Dispose()");
 
             try {
+                GameObject.DestroyImmediate(diveObj_);
+                diveObj_ = null;
+
+                GameObject.DestroyImmediate(cfgToolObj_);
+                cfgToolObj_ = null;
+
+                GameObject.DestroyImmediate(supportToolObj_);
+                supportToolObj_ = null;
+
                 foreach (var c in GetComponentsInChildren<MonoBehaviour>()) {
                     //Log.Debug($"\"{c.name}\": [{c.gameObject}] {c.tag}, {c}");
                     Destroy(c.gameObject);
@@ -165,6 +220,9 @@ namespace Shicho
         public static Mod.Config Config { get => Bootstrapper.Instance.Config; }
 
         private Tool.SupportTool supportTool_ = null;
+
+        private GameObject cfgToolObj_ = null, supportToolObj_ = null, diveObj_ = null;
+        private Dive.DiveController dive_ = null;
         public Tool.ConfigTool cfgTool_ = null;
 
         internal ColossalFramework.Math.Randomizer R;

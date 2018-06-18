@@ -17,7 +17,7 @@ namespace Shicho.Tool
         {
             {
                 var grp = gui.AddGroup("Main key binding");
-                var keyModChoices = Mod.Config.ModMap.Reverse().ToArray();
+                var keyModChoices = SInput.ModMap.Reverse().ToArray();
 
                 grp.AddDropdown(
                     "Mod",
