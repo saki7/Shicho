@@ -506,7 +506,7 @@ namespace Shicho.Patcher.CameraControllerPatch
 
 
     [HarmonyPatch(typeof(CameraController))]
-    [HarmonyPatch("isTiltShiftDisabled", PropertyMethod.Getter)]
+    [HarmonyPatch("isTiltShiftDisabled", MethodType.Getter)]
     class isTiltShiftDisabledPatch
     {
         static bool Prefix(ref bool __result)
@@ -518,7 +518,7 @@ namespace Shicho.Patcher.CameraControllerPatch
         }
     }
     [HarmonyPatch(typeof(CameraController))]
-    [HarmonyPatch("isDepthOfFieldDisabled", PropertyMethod.Getter)]
+    [HarmonyPatch("isDepthOfFieldDisabled", MethodType.Getter)]
     class isDepthOfFieldDisabledPatch
     {
         static bool Prefix(ref bool __result)
@@ -530,7 +530,7 @@ namespace Shicho.Patcher.CameraControllerPatch
         }
     }
     [HarmonyPatch(typeof(CameraController))]
-    [HarmonyPatch("isFilmGrainDisabled", PropertyMethod.Getter)]
+    [HarmonyPatch("isFilmGrainDisabled", MethodType.Getter)]
     class isFilmGrainDisabledPatch
     {
         static bool Prefix(ref bool __result)

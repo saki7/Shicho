@@ -54,7 +54,7 @@ namespace Shicho.Patcher
 
             foreach (var kv in hostiles) {
                 Log.Warn($"unpatching: {kv.Value} for {kv.Key}");
-                harmony.RemovePatch(kv.Key, kv.Value);
+                harmony.Unpatch(kv.Key, kv.Value);
             }
         }
     }

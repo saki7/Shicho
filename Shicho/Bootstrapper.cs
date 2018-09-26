@@ -192,7 +192,7 @@ namespace Shicho
 
             foreach (var pp in patches) {
                 Log.Debug($"removing patch: {pp.Value} for {pp.Key}");
-                harmony_.RemovePatch(pp.Key, pp.Value);
+                harmony_.Unpatch(pp.Key, pp.Value);
             }
         }
 
