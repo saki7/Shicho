@@ -111,23 +111,29 @@ namespace Shicho.GUI
             var root = UIView.Find<UIPanel>("FindItDefaultPanel");
             if (!root) return;
 
-            var scrollBar = root.Find<UIScrollbar>("UIScrollbar");
-            scrollBar.height = scrollBar.parent.height;
-            scrollBar.relativePosition = new Vector2(scrollBar.relativePosition.x, 0);
+            root.width = tsContainer_.width;
 
-            foreach (var comp in scrollBar.components) {
-                comp.height = comp.parent.height;
+            var scrollBar = root.Find<UIScrollbar>("UIScrollbar");
+            if (scrollBar) { 
+                scrollBar.height = scrollBar.parent.height;
+                scrollBar.relativePosition = new Vector2(scrollBar.relativePosition.x, 0);
+
+                foreach (var comp in scrollBar.components) {
+                    comp.height = comp.parent.height;
+                }
             }
 
             var scrollablePanel = root.Find<UIScrollablePanel>("ScrollablePanel");
-            scrollablePanel.width = root.width;
+            if (scrollablePanel) {
+                scrollablePanel.width = root.width;
+            }
 
             var searchBoxPanel = root.Find<UIPanel>("UISearchBox");
-            root.width = tsContainer_.width;
-            searchBoxPanel.width = root.width;
-
-            searchBoxPanel.components[0].relativePosition = new Vector2(300, -75);
-            searchBoxPanel.components[2].width = root.width;
+            if (searchBoxPanel) { 
+                searchBoxPanel.width = root.width;
+                searchBoxPanel.components[0].relativePosition = new Vector2(300, -75);
+                searchBoxPanel.components[2].width = root.width;
+            }
         }
 
         private static void FitScrollablePanelToParent(UIScrollablePanel sc, float relX)
