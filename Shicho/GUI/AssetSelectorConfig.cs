@@ -129,7 +129,7 @@ namespace Shicho.GUI
             }
 
             var searchBoxPanel = root.Find<UIPanel>("UISearchBox");
-            if (searchBoxPanel) { 
+            if (searchBoxPanel && searchBoxPanel.components.Count >= 3) { 
                 searchBoxPanel.width = root.width;
                 searchBoxPanel.components[0].relativePosition = new Vector2(300, -75);
                 searchBoxPanel.components[2].width = root.width;
