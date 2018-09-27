@@ -115,6 +115,7 @@
     <Compile Include="Game\IGameObject.cs" />
     <Compile Include="Game\Plugin.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GUI\AssetSelectorConfig.cs" />
     <Compile Include="GUI\Extension.cs" />
     <Compile Include="GUI\FontStore.cs" />
     <Compile Include="GUI\Helper.cs" />

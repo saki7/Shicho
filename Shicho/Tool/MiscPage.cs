@@ -16,6 +16,9 @@ namespace Shicho.Tool
 
     public static class MiscPage
     {
+        // Master toolbar asset selector
+        private static AssetSelectorConfig assetSelector_;
+
         private static UISlicedSprite thmBar_;
         private static UIComponent tsBar_, infoPanel_;
 
@@ -24,6 +27,11 @@ namespace Shicho.Tool
             page.padding = Helper.Padding(6, 2);
             page.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 8, 0));
             page.autoFitChildrenVertically = true;
+
+            assetSelector_ = new AssetSelectorConfig(UIView.Find<UITabContainer>("TSContainer"));
+            lock (App.Config.UILock) {
+                assetSelector_.Enabled = App.Config.UI.assetSelectorEnabled;
+            }
 
             thmBar_ = UIView.Find<UISlicedSprite>("ThumbnailBar");
             tsBar_ = UIView.Find("TSBar");
@@ -138,6 +146,131 @@ namespace Shicho.Tool
                     },
                     font: FontStore.Get(11),
                     indentPadding: 10
+                );
+            }
+
+            {
+                var pane = page.AddUIComponent<UIPanel>();
+                pane.width = page.width - page.padding.horizontal;
+                pane.padding = Helper.Padding(4, 12, 4, 0);
+                pane.SetAutoLayout(LayoutDirection.Vertical, Helper.Padding(0, 0, 2, 0));
+                pane.autoFitChildrenVertically = true;
+
+                Helper.AddLabel(
+                    ref pane,
+                    "Asset Selector EX",
+                    font: FontStore.Get(12),
+                    color: Helper.RGB(220, 230, 250),
+                    bullet: "IconPolicyBigBusiness"
+                );
+
+                Helper.AddCheckBox(
+                    ref pane,
+                    "Enable",
+                    tooltip: null,
+                    initialValue: assetSelector_.Enabled,
+                    (c, isChecked) => { assetSelector_.Enabled = isChecked; },
+                    font: FontStore.Get(11),
+                    indentPadding: 10
+                );
+
+                //Helper.AddCheckBox(
+                //    ref pane,
+                //    "Sync `Find It!`",
+                //    tooltip: "Auto-adjust size & position for the mod `Find It!` (837734529) by SamsamTS",
+                //    initialValue: assetSelector_.SyncFindIt,
+                //    (c, isChecked) => { assetSelector_.SyncFindIt = isChecked; },
+                //    font: FontStore.Get(11),
+                //    indentPadding: 10
+                //);
+
+                Helper.AddDropDown(
+                    ref pane,
+                    "Scroll direction",
+                    new[] {
+                        "Horizontal",
+                        "Vertical",
+                    },
+                    initialValue: App.Config.UI.assetSelectorScrollDirection == UIOrientation.Horizontal ? "Horizontal" : "Vertical",
+
+                    (c, i) => {
+                        switch ((c as UIDropDown).selectedValue) {
+                            case "Horizontal":
+                                assetSelector_.ScrollDirection = UIOrientation.Horizontal;
+                                break;
+
+                            case "Vertical":
+                                assetSelector_.ScrollDirection = UIOrientation.Vertical;
+                                break;
+                        }
+                    }
+                );
+
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "X offset",
+                    "Relative X offset from screen left",
+                    opts: new SliderOption<float>(
+                        minValue: 0.00f,
+                        maxValue: 1.00f,
+                        stepSize: 0.005f,
+                        defaultValue: assetSelector_.X,
+                        (c, value) => { assetSelector_.X = value; }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Y offset",
+                    "Relative Y offset from screen top",
+                    opts: new SliderOption<float>(
+                        minValue: 0.00f,
+                        maxValue: 1.00f,
+                        stepSize: 0.005f,
+                        defaultValue: assetSelector_.Y,
+                        (c, value) => { assetSelector_.Y = value; }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Width",
+                    "Relative % for screen width",
+                    opts: new SliderOption<float>(
+                        minValue: 0.20f,
+                        maxValue: 1.00f,
+                        stepSize: 0.005f,
+                        defaultValue: assetSelector_.Width,
+
+                        (c, value) => { assetSelector_.Width = value; }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
+                );
+
+                ToolHelper.AddConfig(
+                    ref pane,
+                    "Height",
+                    "Relative % for screen height",
+                    opts: new SliderOption<float>(
+                        minValue: 0.10f,
+                        maxValue: 0.88f,
+                        stepSize: 0.005f,
+                        defaultValue: assetSelector_.Height,
+
+                        (c, value) => { assetSelector_.Height = value; }
+                    ) {
+                        hasField = false,
+                    },
+                    color: Helper.RGB(160, 160, 160)
                 );
             }
 

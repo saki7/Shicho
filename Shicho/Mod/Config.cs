@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 
 namespace Shicho.Mod
 {
+    using ColossalFramework.UI;
     using KeyMod = SInput.KeyMod;
 
     [Serializable]
@@ -225,6 +226,10 @@ namespace Shicho.Mod
             ;
 
             public bool tutorialDisabled;
+
+            public bool assetSelectorEnabled, assetSelectorSyncFindIt;
+            public Vector4 assetSelectorTransform;
+            public UIOrientation assetSelectorScrollDirection;
         }
 
         [Serializable]
@@ -299,6 +304,11 @@ namespace Shicho.Mod
             tutorialDisabled = true,
 
             pauseOutline = false,
+
+            assetSelectorEnabled = false,
+            assetSelectorSyncFindIt = true,
+            assetSelectorTransform = new Vector4(0, 0.7f, 0.21f, 1.0f),
+            assetSelectorScrollDirection = UIOrientation.Vertical,
         };
 
         [NonSerialized]
